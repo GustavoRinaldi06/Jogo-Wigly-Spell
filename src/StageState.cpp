@@ -5,6 +5,7 @@
 #include "../include/InputManager.h"
 #include "../include/Camera.h"
 #include "../include/Character.h"
+#include "../include/BounceBall.h"
 #include "../include/PlayerController.h"
 #include "../include/Collider.h"
 #include "../include/Collision.h"
@@ -81,6 +82,13 @@ void StageState::LoadAssets()
     Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
 
     AddObject(playerGO);
+
+    GameObject *bounceGO = new GameObject();
+    bounceGO->box.x = 1000;  // Centro do mapa
+    bounceGO->box.y = 550; // Altura maior
+
+    bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
+    
     // Música --------------------------------------------------------------------------------------------------------------------
 
     backgroundMusic.Open("recursos/audio/Fundo.mp3");
