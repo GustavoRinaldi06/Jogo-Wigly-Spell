@@ -13,6 +13,8 @@ public:
     bool Is(const std::string &type) override;
     void SetScale(Vec2 scale);
     void SetOffset(Vec2 offset);
+    Vec2 GetOffset();
+    Vec2 GetScale();
 
     Rect box;
     std::string tag;

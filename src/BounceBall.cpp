@@ -11,14 +11,14 @@
 #include <iostream>
 
 BounceBall::BounceBall(GameObject &associated, const std::string &spritePath)
-    : Component(associated), linearSpeed(200)
+    : Component(associated)
 {
-
+    
     auto renderer = new SpriteRenderer(associated, spritePath, 2, 4);
     associated.AddComponent(renderer);
 
-    associated.box.w = 20;  // ou a largura desejada
-    associated.box.h = 20; // altura desejada
+    associated.box.w = 30;  // ou a largura desejada
+    associated.box.h = 30; // altura desejada
 
     // Novos sons
     //hitSound = Sound();
@@ -27,15 +27,18 @@ BounceBall::BounceBall(GameObject &associated, const std::string &spritePath)
 
     // Cria as animações
     auto animator = new Animator(associated);
-    animator->AddAnimation("floating", Animation(0, 1, 0.5f));
+    animator->AddAnimation("floating", Animation(0, 1, 0.25f));
     animator->AddAnimation("bouncing", Animation(2, 3, 0.2f));
-    animator->AddAnimation("above", Animation(4, 5, 0.5f));
+    animator->AddAnimation("above", Animation(4, 5, 0.75f));
     animator->AddAnimation("popping", Animation(6, 7, 0.25f));
     associated.AddComponent(animator);
+    animator->SetAnimation("floating");
 
     associated.AddComponent(new Collider(associated,Vec2(0.8,0.8)));
+    //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     lifespan.Restart();
+    bounceTimer.Set(3.0);
 }
 
 BounceBall::~BounceBall()
@@ -73,15 +76,16 @@ void BounceBall::Update(float dt)
 
         return; // não executa mais lógica de movimento
     }
+
     lifespan.Update(dt);
-    if (lifespan.Get() > 10.0f) {
+    if (lifespan.Get() > 50.0f) { 
         destroyed = true;
     }
 
     // Enquanto funcional --------------------------------------------------------------------------
 
     // Aplica a gravidade --------------------------------------------------------------------
-    if (GameData::gameMode == 1)
+    if (GameData::gameMode == 1 && !bouncing)
     {
         // Aplica a gravidade --------------------------------------------------------------------
         if (GameData::inverted == false)
@@ -89,8 +93,10 @@ void BounceBall::Update(float dt)
         else
             speed.y -= gravity * dt; // gravidade invertida, puxa pro teto
     }
-    else
+    else {
         speed.y = 0;
+    }
+        
 
     associated.box.y += speed.y * dt;
     associated.box.x += speed.x * dt;
@@ -99,10 +105,14 @@ void BounceBall::Update(float dt)
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
     if (animator)
     {
+        if (bouncing) {
+            bounceTimer.Update(dt);
+        }
         animator->Update(dt);
         if (GameData::gameMode == 0)
             animator->SetAnimation("above");
-        else if (bounceTimer.Get() < 0.55f) {
+        else if (bounceTimer.Get() < 0.29f) {
+            //printf("%f %i\n",bounceTimer.Get(),bouncing);
             animator->SetAnimation("bouncing");
             Collider *col = static_cast<Collider *>(associated.GetComponent("Collider"));
             col->SetScale(Vec2(0.8,0.4));
@@ -110,15 +120,16 @@ void BounceBall::Update(float dt)
         }
         else {
             if (bouncing) {
+                
                 bouncing = false;
                 Collider *col = static_cast<Collider *>(associated.GetComponent("Collider"));
                 col->SetScale(Vec2(0.8,0.8));
                 col->SetOffset(Vec2(0,0));
                 if (GameData::inverted) {
-                    speed.y = -basespeedy;
+                    speed.y = basespeedy;
                 }
                 else {
-                    speed.y = basespeedy;
+                    speed.y = -basespeedy;
                 }
             }
             animator->SetAnimation("floating");       
@@ -148,6 +159,9 @@ void BounceBall::Update(float dt)
     if(GameData::gameMode == 0){
         speed.y = 0;
     }
+    //Collider *collider = (Collider *)associated.GetComponent("Collider");
+    //collider->SetScale(Vec2(1,1));
+    //collider->SetOffset(Vec2(0,0)); // Ignorando escala e offset para colisão com paredes
 }
 
 void BounceBall::Render() {}
@@ -163,20 +177,34 @@ void BounceBall::NotifyCollision(GameObject &other)
 
     // Se colidir com chão
     Collider *collider = (Collider *)other.GetComponent("Collider");
+    Collider *col = (Collider *)associated.GetComponent("Collider");
     if (collider && collider->tag == "ground")
     {
         // Ajusta posição
+        if (!bouncing && !GameData::inverted) {
+            bouncing = true;
+            bounceTimer.Restart();
+            speed.y = 0;
+        }
+        else if (GameData::inverted) {
+            speed.y = 0;
+        }
         associated.box.y = other.box.y - associated.box.h;
-        bouncing = true;
-        bounceTimer.Restart();
     }
 
     if (collider && collider->tag == "inverted_ground")
     {
         // Ajusta posição
+        if (!bouncing && GameData::inverted) {
+            bouncing = true;
+            bounceTimer.Restart();
+            speed.y = 0;
+        }
+        else if (!GameData::inverted) {
+            speed.y = 0;
+        }
         associated.box.y = other.box.y + other.box.h;
-        bouncing = true;
-        bounceTimer.Restart();
+        
         
     }
 
@@ -184,7 +212,7 @@ void BounceBall::NotifyCollision(GameObject &other)
     if (collider && collider->tag == "wall")
     {
         // Destroi se colidir com parede
-        associated.RequestDelete();
+        destroyed = true;
     }
 }
 

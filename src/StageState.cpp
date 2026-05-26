@@ -27,7 +27,7 @@ StageState::~StageState()
 
 void StageState::LoadAssets()
 {
-    std::cout << "\n Carregando fase 1 WoglySpell:" << "\n"; // Alertar LoadAssets
+    std::cout << "\n Carregando fase 1 WiglySpell:" << "\n"; // Alertar LoadAssets
 
     // Fundo -------------------------------------------------------------------------------------------------------------------
     GameObject *bgObject = new GameObject();
@@ -84,11 +84,11 @@ void StageState::LoadAssets()
     AddObject(playerGO);
 
     GameObject *bounceGO = new GameObject();
-    bounceGO->box.x = 1000;  // Centro do mapa
+    bounceGO->box.x = 800;  // Centro do mapa
     bounceGO->box.y = 550; // Altura maior
 
     bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
-    
+    AddObject(bounceGO);
     // Música --------------------------------------------------------------------------------------------------------------------
 
     backgroundMusic.Open("recursos/audio/Fundo.mp3");

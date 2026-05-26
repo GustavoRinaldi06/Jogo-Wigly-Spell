@@ -27,9 +27,9 @@ public:
 
 private:
     // Valores de controle plataforma
-    Vec2 speed = Vec2(-300,0);
-    float gravity = 1000.0f; // Gravidade
-    float basespeedy = 500;
+    Vec2 speed = Vec2(-20,0);
+    float gravity = 200.0f; // Gravidade
+    float basespeedy = 300;
 
     bool destroyed = false;
     bool blockable = true;
@@ -42,7 +42,7 @@ private:
     bool deathAnimTriggered{false};
 
     // Verificadores de inversão
-    bool bouncing;
+    bool bouncing = false;
 
     float linearSpeed;
     
