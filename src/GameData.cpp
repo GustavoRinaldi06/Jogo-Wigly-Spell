@@ -4,6 +4,7 @@ int GameData::playerHP = 100;
 int GameData::gameMode = 0; // sempre inicializa no menu
 int GameData::currentState = 0;
 bool GameData::inverted = false;
+Vec2 GameData::universalspeed = Vec2(0,0);
 
 bool GameData::playerVictory_1 = false; // Jogador ainda não ganhou
 bool GameData::complete1 = false;

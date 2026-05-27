@@ -6,9 +6,14 @@
 #include "../include/Camera.h"
 #include "../include/Character.h"
 #include "../include/BounceBall.h"
+#include "../include/HomingProj.h"
+#include "../include/Floor.h"
 #include "../include/PlayerController.h"
 #include "../include/Collider.h"
 #include "../include/Collision.h"
+#include "../include/ScenaryGenerator.h"
+
+
 #include "Text.h"
 
 #define INCLUDE_SDL
@@ -28,7 +33,7 @@ StageState::~StageState()
 void StageState::LoadAssets()
 {
     std::cout << "\n Carregando fase 1 WiglySpell:" << "\n"; // Alertar LoadAssets
-
+    GameData::universalspeed = Vec2(-50,0); 
     // Fundo -------------------------------------------------------------------------------------------------------------------
     GameObject *bgObject = new GameObject();
     SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
@@ -49,11 +54,10 @@ void StageState::LoadAssets()
     ground->box.y = 700;
     ground->box.w = 1920;
     ground->box.h = 50;
-
+    /*
     Collider *groundCollider = new Collider(*ground);
     groundCollider->tag = "ground";
     ground->AddComponent(groundCollider);
-
     AddObject(ground);
 
     // Cria o teto
@@ -62,33 +66,65 @@ void StageState::LoadAssets()
     inverted_ground->box.y = 50;
     inverted_ground->box.w = 1920;
     inverted_ground->box.h = 50;
+    
 
     Collider *I_groundCollider = new Collider(*inverted_ground);
     I_groundCollider->tag = "inverted_ground";
     inverted_ground->AddComponent(I_groundCollider);
 
     AddObject(inverted_ground);
+    
+    */
+   /*
+    for (int i = 0; i < 10; i++) {
+        GameObject *floorGO = new GameObject();
+        floorGO->box.x = 120*i;  // Centro do mapa
+        floorGO->box.y = 600; // Altura maior
+
+        floorGO->AddComponent(new Floor(*floorGO, "recursos/img/floor.png",(i % 4) == 0,SDL_FLIP_NONE,0.0)); // substitua pela imagem correta
+        AddObject(floorGO);
+    }
+    */
+
+    GameObject *floorGO = new GameObject();
+    floorGO->AddComponent(new ScenaryGenerator(*floorGO, Vec2(0.0,0.0),Vec2(0,650),Vec2(-120,0),SDL_FLIP_NONE,0.0)); // substitua pela imagem correta
+    AddObject(floorGO);
+
+    GameObject *ceilGO = new GameObject();
+
+    ceilGO->AddComponent(new ScenaryGenerator(*ceilGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-120,0),SDL_FLIP_VERTICAL,0.0)); // substitua pela imagem correta
+    AddObject(ceilGO);
 
     // Personagem ----------------------------------------------------------------------------------------------------------------
     GameObject *playerGO = new GameObject();
     playerGO->box.x = 600;  // Centro do mapa
-    playerGO->box.y = 550; // Altura maior
+    playerGO->box.y = 450; // Altura maior
 
     playerGO->AddComponent(new Character(*playerGO, "recursos/img/Player.png")); // substitua pela imagem correta
     playerGO->AddComponent(new PlayerController(*playerGO));
 
     GameData::playerHP = 100; // Reseta vida do personagem
-    Camera::GetInstance().SetPosition(Vec2(0, 0)); // Puxa a câmera de volta pro (0,0)
-    Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
+    Camera::GetInstance().SetPosition(Vec2(240, 0)); // Puxa a câmera de volta pro (0,0)
+    
+    //Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
 
     AddObject(playerGO);
 
     GameObject *bounceGO = new GameObject();
     bounceGO->box.x = 800;  // Centro do mapa
-    bounceGO->box.y = 550; // Altura maior
+    bounceGO->box.y = 450; // Altura maior
 
     bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
     AddObject(bounceGO);
+
+    GameObject *homingGO = new GameObject();
+    homingGO->box.x = 1000;  // Centro do mapa
+    homingGO->box.y = 450; // Altura maior
+
+    homingGO->AddComponent(new HomingProj(*homingGO, "recursos/img/homingProj.png")); // substitua pela imagem correta
+    AddObject(homingGO);
+
+
     // Música --------------------------------------------------------------------------------------------------------------------
 
     backgroundMusic.Open("recursos/audio/Fundo.mp3");

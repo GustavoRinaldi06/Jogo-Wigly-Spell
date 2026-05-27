@@ -23,10 +23,12 @@ void Camera::Update(float dt)
 {
     if (focus != nullptr)
     {
-        pos = focus->box.GetCenter() - Vec2(600, 450); // Centralizar a camera em relação ao personagem
-
+        if (focus != nullptr) {
+            pos = focus->box.GetCenter() - Vec2(600, 450); // Centralizar a camera em relação ao personagem
+        }
+        
         // Define os limites da visão (ajustar dependendo da fase)
-        float limiteCima = -10.0f;  
+        float limiteCima = -0.0f;  
         float limiteBaixo = 150.0f; 
 
         // Aplica o limite na posição Y da câmera
@@ -43,17 +45,19 @@ void Camera::Update(float dt)
     {
         InputManager &input = InputManager::GetInstance();
         speed = Vec2();
+        if (focus != nullptr) {
+            if (input.IsKeyDown(LEFT_ARROW_KEY) || input.IsKeyDown('a'))
+                speed.x = -300;
+            if (input.IsKeyDown(RIGHT_ARROW_KEY) || input.IsKeyDown('d'))
+                speed.x = 300;
+            if (input.IsKeyDown(UP_ARROW_KEY) || input.IsKeyDown('w'))
+                speed.y = -300;
+            if (input.IsKeyDown(DOWN_ARROW_KEY) || input.IsKeyDown('s'))
+                speed.y = 300;
 
-        if (input.IsKeyDown(LEFT_ARROW_KEY) || input.IsKeyDown('a'))
-            speed.x = -300;
-        if (input.IsKeyDown(RIGHT_ARROW_KEY) || input.IsKeyDown('d'))
-            speed.x = 300;
-        if (input.IsKeyDown(UP_ARROW_KEY) || input.IsKeyDown('w'))
-            speed.y = -300;
-        if (input.IsKeyDown(DOWN_ARROW_KEY) || input.IsKeyDown('s'))
-            speed.y = 300;
-
-        pos = pos + speed * dt;
+            pos = pos + speed * dt;
+        }
+        
     }
 }
 

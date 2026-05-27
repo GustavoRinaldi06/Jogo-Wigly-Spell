@@ -16,8 +16,11 @@ public:
     void Pause() override;
     void Resume() override;
 
+
     Text *hpText = nullptr;
     Text *spellText = nullptr;
+
+
 
 private:
 

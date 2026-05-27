@@ -7,6 +7,7 @@
 #include "Collider.h"
 #include "Game.h"
 #include "GameData.h"
+#include "StageState.h"
 
 #include <iostream>
 
@@ -16,9 +17,8 @@ BounceBall::BounceBall(GameObject &associated, const std::string &spritePath)
     
     auto renderer = new SpriteRenderer(associated, spritePath, 2, 4);
     associated.AddComponent(renderer);
-
-    associated.box.w = 30;  // ou a largura desejada
-    associated.box.h = 30; // altura desejada
+    renderer->SetScale(1,1);
+    
 
     // Novos sons
     //hitSound = Sound();
@@ -97,9 +97,9 @@ void BounceBall::Update(float dt)
         speed.y = 0;
     }
         
-
-    associated.box.y += speed.y * dt;
-    associated.box.x += speed.x * dt;
+    Vec2 uspeed = GameData::universalspeed;
+    associated.box.x += (speed.x + uspeed.x) * dt;
+    associated.box.y += (speed.y + uspeed.y)* dt;
     
     // Atualiza animação de acordo com a movimentação
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
@@ -177,42 +177,43 @@ void BounceBall::NotifyCollision(GameObject &other)
 
     // Se colidir com chão
     Collider *collider = (Collider *)other.GetComponent("Collider");
-    Collider *col = (Collider *)associated.GetComponent("Collider");
-    if (collider && collider->tag == "ground")
-    {
-        // Ajusta posição
-        if (!bouncing && !GameData::inverted) {
-            bouncing = true;
-            bounceTimer.Restart();
-            speed.y = 0;
+    Collider * col = (Collider *)associated.GetComponent("Collider");
+    int dir = col->ColDir(collider);
+    if (collider && collider->tag == "solid") {
+        if (dir == 0)
+        {
+            // Ajusta posição
+            if (!bouncing && !GameData::inverted) {
+                bouncing = true;
+                bounceTimer.Restart();
+                speed.y = 0;
+            }
+            else if (GameData::inverted) {
+                speed.y = 0;
+            }
+            associated.box.y = other.box.y - associated.box.h;
         }
-        else if (GameData::inverted) {
-            speed.y = 0;
-        }
-        associated.box.y = other.box.y - associated.box.h;
-    }
 
-    if (collider && collider->tag == "inverted_ground")
-    {
-        // Ajusta posição
-        if (!bouncing && GameData::inverted) {
-            bouncing = true;
-            bounceTimer.Restart();
-            speed.y = 0;
+        else if (dir == 1)
+        {
+            // Ajusta posição
+            if (!bouncing && GameData::inverted) {
+                bouncing = true;
+                bounceTimer.Restart();
+                speed.y = 0;
+            }
+            else if (!GameData::inverted) {
+                speed.y = 0;
+            }
+            associated.box.y = other.box.y + other.box.h;
+            
+            
         }
-        else if (!GameData::inverted) {
-            speed.y = 0;
-        }
-        associated.box.y = other.box.y + other.box.h;
-        
-        
-    }
-
-    // Se colidir com parede
-    if (collider && collider->tag == "wall")
-    {
-        // Destroi se colidir com parede
-        destroyed = true;
+        // Se colidir com parede
+        else {
+                // Destroi se colidir com parede
+                destroyed = true;
+            }
     }
 }
 

@@ -8,13 +8,16 @@
 #include "Game.h"
 #include "InputManager.h"
 #include "GameData.h"
+#include "StageState.h"
+
+#include "Floor.h"
 
 #include <iostream>
 
 Character *Character::player = nullptr;
 
 Character::Character(GameObject &associated, const std::string &spritePath)
-    : Component(associated), linearSpeed(200), hp(100)
+    : Component(associated), linearSpeed(250), hp(100)
 {
     if (player == nullptr){
         player = this;
@@ -24,8 +27,9 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     renderer->SetCameraFollower(false);
     associated.AddComponent(renderer);
 
-    associated.box.w = 50;  // ou a largura desejada
-    associated.box.h = 100; // altura desejada
+
+    //associated.box.w = 50;  // ou a largura desejada
+    //associated.box.h = 100; // altura desejada
 
     // Novos sons
     //hitSound = Sound();
@@ -45,7 +49,13 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     animator->AddAnimation("dead", Animation(10, 11, 0.3f));
     associated.AddComponent(animator);
 
-    associated.AddComponent(new Collider(associated));
+    Collider *col = new Collider(associated);
+
+
+    col->SetScale(Vec2(0.65,1.0));
+    //col->SetOffset(Vec2(associated.box.w*(1-0.65)/2,0));
+
+    associated.AddComponent(col);
     spellTimer.Set(0.8);
     spell2Timer.Set(5.0);
  
@@ -105,18 +115,62 @@ void Character::Update(float dt)
     // Pega input de pulo ---------------------------------------------------------------------
     InputManager &input = InputManager::GetInstance();
     if (GameData::gameMode == 1){
-        if (input.KeyPress(SDLK_SPACE) && isOnGround)
+        SpriteRenderer *rend = (SpriteRenderer *)associated.GetComponent("SpriteRenderer");
+        if (dashing) {
+            dashTimer.Update(dt);
+            float dtimer = dashTimer.Get();
+            if (dtimer < 0.15) {
+                if (!input.IsKeyDown(SDLK_LSHIFT)) {
+                    longdash = false;   // Se não segura por tempo suficiente, o dash é curto
+                }
+            }
+            if (dtimer > 0.15 && !longdash || dtimer > 0.3 && longdash) {
+                dashing = false;
+                dashTimer.Restart();
+                speed.x = 0;
+            }
+            else {
+                speed.x = facingDir *500.0f;
+            }
+        }
+        if (input.KeyPress(SDLK_LSHIFT) && !dashed)
+        {
+            speed.x = facingDir * 500.0f;  // ajustar a força de pulo na grvidade invertida
+            speed.y = 0;
+            dashed = true; // se pulou
+            dashing = true;
+            dashTimer.Restart();
+            longdash = true;
+        } 
+        if (jumping) {
+            jumpTimer.Update(dt);
+            float jtimer = jumpTimer.Get();
+            if (jtimer < 0.15) {
+                if (!input.IsKeyDown(SDLK_SPACE)) {
+                    jumping = false;   // Se não segura por tempo suficiente, o salto é curto
+                    jumpTimer.Restart();
+                    speed.y *= 0.5;
+                }
+            }
+            else {
+
+                jumping = false;
+                jumpTimer.Restart();
+            }
+        }
+        if (!dashing && input.KeyPress(SDLK_SPACE) && isOnGround)
         {
             if (GameData::inverted == false)
-                speed.y = -600.0f; // ajustar a força de pulo
+                speed.y = -700.0f; // ajustar a força de pulo
             else if (GameData::inverted == true)
-                speed.y = 600.0f;  // ajustar a força de pulo na grvidade invertida
+                speed.y = 700.0f;  // ajustar a força de pulo na grvidade invertida
 
             // Pulou
             isOnGround = false; // se está no chão
             jumped = true; // se pulou
+            jumping = true;
         }
-        else if (input.KeyPress(SDLK_SPACE) && jumped && (!Djumped) && GameData::Djump == true)
+        else if (!dashing && input.KeyPress(SDLK_SPACE) && jumped && (!Djumped) && GameData::Djump == true)
         {
             if (GameData::inverted == false)
                 speed.y = -600.0f; // ajustar a força de pulo
@@ -124,6 +178,7 @@ void Character::Update(float dt)
                 speed.y = 600.0f; // ajustar a força de pulo na grvidade invertida
                 
             Djumped = true;      // se pulou duas vezes
+            jumping = true;
         }
     }
 
@@ -138,6 +193,9 @@ void Character::Update(float dt)
             //Reseta os pulos para evitar que o player pule "no ar" logo após inverter
             jumped = false;
             Djumped = false;
+            if (!dashing) {
+                dashed = false;
+            }
             
             // Dá um empurrão na direção da nova gravidade para desgrudar o colisor do chão/teto
             if (GameData::inverted == true){
@@ -152,13 +210,15 @@ void Character::Update(float dt)
         }
 
         // Aplica a gravidade --------------------------------------------------------------------
-        if (GameData::inverted == false)
-            speed.y += gravity * dt;
-        else
-            speed.y -= gravity * dt; // gravidade invertida, puxa pro teto
+        if (!dashing){
+            if (GameData::inverted == false)
+                speed.y += gravity * dt;
+            else
+                speed.y -= gravity * dt; // gravidade invertida, puxa pro teto
+        }
     }
 
-    associated.box.y += speed.y * dt;
+    
 
     // Realiza os movimentos e ações ---------------------------------------------------------
     spellTimer.Update(dt);
@@ -168,23 +228,29 @@ void Character::Update(float dt)
         Command current = taskQueue.front();
 
         // MOVE ------------------------------------------------------------------------
-        if (current.type == CommandType::MOVE)
+        if (!dashing && current.type == CommandType::MOVE)
         {
             Vec2 dir = (current.pos - associated.box.GetCenter()).Normalize();
             speed.x = dir.x * linearSpeed;
 
-            associated.box.x += speed.x * dt;
+            
             if (GameData::gameMode == 0){
                 speed.y = dir.y * linearSpeed;
-                associated.box.y += speed.y * dt;
             }
-
-            if ((associated.box.GetCenter() - current.pos).Magnitude() < 10.0f){
-                taskQueue.pop();
-            }
+            taskQueue.pop();
 
         }
+        
+
+        
     }
+    surfaceTimer.Update(dt);
+    if (surfaceTimer.Get() > 0.1) {
+        surfacespeed = Vec2(0,0);
+    }
+    Vec2 uspeed = GameData::universalspeed;
+    associated.box.x += (speed.x + surfacespeed.x + uspeed.x)* dt;
+    associated.box.y += (speed.y + surfacespeed.y + uspeed.y)* dt;
 
     // Atualiza animação de acordo com a movimentação
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
@@ -262,53 +328,62 @@ void Character::NotifyCollision(GameObject &other)
 
     // Se colidir com chão
     Collider *collider = (Collider *)other.GetComponent("Collider");
-    if (collider && collider->tag == "ground")
+    Collider * col = (Collider *)associated.GetComponent("Collider");
+    int dir = col->ColDir(collider);
+    if (collider && collider->tag == "solid")
     {
+        surfaceTimer.Restart();
+        Floor *floor = (Floor *)other.GetComponent("Floor");
+        surfacespeed = floor->speed;
         // Ajusta posição
-        associated.box.y = other.box.y - associated.box.h;
-        speed.y = 0;
-        isOnGround = true; // está tocando no chão
-        if(jumped || Inversion){ // pulou e precisa limpar lista de comandos realizados no ar
-            jumped = false;
-            Djumped = false;
-            Inversion = false;
-            for (int i = 0; i < (int)taskQueue.size(); i++){
-                taskQueue.pop();
+        if (dir == 0) {
+            associated.box.y = other.box.y - associated.box.h;
+            speed.y = 0;
+            if (!GameData::inverted) {
+                isOnGround = true; // está tocando no chão
+                if (!dashing) {
+                    dashed = false;
+                }
+                if(jumped || Inversion){ // pulou e precisa limpar lista de comandos realizados no ar
+                    jumped = false;
+                    Djumped = false;
+                    Inversion = false;
+                    
+                    for (int i = 0; i < (int)taskQueue.size(); i++){
+                        taskQueue.pop();
+                    }
+                }
             }
+            
         }
-    }
-
-    if (collider && collider->tag == "inverted_ground")
-    {
-        // Ajusta posição
-        associated.box.y = other.box.y + other.box.h;
-        speed.y = 0;
-        isOnGround = true; // está tocando no chão
-        if (jumped || Inversion){ // pulou e precisa limpar lista de comandos realizados no ar
-            jumped = false;
-            Djumped = false;
-            Inversion = false;
-            for (int i = 0; i < (int)taskQueue.size(); i++){
-                taskQueue.pop();
+        else if (dir == 1) {
+            associated.box.y = other.box.y + other.box.h;
+            speed.y = 0;
+            if (GameData::inverted) {
+                isOnGround = true; // está tocando no chão
+                if (!dashing) {
+                    dashed = false;
+                }
+                if (jumped || Inversion){ // pulou e precisa limpar lista de comandos realizados no ar
+                    jumped = false;
+                    Djumped = false;
+                    Inversion = false;
+                    for (int i = 0; i < (int)taskQueue.size(); i++){
+                        taskQueue.pop();
+                    }
+                }
             }
+            
+            
         }
-    }
-
-    // Se colidir com parede
-    if (collider && collider->tag == "wall")
-    {
-        // Ajusta posição
-        associated.box.x = other.box.x - associated.box.w;
-        speed.x = 0;
-    }
-
-    // Se colidir com parede agarrável (teste ainda, apenas n criar wall assim)
-    if (collider && collider->tag == "climbWall")
-    {
-        // Ajusta posição
-        associated.box.x = other.box.x - associated.box.w;
-        speed.y -= 200; // Acho q vai bugar
-        speed.x = 0;
+        else if (dir == 2) {
+            associated.box.x = other.box.x - associated.box.w;
+            speed.x = 0;
+        }
+        else if (dir == 3) {
+            associated.box.x = other.box.x + other.box.w;
+            speed.x = 0;
+        }
     }
 }
 
@@ -434,4 +509,8 @@ void Character::Shoot2(Vec2 targetPos)
     {
         noSpell.Play(1); // Não desbloqueou
     }
+}
+
+Rect Character::PlayerBox() {
+    return player->associated.box;
 }

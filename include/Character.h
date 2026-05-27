@@ -33,6 +33,7 @@ public:
     void Render() override;
     bool Is(const std::string &type) override;
     void Issue(Command task);
+    static Rect PlayerBox();
 
     static Character *player; // ponteiro global (caso seja o player)
 
@@ -53,10 +54,21 @@ private:
 
     // Valores de controle plataforma
     Vec2 speed;
-    float gravity = 1000.0f; // Gravidade
+    Vec2 surfacespeed = Vec2(0,0);
+    Timer surfaceTimer;
+    float gravity = 1500.0f; // Gravidade
     bool isOnGround = false;
     bool jumped = false;
     bool Djumped = false;
+    bool jumping = false;
+
+    bool dashed = false;
+    bool dashing = false;
+
+    bool longdash = false;
+    Timer dashTimer;
+    Timer jumpTimer;
+
 
     // Config basica
     float linearSpeed;

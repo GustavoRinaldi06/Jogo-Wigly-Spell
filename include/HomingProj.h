@@ -1,5 +1,5 @@
-#ifndef BOUNCEBALL_H
-#define BOUNCEBALL_H
+#ifndef HOMINGPROJ_H
+#define HOMINGPROJ_H
 
 #include "Component.h"
 #include "Rect_Vec2.h"
@@ -9,12 +9,12 @@
 #include <queue>
 #include <memory>
 
-class BounceBall : public Component
+class HomingProj : public Component
 {
 public:
 
-    BounceBall(GameObject &associated, const std::string &spritePath);
-    ~BounceBall();
+    HomingProj(GameObject &associated, const std::string &spritePath);
+    ~HomingProj();
 
     void Start() override;
     void Update(float dt) override;
@@ -27,24 +27,21 @@ public:
 
 private:
     // Valores de controle plataforma
-    Vec2 speed = Vec2(0,0);
+    Vec2 speed = Vec2(-20,0);
     float gravity = 200.0f; // Gravidade
-    float basespeedy = 300;
 
     bool destroyed = false;
     bool blockable = true;
 
     // Death e hit
     Sound hitSound, fallSound, deathSound;
-    Timer bounceTimer;
     Timer lifespan;
     Timer deathTimer;
     bool deathAnimTriggered{false};
 
     // Verificadores de inversão
-    bool bouncing = false;
 
-    float linearSpeed;
+    float linearSpeed = 50;
     
     
 };

@@ -33,5 +33,30 @@ bool Collider::Is(const std::string &type)
     return type == "Collider";
 }
 
+int Collider::ColDir(Collider *other)
+{
+    Vec2 centerdist = other->box.GetCenter() - box.GetCenter();
+    Vec2 overlaplimit =  Vec2((other->box.w + box.w),(other->box.h + box.h));
+    Vec2 distance = overlaplimit - Vec2(abs(centerdist.x),abs(centerdist.y));
+    if (distance.y <= distance.x) {
+        if (centerdist.y >= 0) {
+            return 0;   // Baixo
+        }
+        else {
+            return 1; // Cima
+        }
+    }
+    else {
+        if (centerdist.x >= 0) {
+            return 2;   // direita
+        }
+        else {
+            return 3; // esquerda
+        }
+    }
+}
+
 void Collider::SetScale(Vec2 scale) { this->scale = scale; }
 void Collider::SetOffset(Vec2 offset) { this->offset = offset; }
+Vec2 Collider::GetScale() {return this->scale;}
+Vec2 Collider::GetOffset() {return this->offset;}

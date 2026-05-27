@@ -13,6 +13,7 @@ public:
     Vec2 operator+(const Vec2 &other) const;
     Vec2 operator-(const Vec2 &other) const;
     Vec2 operator*(float scalar) const;
+    Vec2 operator=(const Vec2& other);
     float Magnitude() const;
     Vec2 Normalize() const;
     float Distance(const Vec2 &other) const;
@@ -32,6 +33,7 @@ public:
     bool Contains(float px, float py) const;
     Rect operator+(const Vec2 &vec) const;
     void SetCenter(Vec2 center);
+    
 };
 
 #endif // RECT_VEC2_H

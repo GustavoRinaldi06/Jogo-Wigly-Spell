@@ -1,5 +1,6 @@
 #ifndef GAMEDATA_H
 #define GAMEDATA_H
+#include "Rect_Vec2.h"
 
 class GameData
 {
@@ -20,6 +21,8 @@ public:
 
     static bool playerVictory_3; // SAber se o jogador ganhou ou perdeu a fase 3
     static bool complete3;       // SAber se completou a fase 3 já (usar para save)
+
+    static Vec2 universalspeed;
 
     // Habilidades desbloqueaveis
     static bool Djump;

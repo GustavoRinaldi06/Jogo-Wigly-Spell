@@ -7,6 +7,7 @@
 #define DOWN_ARROW_KEY SDLK_DOWN
 #define ESCAPE_KEY SDLK_ESCAPE
 #define LEFT_MOUSE_BUTTON SDL_BUTTON_LEFT
+#define SHIFT_KEY SDLK_LSHIFT
 //------------------------------------------------
 
 #include <unordered_map>
