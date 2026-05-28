@@ -12,9 +12,18 @@
 class Character : public Component
 {
 public:
+    // Movimentação
     enum class CommandType
     {
         MOVE
+    };
+
+    // Estoque de cores
+    enum Color
+    {
+        NONE,
+        RED,
+        BLUE
     };
 
     struct Command
@@ -47,7 +56,12 @@ public:
 
     // Atirar ao mesmo tempo que anda
     void Shoot1(Vec2 targetPos);
-    void Shoot2(Vec2 targetPos);
+
+    // Coleta de cores e disparo de misturas
+    bool CollectColor(Color newColor);
+    void UseSpell(Vec2 targetPos);
+    void ShootMix(Vec2 targetPos, float speed, int damage, float maxDistance, std::string spritePath);
+    std::vector<Color> GetColorInventory() const; // Colocar na interface
 
 private:
     std::queue<Command> taskQueue;
@@ -91,9 +105,11 @@ private:
     Timer spellTimer; //cooldown
     Sound spellSound;
 
-    // Speel 2
-    Timer spell2Timer; //cooldown
-    Sound spell2Sound;
+    // Speel de mistura
+    std::vector<Color> colorInventory; // Guarda as cores coletadas num vetor
+    const size_t MAX_COLORS = 2;
+    Timer spellMixTimer; //cooldown
+    Sound spell_red_Sound, spell_scarlet_Sound, spell_blue_Sound, spell_darkBlue_Sound, spell_purple_Sound;
     Sound noSpell;
 
     // Controle de sprite

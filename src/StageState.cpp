@@ -100,7 +100,7 @@ void StageState::LoadAssets()
     playerGO->box.x = 600;  // Centro do mapa
     playerGO->box.y = 450; // Altura maior
 
-    playerGO->AddComponent(new Character(*playerGO, "recursos/img/Player.png")); // substitua pela imagem correta
+    playerGO->AddComponent(new Character(*playerGO, "recursos/img/wigly.png")); // substitua pela imagem correta
     playerGO->AddComponent(new PlayerController(*playerGO));
 
     GameData::playerHP = 100; // Reseta vida do personagem
@@ -145,7 +145,7 @@ void StageState::LoadAssets()
 
     AddObject(textGO);
 
-    // TExto de cooldown do cachorro --------------------------------------------------------------------------------------------
+    // TExto de cooldown da magia --------------------------------------------------------------------------------------------
 
     GameObject *textGO1 = new GameObject();
     std::string spellCooldown = "Magia acumulada com sucesso!";
@@ -183,7 +183,7 @@ void StageState::Update(float dt)
             GameData::gameMode = 0; // troca para menu
     }
 
-    // Leitura da tecla I (ex: Abrir Inventário)
+    // Leitura da tecla I
     if (input.KeyPress(SDLK_i))
     {
         std::cout << "Gravidade invertida!" << std::endl;
@@ -191,6 +191,16 @@ void StageState::Update(float dt)
             GameData::inverted = false;
         else
             GameData::inverted = true;
+    }
+
+    // Leitura da tecla K
+    if (input.KeyPress(SDLK_k))
+    {
+        std::cout << "Modo de mira alterado!" << std::endl;
+        if (GameData::aimed)
+            GameData::aimed = false;
+        else
+            GameData::aimed = true;
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

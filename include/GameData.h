@@ -27,6 +27,9 @@ public:
     // Habilidades desbloqueaveis
     static bool Djump;
     static bool spell;
+
+    // Colocar com mira ou sem mira
+    static bool aimed;
 };
 
 #endif // GAMEDATA_H

@@ -23,7 +23,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
         player = this;
     }
 
-    auto renderer = new SpriteRenderer(associated, spritePath, 3, 4);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 4);
     renderer->SetCameraFollower(false);
     associated.AddComponent(renderer);
 
@@ -37,15 +37,19 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     //fallSound = Sound();
     walkSound = Sound("recursos/audio/AndandoGrama.mp3");
     spellSound = Sound("recursos/audio/Spell.mp3");
-    spell2Sound = Sound("recursos/audio/Spell2.mp3");
+    spell_red_Sound = Sound("recursos/audio/Spell2.mp3");
+    spell_scarlet_Sound = Sound("recursos/audio/Spell2.mp3");
+    spell_blue_Sound = Sound("recursos/audio/Spell2.mp3");
+    spell_darkBlue_Sound = Sound("recursos/audio/Spell2.mp3");
+    spell_purple_Sound = Sound("recursos/audio/Spell2.mp3");
     noSpell = Sound("recursos/audio/NoSpell.mp3");
 
     // Cria as animações
     auto animator = new Animator(associated);
-    animator->AddAnimation("idle", Animation(6, 9, 0.5f));
-    animator->AddAnimation("walking_X", Animation(0, 5, 0.2f));
-    animator->AddAnimation("walking_UP", Animation(6, 9, 0.5f));
-    animator->AddAnimation("walking_DOWN", Animation(6, 9, 0.5f));
+    animator->AddAnimation("idle", Animation(0, 3, 0.5f));
+    animator->AddAnimation("walking_X", Animation(4, 7, 0.2f));
+    //animator->AddAnimation("walking_UP", Animation(6, 9, 0.5f));
+    //animator->AddAnimation("walking_DOWN", Animation(6, 9, 0.5f));
     animator->AddAnimation("dead", Animation(10, 11, 0.3f));
     associated.AddComponent(animator);
 
@@ -57,10 +61,12 @@ Character::Character(GameObject &associated, const std::string &spritePath)
 
     associated.AddComponent(col);
     spellTimer.Set(0.8);
-    spell2Timer.Set(5.0);
+    spellMixTimer.Set(5.0);
  
     wasInverted = GameData::inverted; // Faz track da direção da gravidade
     Inversion = false;
+
+    colorInventory.push_back(RED);
 }
 
 Character::~Character()
@@ -222,7 +228,7 @@ void Character::Update(float dt)
 
     // Realiza os movimentos e ações ---------------------------------------------------------
     spellTimer.Update(dt);
-    spell2Timer.Update(dt);
+    spellMixTimer.Update(dt);
     if (!taskQueue.empty())
     {
         Command current = taskQueue.front();
@@ -239,10 +245,7 @@ void Character::Update(float dt)
             }
             taskQueue.pop();
 
-        }
-        
-
-        
+        }    
     }
     surfaceTimer.Update(dt);
     if (surfaceTimer.Get() > 0.1) {
@@ -300,7 +303,6 @@ void Character::Update(float dt)
         renderer->SetFrame(frame, flip);
 
     }
-
     walkSoundCall(dt);
 
     speed.x = 0;
@@ -394,7 +396,7 @@ int Character::GetHP() const
 
 int Character::GetCool() const
 {
-    return static_cast<int>(spell2Timer.Get());
+    return static_cast<int>(spellMixTimer.Get());
 }
 
 void Character::walkSoundCall(float dt){
@@ -468,49 +470,127 @@ void Character::Shoot1(Vec2 targetPos)
     }
 }
 
-void Character::Shoot2(Vec2 targetPos)
+void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDistance, std::string spritePath)
 {
-    if (GameData::spell == true)
+    Vec2 shooterCenter = associated.box.GetCenter();
+    Vec2 delta = targetPos - shooterCenter;
+
+    if (delta.Magnitude() < 0.01f)
     {
-        if (spell2Timer.Get() >= 5.0)
-        {
-            spell2Sound.Play(1);
-
-            Vec2 shooterCenter = associated.box.GetCenter();
-            Vec2 delta = targetPos - shooterCenter;
-
-            if (delta.Magnitude() < 0.01f)
-            {
-                delta = Vec2(1, 0);
-            }
-            Vec2 direction = delta.Normalize();
-
-            float angle = atan2(direction.y, direction.x);
-            float speed = 200.0f;
-            int damage = 50;
-            float maxDistance = 500.0f;
-            bool targetsPlayer = false;
-
-            GameObject *spell2GO = new GameObject();
-            spell2GO->box.x = shooterCenter.x;
-            spell2GO->box.y = shooterCenter.y - 20;
-            spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/Bullet.png"));
-
-            Game::GetInstance().GetCurrentState().AddObject(spell2GO);
-
-            spell2Timer.Restart();
-        }
-        else
-        {
-            noSpell.Play(1); // Tempo de recarga
-        }
+        delta = Vec2(1, 0);
     }
-    else
-    {
-        noSpell.Play(1); // Não desbloqueou
-    }
+    Vec2 direction = delta.Normalize();
+
+    float angle = atan2(direction.y, direction.x);
+    bool targetsPlayer = false;
+
+    GameObject *spell2GO = new GameObject();
+    spell2GO->box.x = shooterCenter.x;
+    spell2GO->box.y = shooterCenter.y - 20; // Para ajustar a altura do tiro
+
+    // Passa as variáveis  recebidas para o componente Bullet
+    spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, targetsPlayer, spritePath));
+    Game::GetInstance().GetCurrentState().AddObject(spell2GO);
 }
 
 Rect Character::PlayerBox() {
     return player->associated.box;
+}
+
+bool Character::CollectColor(Color newColor)
+{
+    if (colorInventory.size() >= MAX_COLORS)
+    {
+        std::cout << "Inventário de cores cheio" << std::endl;
+        return false;
+    }
+    colorInventory.push_back(newColor); // Adiciona a nova cor
+    std::cout << "Cor" << newColor << "coletada, Total no inventário: " << colorInventory.size() << std::endl;
+    return true;
+}
+
+void Character::UseSpell(Vec2 targetPos)
+{
+    // Se o inventário estiver vazio, toca o som de erro
+    if (colorInventory.empty())
+    {
+        noSpell.Play(1);
+        return;
+    }
+
+    // Se a spell global não estiver ativa ou estiver em cooldown, toca o som de erro
+    if (GameData::spell == false || spellMixTimer.Get() < 5.0f)
+    {
+        noSpell.Play(1);
+        return;
+    }
+
+    // Variáveis dependendo da mistura de cores
+    std::string spritePath = "recursos/img/Bullet.png"; // Padrão
+    float speed = 200.0f;
+    int damage = 50;
+    float maxDistance = 500.0f;
+    bool shouldShoot = false;
+
+    // VErifica as corres do vetor e realiza o diparo/habilidade
+    if (colorInventory.size() == 1)
+    {
+        Color unica = colorInventory[0];
+
+        if (unica == RED)
+        {
+            spell_red_Sound.Play(1); // Som da magia vermelha
+            damage = 30;
+            speed = 250.0f;
+            spritePath = "recursos/img/Bullet.png"; 
+            shouldShoot = true;
+        }
+        else if (unica == BLUE)
+        {
+            // fazer a imortalidade
+            shouldShoot = false;
+        }
+    }
+    else if (colorInventory.size() == 2)
+    {
+        Color c1 = colorInventory[0];
+        Color c2 = colorInventory[1];
+
+        if (c1 == RED && c2 == RED)
+        {
+            spell_scarlet_Sound.Play(1);
+            damage = 80;             
+            speed = 180.0f;
+            spritePath = "recursos/img/Bullet.png";
+            shouldShoot = true;
+        }
+        else if (c1 == BLUE && c2 == BLUE)
+        {
+            // O azul duplo por enquanto fica vazio
+            shouldShoot = false;
+        }
+        else if ((c1 == RED && c2 == BLUE) || (c1 == BLUE && c2 == RED))
+        {
+            spell_purple_Sound.Play(1); 
+            damage = 60;
+            speed = 350.0f;
+            maxDistance = 700.0f;
+            spritePath = "recursos/img/Bullet.png";
+            shouldShoot = true;
+        }
+    }
+
+    // Se a combinação gerou um disparo válido, executa o tiro e limpa as cores
+    if (shouldShoot)
+    {
+        ShootMix(targetPos, speed, damage, maxDistance, spritePath);
+
+        colorInventory.clear();  // Apaga as cores
+        spellMixTimer.Restart(); // Reseta o cooldown
+    }
+}
+
+std::vector<Character::Color> Character::GetColorInventory() const
+{
+    return colorInventory;
 }

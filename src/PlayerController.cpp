@@ -37,18 +37,38 @@ void PlayerController::Update(float dt)
         character->Issue(Character::Command(Character::CommandType::MOVE, target.x, target.y));
     }
 
-    if (input.MousePress(LEFT_MOUSE_BUTTON)) // Atira a spell 1
+    if (input.MousePress(LEFT_MOUSE_BUTTON)) // Atira a spell padrão
     {
-        float mouseX = input.GetMouseX() + Camera::GetInstance().GetPosition().x;
-        float mouseY = input.GetMouseY() + Camera::GetInstance().GetPosition().y;
-        character->Shoot1(Vec2(mouseX, mouseY));
+        if (GameData::aimed) // Se aimed for True, mira no mouse
+        {
+            float mouseX = input.GetMouseX() + Camera::GetInstance().GetPosition().x;
+            float mouseY = input.GetMouseY() + Camera::GetInstance().GetPosition().y;
+            character->Shoot1(Vec2(mouseX, mouseY));
+        }
+        else // Se aimed for False, atira reto para a frente
+        {
+            Vec2 center = associated.box.GetCenter();
+            float targetX = center.x + 500.0f;
+
+            character->Shoot1(Vec2(targetX, center.y));
+        }
     }
 
-    if (input.MousePress(SDL_BUTTON_RIGHT)) // Atira a spell 2
+    if (input.KeyPress('e')) // Atira a spell de mistura
     {
-        float mouseX = input.GetMouseX() + Camera::GetInstance().GetPosition().x;
-        float mouseY = input.GetMouseY() + Camera::GetInstance().GetPosition().y;
-        character->Shoot2(Vec2(mouseX, mouseY));
+        if (GameData::aimed) // Se aimed for True, mira no mouse
+        {
+            float mouseX = input.GetMouseX() + Camera::GetInstance().GetPosition().x;
+            float mouseY = input.GetMouseY() + Camera::GetInstance().GetPosition().y;
+            character->UseSpell(Vec2(mouseX, mouseY));
+        }
+        else // Se aimed for False, atira reto para a frente
+        {
+            Vec2 center = associated.box.GetCenter();
+            float targetX = center.x + 500.0f;
+
+            character->UseSpell(Vec2(targetX, center.y));
+        }
     }
 }
 

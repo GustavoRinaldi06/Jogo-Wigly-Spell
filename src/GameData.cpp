@@ -17,3 +17,5 @@ bool GameData::complete3 = false;
 
 bool GameData::Djump = true;
 bool GameData::spell = true;
+
+bool GameData::aimed = true;
