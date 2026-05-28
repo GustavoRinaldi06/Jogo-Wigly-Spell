@@ -14,7 +14,7 @@
 HomingProj::HomingProj(GameObject &associated, const std::string &spritePath)
     : Component(associated)
 {
-    
+    associated.layer = 5.1;
     auto renderer = new SpriteRenderer(associated, spritePath, 2, 2);
     associated.AddComponent(renderer);
     renderer->SetScale(1.5,2);

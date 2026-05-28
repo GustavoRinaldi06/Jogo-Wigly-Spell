@@ -296,6 +296,9 @@ void StageState::Render()
     SDL_RenderClear(renderer);
 
     // Desenha todos os game objects
+    std::sort(objectArray.begin()+2, objectArray.end(),[](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b) {
+        return a->layer < b->layer;
+    });
     RenderArray();
 
     // Apresenta o frame

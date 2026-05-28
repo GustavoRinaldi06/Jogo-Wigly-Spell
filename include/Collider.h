@@ -15,6 +15,7 @@ public:
     void SetOffset(Vec2 offset);
     Vec2 GetOffset();
     Vec2 GetScale();
+    int ColDir(Collider *other);
 
     Rect box;
     std::string tag;

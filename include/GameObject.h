@@ -25,6 +25,7 @@ public:
 
     bool started;
     void Start();
+    float layer = 5;
 
     double angleDeg = 0; // usado para rotação
 
