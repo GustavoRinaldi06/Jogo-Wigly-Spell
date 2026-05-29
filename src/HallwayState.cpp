@@ -85,6 +85,7 @@ void HallwayState::LoadAssets()
     //Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
 
     AddObject(playerGO);
+    GameData::inverted = false;
     /*
     GameObject *bounceGO = new GameObject();
     bounceGO->box.x = 800;  // Centro do mapa

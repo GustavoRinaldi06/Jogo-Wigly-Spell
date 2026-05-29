@@ -5,7 +5,7 @@
 #include "GameData.h"
 #include "Floor.h"
 #include "Background.h"
-#include "StageState.h"
+#include "HallwayState.h"
 
 #include <iostream>
 

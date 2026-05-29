@@ -7,7 +7,7 @@
 #include "Collider.h"
 #include "Game.h"
 #include "GameData.h"
-#include "StageState.h"
+#include "HallwayState.h"
 
 #include <iostream>
 

@@ -131,9 +131,10 @@ void Character::Update(float dt)
         deathTimer.Update(dt);
 
         // só deleta após 6s
-        if (deathTimer.Get() > 6.0f)
+        if (deathTimer.Get() > 6.0f){
             bubble->RequestDelete();
             associated.RequestDelete();
+        }
 
         return; // não executa mais lógica de movimento
     }
@@ -187,7 +188,7 @@ void Character::Update(float dt)
                     longdash = false;   // Se não segura por tempo suficiente, o dash é curto
                 }
             }
-            if (dtimer > 0.15 && !longdash || dtimer > 0.3 && longdash) {
+            if ((dtimer > 0.15 && !longdash) || (dtimer > 0.3 && longdash)) {
                 animator->SetAnimation("dashend");
                 dashing = false;
                 dashTimer.Restart();

@@ -5,7 +5,7 @@
 #include <cmath>
 
 Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, float maxDistance, bool targetsPlayer, const std::string &spritePath, int color)
-    : Component(associated), distanceLeft(maxDistance), damage(damage), targetsPlayer(targetsPlayer)
+    : Component(associated), damage(damage), distanceLeft(maxDistance), targetsPlayer(targetsPlayer)
 {
     velocity = Vec2(std::cos(angle), std::sin(angle)) * speed;
     int wcount = 1;

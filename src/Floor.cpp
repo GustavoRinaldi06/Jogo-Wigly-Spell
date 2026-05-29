@@ -8,7 +8,7 @@
 #include "Game.h"
 #include "GameData.h"
 #include "Character.h"
-#include "StageState.h"
+#include "HallwayState.h"
 
 #include <iostream>
 

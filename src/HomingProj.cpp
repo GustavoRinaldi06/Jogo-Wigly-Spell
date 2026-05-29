@@ -108,7 +108,7 @@ void HomingProj::NotifyCollision(GameObject &other)
 
     // Se colidir com chão
     Collider *collider = (Collider *)other.GetComponent("Collider");
-    Collider *col = (Collider *)associated.GetComponent("Collider");
+    //Collider *col = (Collider *)associated.GetComponent("Collider");
 
     // Se colidir com parede
     if (collider && (collider->tag == "solid")) 
