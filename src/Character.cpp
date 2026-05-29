@@ -8,7 +8,7 @@
 #include "Game.h"
 #include "InputManager.h"
 #include "GameData.h"
-#include "StageState.h"
+#include "HallwayState.h"
 
 #include "Floor.h"
 

@@ -1,6 +1,6 @@
 #include "TitleState.h"
 #include "Game.h"
-#include "StageState.h"
+#include "HallwayState.h"
 #include "InputManager.h"
 #include "SpriteRenderer.h"
 #include "Text.h"
@@ -58,10 +58,10 @@ void TitleState::Update(float dt)
         return;
     }
 
-    // Se ESPAÇO for pressionado, empilha StageState
+    // Se ESPAÇO for pressionado, empilha HallwayState
     if (input.KeyPress(SDLK_SPACE))
     {
-        Game::GetInstance().Push(new StageState());
+        Game::GetInstance().Push(new HallwayState());
         return;
     }
 

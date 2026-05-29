@@ -1,4 +1,4 @@
-#include "../include/StageState.h"
+#include "../include/HallwayState.h"
 #include "../include/TileSet.h"
 #include "../include/SpriteRenderer.h"
 #include "../include/TileMap.h"
@@ -26,15 +26,15 @@
 #include <iostream>
 #include <algorithm>
 
-StageState::StageState() {}
+HallwayState::HallwayState() {}
 
-StageState::~StageState()
+HallwayState::~HallwayState()
 {
     objectArray.clear(); // Limpa os GameObjects automaticamente graças ao unique_ptr
 }
 
 
-void StageState::LoadAssets()
+void HallwayState::LoadAssets()
 {
     std::cout << "\n Carregando fase 1 WiglySpell:" << "\n"; // Alertar LoadAssets
     GameData::universalspeed = Vec2(-50,0); 
@@ -189,7 +189,7 @@ void StageState::LoadAssets()
     AddObject(textGO2);
 }
 
-void StageState::Update(float dt)
+void HallwayState::Update(float dt)
 {
     InputManager &input = InputManager::GetInstance();
 
@@ -331,7 +331,7 @@ void StageState::Update(float dt)
     }
 }
 
-void StageState::Render()
+void HallwayState::Render()
 {
     SDL_Renderer *renderer = Game::GetInstance().GetRenderer();
 
@@ -349,7 +349,7 @@ void StageState::Render()
 }
 
 
-void StageState::Start()
+void HallwayState::Start()
 {
     LoadAssets();
     StartArray(); // Agora a classe state é responsável
@@ -359,12 +359,12 @@ void StageState::Start()
     GameData::playerVictory_1 = false; // Reinicia a fase e apaga save de vitória anterior
 }
 
-void StageState::Pause()
+void HallwayState::Pause()
 {
    // Não sei ainda
 }
 
-void StageState::Resume()
+void HallwayState::Resume()
 {
   // Não sei ainda
 }

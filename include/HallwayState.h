@@ -2,11 +2,11 @@
 #include "Music.h"
 #include "EndState.h"
 
-class StageState : public State
+class HallwayState : public State
 {
 public:
-    StageState();
-    ~StageState();
+    HallwayState();
+    ~HallwayState();
 
     void LoadAssets() override;
     void Update(float dt) override;
