@@ -37,6 +37,7 @@ public:
 
     // Trabalho 5
     void SetScale(float x, float y);
+    void SetTransparency(int transp = 255);
 
 private:
     Sprite sprite;

@@ -43,8 +43,7 @@ CorridorGhost::CorridorGhost(GameObject &associated, const std::string &spritePa
     associated.AddComponent(animator);
     animator->SetAnimation("idle");
 
-    Collider *col = new Collider(associated,Vec2(0.8,0.8));
-    col->SetScale(Vec2(0.6,1.0));
+    Collider *col = new Collider(associated,Vec2(Vec2(0.6,0.8)));
     associated.AddComponent(col);
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();

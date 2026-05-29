@@ -9,7 +9,7 @@
 class ScenaryGenerator : public Component
 {
 public:
-    ScenaryGenerator(GameObject &associated, Vec2 speed = {-30, 0}, Vec2 start = {1200, 600}, Vec2 end = {-120,0}, SDL_RendererFlip flip = SDL_FLIP_NONE, float angle = 0);
+    ScenaryGenerator(GameObject &associated,  Vec2 speed = {-30, 0}, Vec2 start = {1200, 600}, Vec2 end = {-120,0}, SDL_RendererFlip flip = SDL_FLIP_NONE, float angle = 0,int type = 0);
     ~ScenaryGenerator();
     void Update(float dt) override;
     void Render() override;
@@ -24,6 +24,10 @@ public:
     SDL_RendererFlip flip;
     float angle;
     GameObject* reference;
+    int type = 0;
+    int range = 0;
+    float followrate = 1;
+    int batchcount = 1;
 };
 
 #endif

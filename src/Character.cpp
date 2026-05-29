@@ -24,7 +24,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
         player = this;
     }
 
-    auto renderer = new SpriteRenderer(associated, spritePath, 4, 4);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 12);
     renderer->SetCameraFollower(false);
     associated.AddComponent(renderer);
 
@@ -47,11 +47,16 @@ Character::Character(GameObject &associated, const std::string &spritePath)
 
     // Cria as animações
     auto animator = new Animator(associated);
-    animator->AddAnimation("idle", Animation(0, 3, 0.5f));
-    animator->AddAnimation("walking_X", Animation(4, 7, 0.2f));
-    //animator->AddAnimation("walking_UP", Animation(6, 9, 0.5f));
-    //animator->AddAnimation("walking_DOWN", Animation(6, 9, 0.5f));
-    animator->AddAnimation("dead", Animation(10, 11, 0.8f));
+    animator->AddAnimation("idle", Animation(22, 25, 0.5f));
+    animator->AddAnimation("walking_X", Animation(26, 29, 0.2f));
+    animator->AddAnimation("dashstart", Animation(0, 2+1, 0.15f));
+    animator->AddAnimation("dashend", Animation(4, 5+1, 0.15f));     //+1 serve para detecção quando a animação deveria trocar
+    animator->AddAnimation("dashing", Animation(3, 3, 10.0f));
+    animator->AddAnimation("jumping", Animation(16, 17, 0.25f));
+    animator->AddAnimation("idleair", Animation(18, 19, 0.25f));
+    animator->AddAnimation("walking_wall", Animation(44, 47, 0.25f));
+    animator->AddAnimation("idlewall", Animation(32, 43, 0.1));
+    animator->AddAnimation("dead", Animation(6, 13, 0.8f));
     associated.AddComponent(animator);
 
     Collider *col = new Collider(associated); 
@@ -94,6 +99,8 @@ void Character::Start()
 
 void Character::Update(float dt)
 {
+    Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+    
     if (hp <= 0) {
         deathAnimTriggered = true;
     }
@@ -181,12 +188,16 @@ void Character::Update(float dt)
                 }
             }
             if (dtimer > 0.15 && !longdash || dtimer > 0.3 && longdash) {
+                animator->SetAnimation("dashend");
                 dashing = false;
                 dashTimer.Restart();
                 speed.x = 0;
             }
             else {
                 speed.x = facingDir *500.0f;
+                if (animator->GetCurrentFrame() == 3 && animator->GetAnimation() == "dashstart") {
+                    animator->SetAnimation("dashing");
+                }
             }
         }
         if (input.KeyPress(SDLK_LSHIFT) && !dashed)
@@ -195,6 +206,7 @@ void Character::Update(float dt)
             speed.y = 0;
             dashed = true; // se pulou
             dashing = true;
+            animator->SetAnimation("dashstart");
             dashTimer.Restart();
             longdash = true;
         } 
@@ -225,6 +237,7 @@ void Character::Update(float dt)
             isOnGround = false; // se está no chão
             jumped = true; // se pulou
             jumping = true;
+            animator->SetAnimation("jumping");
         }
         else if (!dashing && input.KeyPress(SDLK_SPACE) && jumped && (!Djumped) && GameData::Djump == true)
         {
@@ -235,6 +248,7 @@ void Character::Update(float dt)
                 
             Djumped = true;      // se pulou duas vezes
             jumping = true;
+            animator->SetAnimation("jumping");
         }
 
     }
@@ -307,21 +321,48 @@ void Character::Update(float dt)
     associated.box.y += (speed.y + surfacespeed.y + uspeed.y)* dt;
 
     // Atualiza animação de acordo com a movimentação
-    Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+    
     if (animator)
     {
         animator->Update(dt);
-        if (fabs(speed.x) > 1.0f)
-            animator->SetAnimation("walking_X");
-        // GameMode menu
-        else if (GameData::gameMode == 0)
-        { // Decide a direção que vai ficar verticalmente
-            if (speed.y < -0.1f)
-                animator->SetAnimation("walking_UP");
-            else
-                animator->SetAnimation("walking_DOWN");
+        //  Reseta animações
+        if (animator->GetAnimation() == "dashend" && animator->GetCurrentFrame() == 6) {
+            if (isOnGround) {
+                animator->SetAnimation("idle");
+            }
+            else {
+                animator->SetAnimation("idleair");
+            }
         }
-        else animator->SetAnimation("idle");
+        else if (animator->GetAnimation() == "jumping") {
+            if (!jumping) {
+                if (GameData::inverted && speed.y < 50) {
+                    animator->SetAnimation("idleair");
+                }
+                else if (!GameData::inverted && speed.y > -50) {
+                    animator->SetAnimation("idleair");
+                }
+            }
+            
+        }
+        else if (!dashing) {
+            if (fabs(speed.x) > 1.0f && isOnGround)
+                animator->SetAnimation("walking_X");
+            // GameMode menu
+            else if (GameData::gameMode == 0)
+            { // Decide a direção que vai ficar verticalmente
+                if (speed.Magnitude() > 5.0)
+                    animator->SetAnimation("walking_wall");
+                else
+                    animator->SetAnimation("idlewall");
+            }
+            else if (isOnGround) {
+                animator->SetAnimation("idle");
+            }
+            else {
+                animator->SetAnimation("idleair");
+            }
+        }
     }
 
     // Decide a direção que vai ficar horizontalmente
@@ -454,12 +495,15 @@ void Character::NotifyCollision(GameObject &other)
 
     }
     else if (other.damage >= 0 && damageCooldown.Get() > 2.0 && invTimer.Get() > 10) {
-        damageCooldown.Restart();
-        if (shield > 0) {
-            shield -=1;
-        }
-        else {
-            hp -= other.damage*20;
+        float dist = associated.box.y - other.box.y;
+        if (abs(dist) < other.box.h/2 + 0.8*(associated.box.h/2)) { // Diminuindo hitbox vertical contra dano
+            damageCooldown.Restart();
+            if (shield > 0) {
+                shield -=1;
+            }
+            else {
+                hp -= other.damage*20;
+            }
         }
     }
 }

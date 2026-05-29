@@ -19,6 +19,7 @@ public:
     bool Is(const std::string &type) override;
 
     void SetAnimation(const std::string &name);
+    std::string &GetAnimation();
     void AddAnimation(const std::string &name, Animation anim);
 
     void Start() override;

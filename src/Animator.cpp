@@ -66,6 +66,10 @@ void Animator::SetAnimation(const std::string &name)
     }
 }
 
+std::string &Animator::GetAnimation() {
+    return current;
+}
+
 void Animator::AddAnimation(const std::string &name, Animation anim) // FAcilitador para modificar animações no futuro
 {
     if (animations.find(name) == animations.end()) // Caso não ache a chave, acidiona ela
