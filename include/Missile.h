@@ -1,5 +1,5 @@
-#ifndef BOUNCEBALL_H
-#define BOUNCEBALL_H
+#ifndef MISSILE_H
+#define MISSILE_H
 
 #include "Component.h"
 #include "Rect_Vec2.h"
@@ -9,12 +9,12 @@
 #include <queue>
 #include <memory>
 
-class BounceBall : public Component
+class Missile : public Component
 {
 public:
 
-    BounceBall(GameObject &associated, const std::string &spritePath);
-    ~BounceBall();
+    Missile(GameObject &associated, const std::string &spritePath, int color = 0);
+    ~Missile();
 
     void Start() override;
     void Update(float dt) override;
@@ -28,25 +28,21 @@ public:
 private:
     // Valores de controle plataforma
     Vec2 speed = Vec2(0,0);
-    float gravity = 200.0f; // Gravidade
-    float basespeedy = 300;
-    
 
     bool destroyed = false;
-
+    int blockable = 9;
 
     // Death e hit
     Sound hitSound, fallSound, deathSound;
-    Timer bounceTimer;
     Timer lifespan;
     Timer deathTimer;
     bool deathAnimTriggered{false};
+    
 
     // Verificadores de inversão
-    bool bouncing = false;
-    int blockable = 5;
-
-    float linearSpeed;
+    Timer LockinTimer;
+    bool launched = false;
+    float linearSpeed = 600;
     
     
 };

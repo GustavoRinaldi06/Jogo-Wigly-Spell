@@ -19,6 +19,7 @@ public:
 
     Text *hpText = nullptr;
     Text *spellText = nullptr;
+    Text *bosshpText = nullptr;
 
 
 

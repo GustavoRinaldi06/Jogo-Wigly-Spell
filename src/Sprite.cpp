@@ -55,6 +55,10 @@ void Sprite::SetClip(int x, int y, int w, int h)
     clipRect.w = w;
     clipRect.h = h;
 }
+
+void Sprite::SetAlpha(int transp) {
+    SDL_SetTextureAlphaMod(texture, 128);
+}
 // Seleciona qua deve ser seguido ou não
 void Sprite::SetCameraFollower(bool follow)
 {

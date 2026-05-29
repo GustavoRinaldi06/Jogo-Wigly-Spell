@@ -1,20 +1,19 @@
-#ifndef FLOOR_H
-#define FLOOR_H
+#ifndef HAZE_H
+#define HAZE_H
 
 #include "Component.h"
 #include "Rect_Vec2.h"
 #include "Timer.h"
 #include "Sound.h"
-#include "Bullet.h"
 #include <queue>
 #include <memory>
 
-class Floor : public Component
+class Haze : public Component
 {
 public:
 
-    Floor(GameObject &associated, const std::string &spritePath, int frame, SDL_RendererFlip flip, float angle);
-    ~Floor();
+    Haze(GameObject &associated, const std::string &spritePath, SDL_RendererFlip flip, float angle);
+    ~Haze();
 
     void Start() override;
     void Update(float dt) override;

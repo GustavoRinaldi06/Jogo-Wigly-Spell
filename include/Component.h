@@ -16,6 +16,7 @@ public:
     virtual bool Is(const std::string &type) = 0;
     virtual void Start() {}
     virtual void NotifyCollision(GameObject &other);
+    
 
 protected:
     GameObject &associated;

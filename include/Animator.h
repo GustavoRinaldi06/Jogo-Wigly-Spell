@@ -24,6 +24,7 @@ public:
     void Start() override;
 
     int GetCurrentFrame() const;
+    void SetCurrentFrame(int frame) ;
 
 private:
     std::unordered_map<std::string, Animation> animations;

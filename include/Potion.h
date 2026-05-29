@@ -1,5 +1,5 @@
-#ifndef FLOOR_H
-#define FLOOR_H
+#ifndef POTION_H
+#define POTION_H
 
 #include "Component.h"
 #include "Rect_Vec2.h"
@@ -9,21 +9,20 @@
 #include <queue>
 #include <memory>
 
-class Floor : public Component
+class Potion : public Component
 {
 public:
 
-    Floor(GameObject &associated, const std::string &spritePath, int frame, SDL_RendererFlip flip, float angle);
-    ~Floor();
+    Potion(GameObject &associated, const std::string &spritePath, int num);
+    ~Potion();
 
     void Start() override;
     void Update(float dt) override;
     void Render() override;
     bool Is(const std::string &type) override;
-    Vec2 speed = Vec2(0,0);
-    int limit = -120;
     // Colisão
     GameObject *GetGameObject() { return &associated; }
+    int number;
 
 };
 

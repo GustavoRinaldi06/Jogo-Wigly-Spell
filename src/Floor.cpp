@@ -15,7 +15,7 @@
 Floor::Floor(GameObject &associated, const std::string &spritePath, int frame,SDL_RendererFlip flp, float rotation)
     : Component(associated)
 {
-    
+    associated.layer = 3.0;
     auto renderer = new SpriteRenderer(associated, spritePath, 2, 1);
     renderer->SetScale(4,2);
     associated.angleDeg = rotation;
@@ -44,7 +44,7 @@ void Floor::Start()
 
 void Floor::Update(float dt)
 {
-    associated.layer = 1.0;
+    
     if (associated.box.x <= limit) {
         associated.RequestDelete();
     }

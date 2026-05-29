@@ -19,6 +19,7 @@ Character *Character::player = nullptr;
 Character::Character(GameObject &associated, const std::string &spritePath)
     : Component(associated), linearSpeed(250), hp(100)
 {
+    associated.layer = 5.0;
     if (player == nullptr){
         player = this;
     }
@@ -50,10 +51,10 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     animator->AddAnimation("walking_X", Animation(4, 7, 0.2f));
     //animator->AddAnimation("walking_UP", Animation(6, 9, 0.5f));
     //animator->AddAnimation("walking_DOWN", Animation(6, 9, 0.5f));
-    animator->AddAnimation("dead", Animation(10, 11, 0.3f));
+    animator->AddAnimation("dead", Animation(10, 11, 0.8f));
     associated.AddComponent(animator);
 
-    Collider *col = new Collider(associated);
+    Collider *col = new Collider(associated); 
 
 
     col->SetScale(Vec2(0.65,1.0));
@@ -66,7 +67,19 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     wasInverted = GameData::inverted; // Faz track da direção da gravidade
     Inversion = false;
 
-    colorInventory.push_back(RED);
+    //colorInventory.push_back(RED);
+    //colorInventory.push_back(BLUE);
+    invTimer.Set(100);
+    purpleTimer.Set(100);
+
+    GameObject *bubbleGO = new GameObject();
+    bubbleGO->AddComponent(new Bubble(*bubbleGO,"recursos/img/bubble.png"));
+    Game::GetInstance().GetCurrentState().AddObject(bubbleGO);
+    bubble = bubbleGO;
+
+    SpriteRenderer *bubrenderer = (SpriteRenderer *)bubble->GetComponent("SpriteRenderer");
+    bubrenderer->SetFrame(0,SDL_FLIP_NONE);
+
 }
 
 Character::~Character()
@@ -81,8 +94,11 @@ void Character::Start()
 
 void Character::Update(float dt)
 {
+    if (hp <= 0) {
+        deathAnimTriggered = true;
+    }
     // Ao morrer -------------------------------------------------------------------------------
-    if (associated.box.y > 750)
+    if (associated.box.y > 750 || associated.box.y < -50 || hp <= 0)
     {
         // dispara animação e som apenas uma vez
         if (!deathAnimTriggered)
@@ -109,6 +125,7 @@ void Character::Update(float dt)
 
         // só deleta após 6s
         if (deathTimer.Get() > 6.0f)
+            bubble->RequestDelete();
             associated.RequestDelete();
 
         return; // não executa mais lógica de movimento
@@ -116,12 +133,45 @@ void Character::Update(float dt)
 
     // Enquanto vivo --------------------------------------------------------------------------
     damageCooldown.Update(dt);
+    invTimer.Update(dt);
+    purpleTimer.Update(dt);
+    shieldTimer.Update(dt);
+    if (damageCooldown.Get() < 2.0) {
+        if ((int)((damageCooldown.Get() * 10)) % 4 == 0) {
+            transparent = !transparent;
+        }
+        else {
+            transparent = false;
+        }
+    }
+    if (shieldTimer.Get() > 10) {
+        shield = 0;
+    }
+    SpriteRenderer *rend = (SpriteRenderer *)associated.GetComponent("SpriteRenderer");
+    if (transparent) {
+        rend->SetTransparency(128);
+    }
+    else {
+        rend->SetTransparency(255);
+    }
     GameData::playerHP = hp; // Atualiza variavel global
+
+    SpriteRenderer *bubrenderer = (SpriteRenderer *)bubble->GetComponent("SpriteRenderer");
+    if (invTimer.Get() < 9) {
+        bubrenderer->SetFrame(2,SDL_FLIP_NONE);
+    }
+    else if (shield > 0) {
+        bubrenderer->SetFrame(1,SDL_FLIP_NONE);
+    }
+    else {
+        bubrenderer->SetFrame(0,SDL_FLIP_NONE);
+    }
+    
 
     // Pega input de pulo ---------------------------------------------------------------------
     InputManager &input = InputManager::GetInstance();
     if (GameData::gameMode == 1){
-        SpriteRenderer *rend = (SpriteRenderer *)associated.GetComponent("SpriteRenderer");
+        
         if (dashing) {
             dashTimer.Update(dt);
             float dtimer = dashTimer.Get();
@@ -186,6 +236,7 @@ void Character::Update(float dt)
             Djumped = true;      // se pulou duas vezes
             jumping = true;
         }
+
     }
 
     // Aplica a gravidade --------------------------------------------------------------------
@@ -309,6 +360,13 @@ void Character::Update(float dt)
     if(GameData::gameMode == 0){
         speed.y = 0;
     }
+    Vec2 campos = (Camera::GetInstance()).GetPosition();
+    if (associated.box.x < campos.x) {
+        associated.box.x = campos.x;
+    }
+    if (associated.box.x + associated.box.w > campos.x + 1200) {
+        associated.box.x = campos.x + 1200 - associated.box.w - 5;
+    }
 }
 
 void Character::Render() {}
@@ -387,6 +445,23 @@ void Character::NotifyCollision(GameObject &other)
             speed.x = 0;
         }
     }
+    else if (other.color > 0 && dashing) {
+        CollectColor(static_cast<Character::Color>(other.color));
+        if (other.blockable >= 0) {
+            other.color = -1;
+            other.damage = -1;
+        }
+
+    }
+    else if (other.damage >= 0 && damageCooldown.Get() > 2.0 && invTimer.Get() > 10) {
+        damageCooldown.Restart();
+        if (shield > 0) {
+            shield -=1;
+        }
+        else {
+            hp -= other.damage*20;
+        }
+    }
 }
 
 int Character::GetHP() const
@@ -455,22 +530,37 @@ void Character::Shoot1(Vec2 targetPos)
 
         float angle = atan2(direction.y, direction.x);
         float speed = 350.0f;
-        int damage = 10;
-        float maxDistance = 700.0f;
+         int damage;
+         int bulcolor;
+        if (purpleTimer.Get() < 30.0) {
+            damage = 15;
+            bulcolor = 3;
+        }
+        else {
+            damage = 10;
+            bulcolor = 0;
+        }
+           
+        float maxDistance = 1700.0f;
         bool targetsPlayer = false;
-
+        
         GameObject *spellGO = new GameObject();
         spellGO->box.x = shooterCenter.x;
         spellGO->box.y = shooterCenter.y - 20;
-        spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/Bullet.png"));
+        if (bulcolor == 3 ) {
+            spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/purpleshot.png",bulcolor));
+        }
+        else {
+            spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/Bullet.png",bulcolor));
 
+        }
+        
         Game::GetInstance().GetCurrentState().AddObject(spellGO);
-
         spellTimer.Restart();
     }
 }
 
-void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDistance, std::string spritePath)
+void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDistance, std::string spritePath, int color)
 {
     Vec2 shooterCenter = associated.box.GetCenter();
     Vec2 delta = targetPos - shooterCenter;
@@ -489,8 +579,12 @@ void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDista
     spell2GO->box.y = shooterCenter.y - 20; // Para ajustar a altura do tiro
 
     // Passa as variáveis  recebidas para o componente Bullet
-    spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, targetsPlayer, spritePath));
+    spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, targetsPlayer, spritePath,color));
     Game::GetInstance().GetCurrentState().AddObject(spell2GO);
+}
+
+bool Character::IsDashing() {
+    return dashing;
 }
 
 Rect Character::PlayerBox() {
@@ -518,20 +612,13 @@ void Character::UseSpell(Vec2 targetPos)
         return;
     }
 
-    // Se a spell global não estiver ativa ou estiver em cooldown, toca o som de erro
-    if (GameData::spell == false || spellMixTimer.Get() < 5.0f)
-    {
-        noSpell.Play(1);
-        return;
-    }
-
     // Variáveis dependendo da mistura de cores
     std::string spritePath = "recursos/img/Bullet.png"; // Padrão
     float speed = 200.0f;
     int damage = 50;
-    float maxDistance = 500.0f;
+    float maxDistance = 1200.0f;
     bool shouldShoot = false;
-
+    int col = 0;
     // VErifica as corres do vetor e realiza o diparo/habilidade
     if (colorInventory.size() == 1)
     {
@@ -540,54 +627,67 @@ void Character::UseSpell(Vec2 targetPos)
         if (unica == RED)
         {
             spell_red_Sound.Play(1); // Som da magia vermelha
-            damage = 30;
-            speed = 250.0f;
-            spritePath = "recursos/img/Bullet.png"; 
+            damage = 50;
+            speed = 400.0f;
+            spritePath = "recursos/img/redsmall.png"; 
             shouldShoot = true;
         }
         else if (unica == BLUE)
         {
             // fazer a imortalidade
             shouldShoot = false;
+            shield = 1;
+            shieldTimer.Restart();
+            colorInventory.clear();  // Apaga as cores
+            spellMixTimer.Restart(); // Reseta o cooldown
         }
     }
     else if (colorInventory.size() == 2)
     {
         Color c1 = colorInventory[0];
         Color c2 = colorInventory[1];
-
+        
         if (c1 == RED && c2 == RED)
         {
             spell_scarlet_Sound.Play(1);
-            damage = 80;             
-            speed = 180.0f;
-            spritePath = "recursos/img/Bullet.png";
+            damage = 150;             
+            speed = 450.0f;
+            spritePath = "recursos/img/redbig.png";
             shouldShoot = true;
+            col = 1;
         }
         else if (c1 == BLUE && c2 == BLUE)
         {
             // O azul duplo por enquanto fica vazio
             shouldShoot = false;
+            invTimer.Set(0);
+            colorInventory.clear();  // Apaga as cores
+            spellMixTimer.Restart(); // Reseta o cooldown
         }
         else if ((c1 == RED && c2 == BLUE) || (c1 == BLUE && c2 == RED))
         {
-            spell_purple_Sound.Play(1); 
-            damage = 60;
-            speed = 350.0f;
-            maxDistance = 700.0f;
-            spritePath = "recursos/img/Bullet.png";
-            shouldShoot = true;
+            spell_purple_Sound.Play(1);
+            colorInventory.clear();  // Apaga as cores
+            spellMixTimer.Restart(); // Reseta o cooldown
+            purpleTimer.Restart(); 
+            // damage = 100;
+            //speed = 350.0f;
+            //maxDistance = 1700.0f;
+            //spritePath = "recursos/img/purpleshot.png";
+            //shouldShoot = true;
+            col = 3;
         }
     }
 
     // Se a combinação gerou um disparo válido, executa o tiro e limpa as cores
     if (shouldShoot)
     {
-        ShootMix(targetPos, speed, damage, maxDistance, spritePath);
+        ShootMix(targetPos, speed, damage, maxDistance, spritePath,col);
 
         colorInventory.clear();  // Apaga as cores
         spellMixTimer.Restart(); // Reseta o cooldown
     }
+    
 }
 
 std::vector<Character::Color> Character::GetColorInventory() const

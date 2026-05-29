@@ -6,6 +6,7 @@ class GameData
 {
 public:
     static int playerHP;
+    static int bossHP;
 
     // Modo de jogo/mapa
     static int gameMode; // 0 se for o menu, 1 se for uma fase (plataforma)

@@ -1,4 +1,4 @@
-#include "HomingProj.h"
+#include "Missile.h"
 #include "GameObject.h"
 #include "SpriteRenderer.h"
 #include "Animator.h"
@@ -11,16 +11,17 @@
 
 #include <iostream>
 
-HomingProj::HomingProj(GameObject &associated, const std::string &spritePath)
+Missile::Missile(GameObject &associated, const std::string &spritePath, int color)
     : Component(associated)
 {
     associated.layer = 5.1;
-    associated.blockable = 5;
+    associated.blockable = 3;
     associated.damage = 1;
     
     auto renderer = new SpriteRenderer(associated, spritePath, 2, 6);
     associated.AddComponent(renderer);
     renderer->SetScale(1.5,2);
+    associated.angleDeg = 270;
 
     // Novos sons
     //hitSound = Sound();
@@ -28,33 +29,38 @@ HomingProj::HomingProj(GameObject &associated, const std::string &spritePath)
     //fallSound = Sound();
 
     // Cria as animações
+    associated.color = color;
     auto animator = new Animator(associated);
-    animator->AddAnimation("floating", Animation(0, 1, 0.5f));
-    animator->AddAnimation("dissipating", Animation(2, 3, 0.25f));
+    int base = 4 * associated.color;
+    animator->AddAnimation("floating", Animation(base + 0,base + 1, 0.5f));
+    animator->AddAnimation("dissipating", Animation(base + 2, base + 3, 0.25f));
     associated.AddComponent(animator);
     animator->SetAnimation("floating");
 
     associated.AddComponent(new Collider(associated,Vec2(0.8,0.8)));
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
-    
     deathTimer.Restart();
     lifespan.Restart();
+    LockinTimer.Restart();
 }
 
-HomingProj::~HomingProj()
+Missile::~Missile()
 {
 }
 
-void HomingProj::Start()
+void Missile::Start()
 {}
 
 
-void HomingProj::Update(float dt)
+void Missile::Update(float dt)
 {
+    // Ao morrer -------------------------------------------------------------------------------
+    if (associated.box.x < -120) {
+        associated.RequestDelete();
+    }
     if (associated.color < 0) {
         destroyed = true;
     }
-    // Ao morrer -------------------------------------------------------------------------------
     if (destroyed)
     {
         // dispara animação e som apenas uma vez
@@ -79,39 +85,56 @@ void HomingProj::Update(float dt)
 
         return; // não executa mais lógica de movimento
     }
-
-    lifespan.Update(dt);
-    if (lifespan.Get() > 15.0f) { 
-        destroyed = true;
+    
+    if (launched) {
+        lifespan.Update(dt);
+        if (lifespan.Get() > 15.0f) { 
+            destroyed = true;
+        }
+        speed.x = -linearSpeed;
+        speed.y = 0;
     }
-
-    // Enquanto funcional --------------------------------------------------------------------------
-
-    // Aplica a gravidade --------------------------------------------------------------------
-    float angle = ((Character::PlayerBox().GetCenter()-associated.box.GetCenter()).Angle());
-    associated.angleDeg = 90 + (angle * 180)/M_PI;
-    speed = Vec2(linearSpeed*cos(angle),linearSpeed*sin(angle));
+    else {
+        
+        LockinTimer.Update(dt);
+        if (LockinTimer.Get() > 0.5) {
+            speed.x = 0;
+            Rect playerbox = Character::PlayerBox();
+            float target = playerbox.y + (playerbox.h/2 - associated.box.h/2);
+            float dist = target - associated.box.y;
+            if (abs(dist) < 5.0) {
+                speed.y = 0;
+            } 
+            else if (dist > 0) {
+                speed.y = 200;
+            }
+            else {
+                speed.y = -200;
+            }
+            if (LockinTimer.Get() > 5.0) {
+                launched = true;
+        }
+        }
+    }
     associated.box.y += speed.y * dt;
     associated.box.x += speed.x * dt;
 }
 
-void HomingProj::Render() {}
+void Missile::Render() {}
 
-bool HomingProj::Is(const std::string &type)
+bool Missile::Is(const std::string &type)
 {
-    return type == "HomingProj";
+    return type == "Missile";
 }
 
 
-void HomingProj::NotifyCollision(GameObject &other)
+void Missile::NotifyCollision(GameObject &other)
 {
 
     // Se colidir com chão
     Collider *collider = (Collider *)other.GetComponent("Collider");
-    Collider *col = (Collider *)associated.GetComponent("Collider");
-
     // Se colidir com parede
-    if (collider && (collider->tag == "solid")) 
+    if (launched && collider && (collider->tag == "solid")) 
     {
         // Destroi se colidir com parede
         destroyed = true;

@@ -1,6 +1,7 @@
 #include "GameData.h"
 
 int GameData::playerHP = 100;
+int GameData::bossHP = 1000;
 int GameData::gameMode = 0; // sempre inicializa no menu
 int GameData::currentState = 0;
 bool GameData::inverted = false;

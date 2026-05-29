@@ -25,11 +25,14 @@ public:
 
     bool started;
     void Start();
-    float layer = 5;
+    float layer = 5.0;
 
     double angleDeg = 0; // usado para rotação
 
     void NotifyCollision(GameObject &other);
+    int color = 0;
+    int blockable = -1;
+    int damage = -1;
 
 private:
     std::vector<Component *> components; // Um objeto é composto de componentes

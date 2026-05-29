@@ -15,6 +15,8 @@ BounceBall::BounceBall(GameObject &associated, const std::string &spritePath)
     : Component(associated)
 {
     associated.layer = 5.1;
+    associated.blockable = 3;
+    associated.damage = 1;
     auto renderer = new SpriteRenderer(associated, spritePath, 2, 4);
     associated.AddComponent(renderer);
     renderer->SetScale(1,1);
@@ -52,6 +54,10 @@ void BounceBall::Start()
 void BounceBall::Update(float dt)
 {
     // Ao morrer -------------------------------------------------------------------------------
+    if (associated.box.y < -120 || associated.box.y > 1400) {
+         associated.RequestDelete();
+    }
+    
     if (destroyed)
     {
         // dispara animação e som apenas uma vez
@@ -214,6 +220,18 @@ void BounceBall::NotifyCollision(GameObject &other)
                 // Destroi se colidir com parede
                 destroyed = true;
             }
+    }
+    else if (collider && collider->tag == "bullet") {
+        Bullet* bul = (Bullet *)other.GetComponent("Bullet");
+        if (bul->bulletcolor == 3 && bul->purpledurability > 0 && blockable > 0) {
+            int block = blockable;
+            blockable -= bul->purpledurability;
+            bul->purpledurability -= block;
+            if (blockable <= 0) {
+                destroyed = true; 
+            }
+            
+        }
     }
 }
 

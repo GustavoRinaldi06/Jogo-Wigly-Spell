@@ -74,3 +74,7 @@ void SpriteRenderer::SetScale(float scaleX, float scaleY)
     associated.box.h = sprite.GetHeight();
     associated.box.SetCenter(oldCenter); // mantém o centro
 }
+
+void SpriteRenderer::SetTransparency(int transp) {
+    sprite.SetAlpha(transp);
+}

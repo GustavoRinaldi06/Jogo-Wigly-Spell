@@ -36,38 +36,40 @@ void PlayerController::Update(float dt)
         Vec2 target = associated.box.GetCenter() + direction.Normalize() * 100;
         character->Issue(Character::Command(Character::CommandType::MOVE, target.x, target.y));
     }
-
-    if (input.MousePress(LEFT_MOUSE_BUTTON)) // Atira a spell padrão
-    {
-        if (GameData::aimed) // Se aimed for True, mira no mouse
+    if (!character->IsDashing()) {
+        if (input.IsMouseDown(LEFT_MOUSE_BUTTON)) // Atira a spell padrão
         {
-            float mouseX = input.GetMouseX() + Camera::GetInstance().GetPosition().x;
-            float mouseY = input.GetMouseY() + Camera::GetInstance().GetPosition().y;
-            character->Shoot1(Vec2(mouseX, mouseY));
+            if (GameData::aimed) // Se aimed for True, mira no mouse
+            {
+                float mouseX = input.GetMouseX() + Camera::GetInstance().GetPosition().x;
+                float mouseY = input.GetMouseY() + Camera::GetInstance().GetPosition().y;
+                character->Shoot1(Vec2(mouseX, mouseY));
+            }
+            else // Se aimed for False, atira reto para a frente
+            {
+                Vec2 center = associated.box.GetCenter();
+                float targetX = center.x + 500.0f;
+
+                character->Shoot1(Vec2(targetX, center.y));
+            }
         }
-        else // Se aimed for False, atira reto para a frente
-        {
-            Vec2 center = associated.box.GetCenter();
-            float targetX = center.x + 500.0f;
 
-            character->Shoot1(Vec2(targetX, center.y));
-        }
-    }
-
-    if (input.KeyPress('e')) // Atira a spell de mistura
-    {
-        if (GameData::aimed) // Se aimed for True, mira no mouse
+        if (input.KeyPress('e')) // Atira a spell de mistura
         {
-            float mouseX = input.GetMouseX() + Camera::GetInstance().GetPosition().x;
-            float mouseY = input.GetMouseY() + Camera::GetInstance().GetPosition().y;
-            character->UseSpell(Vec2(mouseX, mouseY));
-        }
-        else // Se aimed for False, atira reto para a frente
-        {
-            Vec2 center = associated.box.GetCenter();
-            float targetX = center.x + 500.0f;
+            
+            if (GameData::aimed) // Se aimed for True, mira no mouse
+            {
+                float mouseX = input.GetMouseX() + Camera::GetInstance().GetPosition().x;
+                float mouseY = input.GetMouseY() + Camera::GetInstance().GetPosition().y;
+                character->UseSpell(Vec2(mouseX, mouseY));
+            }
+            else // Se aimed for False, atira reto para a frente
+            {
+                Vec2 center = associated.box.GetCenter();
+                float targetX = center.x + 500.0f;
 
-            character->UseSpell(Vec2(targetX, center.y));
+                character->UseSpell(Vec2(targetX, center.y));
+            }
         }
     }
 }

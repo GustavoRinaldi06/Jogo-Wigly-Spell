@@ -31,7 +31,7 @@ private:
     float gravity = 200.0f; // Gravidade
 
     bool destroyed = false;
-    bool blockable = true;
+    int blockable = 5;
 
     // Death e hit
     Sound hitSound, fallSound, deathSound;

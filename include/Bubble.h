@@ -1,5 +1,5 @@
-#ifndef FLOOR_H
-#define FLOOR_H
+#ifndef BUBBLE_H
+#define BUBBLE_H
 
 #include "Component.h"
 #include "Rect_Vec2.h"
@@ -9,19 +9,17 @@
 #include <queue>
 #include <memory>
 
-class Floor : public Component
+class Bubble : public Component
 {
 public:
 
-    Floor(GameObject &associated, const std::string &spritePath, int frame, SDL_RendererFlip flip, float angle);
-    ~Floor();
+    Bubble(GameObject &associated, const std::string &spritePath);
+    ~Bubble();
 
     void Start() override;
     void Update(float dt) override;
     void Render() override;
     bool Is(const std::string &type) override;
-    Vec2 speed = Vec2(0,0);
-    int limit = -120;
     // Colisão
     GameObject *GetGameObject() { return &associated; }
 

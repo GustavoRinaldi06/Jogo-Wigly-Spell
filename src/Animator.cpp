@@ -81,3 +81,7 @@ int Animator::GetCurrentFrame() const // DEBUG
 {
     return currentFrame;
 }
+
+void Animator::SetCurrentFrame(int frame) {
+    currentFrame = frame;
+}

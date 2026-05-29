@@ -6,8 +6,10 @@
 #include "Timer.h"
 #include "Sound.h"
 #include "Bullet.h"
+#include "Bubble.h"
 #include <queue>
 #include <memory>
+
 
 class Character : public Component
 {
@@ -53,6 +55,10 @@ public:
     // Acessar informações privadas
     int GetHP() const;
     int GetCool() const;
+    int shield = 0;
+    Timer shieldTimer;
+    bool transparent = false;
+
 
     // Atirar ao mesmo tempo que anda
     void Shoot1(Vec2 targetPos);
@@ -60,9 +66,9 @@ public:
     // Coleta de cores e disparo de misturas
     bool CollectColor(Color newColor);
     void UseSpell(Vec2 targetPos);
-    void ShootMix(Vec2 targetPos, float speed, int damage, float maxDistance, std::string spritePath);
+    void ShootMix(Vec2 targetPos, float speed, int damage, float maxDistance, std::string spritePath, int color = 0);
     std::vector<Color> GetColorInventory() const; // Colocar na interface
-
+    bool IsDashing();
 private:
     std::queue<Command> taskQueue;
 
@@ -70,6 +76,7 @@ private:
     Vec2 speed;
     Vec2 surfacespeed = Vec2(0,0);
     Timer surfaceTimer;
+    Timer invTimer;
     float gravity = 1500.0f; // Gravidade
     bool isOnGround = false;
     bool jumped = false;
@@ -82,6 +89,7 @@ private:
     bool longdash = false;
     Timer dashTimer;
     Timer jumpTimer;
+    Timer purpleTimer;
 
 
     // Config basica
@@ -103,6 +111,7 @@ private:
 
     // Speel basica
     Timer spellTimer; //cooldown
+
     Sound spellSound;
 
     // Speel de mistura
@@ -118,6 +127,7 @@ private:
     // Verificadores de inversão
     bool wasInverted;
     bool Inversion;
+    GameObject *bubble;
 };
 
 #endif

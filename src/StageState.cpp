@@ -7,7 +7,11 @@
 #include "../include/Character.h"
 #include "../include/BounceBall.h"
 #include "../include/HomingProj.h"
+#include "../include/Missile.h"
+#include "../include/CorrGhost.h"
+#include "../include/Potion.h"
 #include "../include/Floor.h"
+#include "../include/Haze.h"
 #include "../include/PlayerController.h"
 #include "../include/Collider.h"
 #include "../include/Collision.h"
@@ -35,81 +39,53 @@ void StageState::LoadAssets()
     std::cout << "\n Carregando fase 1 WiglySpell:" << "\n"; // Alertar LoadAssets
     GameData::universalspeed = Vec2(-50,0); 
     // Fundo -------------------------------------------------------------------------------------------------------------------
-    GameObject *bgObject = new GameObject();
-    SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
-    bgRenderer->Open("recursos/img/FundoTest.png");
-    bgRenderer->SetCameraFollower(false);
+    //GameObject *bgObject = new GameObject();
+    //SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
+    //bgRenderer->Open("recursos/img/FundoTest.png");
+    //bgRenderer->SetCameraFollower(false);
 
-    bgObject->box.x = 0;
-    bgObject->box.y = 0;
+    //bgObject->box.x = 0;
+    //bgObject->box.y = 0;
 
-    bgObject->AddComponent(bgRenderer);
-    AddObject(bgObject);
+    //bgObject->AddComponent(bgRenderer);
+    //AddObject(bgObject);
 
     // Mapa --------------------------------------------------------------------------------------------------------------------
-
-    // Cria o chão
-    GameObject *ground = new GameObject();
-    ground->box.x = 0;
-    ground->box.y = 700;
-    ground->box.w = 1920;
-    ground->box.h = 50;
-    /*
-    Collider *groundCollider = new Collider(*ground);
-    groundCollider->tag = "ground";
-    ground->AddComponent(groundCollider);
-    AddObject(ground);
-
-    // Cria o teto
-    GameObject *inverted_ground = new GameObject();
-    inverted_ground->box.x = 0;
-    inverted_ground->box.y = 50;
-    inverted_ground->box.w = 1920;
-    inverted_ground->box.h = 50;
-    
-
-    Collider *I_groundCollider = new Collider(*inverted_ground);
-    I_groundCollider->tag = "inverted_ground";
-    inverted_ground->AddComponent(I_groundCollider);
-
-    AddObject(inverted_ground);
-    
-    */
-   /*
-    for (int i = 0; i < 10; i++) {
-        GameObject *floorGO = new GameObject();
-        floorGO->box.x = 120*i;  // Centro do mapa
-        floorGO->box.y = 600; // Altura maior
-
-        floorGO->AddComponent(new Floor(*floorGO, "recursos/img/floor.png",(i % 4) == 0,SDL_FLIP_NONE,0.0)); // substitua pela imagem correta
-        AddObject(floorGO);
-    }
-    */
 
     GameObject *floorGO = new GameObject();
     floorGO->AddComponent(new ScenaryGenerator(*floorGO, Vec2(0.0,0.0),Vec2(0,650),Vec2(-120,0),SDL_FLIP_NONE,0.0)); // substitua pela imagem correta
     AddObject(floorGO);
 
     GameObject *ceilGO = new GameObject();
-
     ceilGO->AddComponent(new ScenaryGenerator(*ceilGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-120,0),SDL_FLIP_VERTICAL,0.0)); // substitua pela imagem correta
     AddObject(ceilGO);
 
+    GameObject *bgGO = new GameObject();
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,1)); // substitua pela imagem correta
+    AddObject(bgGO);
+    bgGO = new GameObject();
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,2)); // substitua pela imagem correta
+    AddObject(bgGO);
+
+    bgGO = new GameObject();
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,3)); // substitua pela imagem correta
+    AddObject(bgGO);
+
     // Personagem ----------------------------------------------------------------------------------------------------------------
     GameObject *playerGO = new GameObject();
-    playerGO->box.x = 600;  // Centro do mapa
-    playerGO->box.y = 450; // Altura maior
+    playerGO->box.x = 500;  // Centro do mapa
+    playerGO->box.y = 300; // Altura maior
 
     playerGO->AddComponent(new Character(*playerGO, "recursos/img/wigly.png")); // substitua pela imagem correta
     playerGO->AddComponent(new PlayerController(*playerGO));
 
     GameData::playerHP = 100; // Reseta vida do personagem
-    Camera::GetInstance().SetPosition(Vec2(240, 0)); // Puxa a câmera de volta pro (0,0)
+    Camera::GetInstance().SetPosition(Vec2(0, 0)); // Puxa a câmera de volta pro (0,0)
     
     //Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
 
     AddObject(playerGO);
-
+    /*
     GameObject *bounceGO = new GameObject();
     bounceGO->box.x = 800;  // Centro do mapa
     bounceGO->box.y = 450; // Altura maior
@@ -117,12 +93,28 @@ void StageState::LoadAssets()
     bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
     AddObject(bounceGO);
 
-    GameObject *homingGO = new GameObject();
-    homingGO->box.x = 1000;  // Centro do mapa
-    homingGO->box.y = 450; // Altura maior
+    GameObject *missileGO = new GameObject();
+    missileGO->box.x = 1100;  // Centro do mapa
+    missileGO->box.y = 450; // Altura maior
 
-    homingGO->AddComponent(new HomingProj(*homingGO, "recursos/img/homingProj.png")); // substitua pela imagem correta
-    AddObject(homingGO);
+    missileGO->AddComponent(new Missile(*missileGO, "recursos/img/homingProj.png")); // substitua pela imagem correta
+    AddObject(missileGO);
+    */
+    float prevy = 0;
+    for (int i = 0; i < 8; i++) {
+        GameObject *hazeGO = new GameObject();
+        hazeGO->AddComponent(new Haze(*hazeGO, "recursos/img/purplehaze.png",SDL_FLIP_NONE,0)); // substitua pela imagem correta
+        hazeGO->box.x = 0;  // Centro do mapa
+        hazeGO->box.y = prevy; // Altura maior
+        AddObject(hazeGO);
+        prevy = hazeGO->box.y + hazeGO->box.h;
+    }
+    GameObject *corridorGO = new GameObject();
+    corridorGO->box.x = 850;  // Centro do mapa
+    corridorGO->box.y = 250; // Altura maior
+
+    corridorGO->AddComponent(new CorridorGhost(*corridorGO, "recursos/img/CorrGhost.png")); // substitua pela imagem correta
+    AddObject(corridorGO);
 
 
     // Música --------------------------------------------------------------------------------------------------------------------
@@ -137,6 +129,7 @@ void StageState::LoadAssets()
     std::string hpString = "HP: " + std::to_string(Character::player->GetHP());
     hpText = new Text(*textGO, "recursos/font/neodgm.ttf", 24, BLENDED, hpString, white);
     textGO->AddComponent(hpText);
+    textGO->layer = 10;
 
     hpText->SetCameraFollower(true);
     // Posição do texto
@@ -146,11 +139,12 @@ void StageState::LoadAssets()
     AddObject(textGO);
 
     // TExto de cooldown da magia --------------------------------------------------------------------------------------------
-
+    /*
     GameObject *textGO1 = new GameObject();
     std::string spellCooldown = "Magia acumulada com sucesso!";
     spellText = new Text(*textGO1, "recursos/font/neodgm.ttf", 24, BLENDED, spellCooldown, white);
     textGO1->AddComponent(spellText);
+    textGO1->layer = 10;
 
     spellText->SetCameraFollower(true);
     // Posição do texto
@@ -158,6 +152,41 @@ void StageState::LoadAssets()
     textGO1->box.y = 650;
 
     AddObject(textGO1);
+
+    */
+    
+    GameObject *cauldGO1 = new GameObject();
+    cauldGO1->AddComponent(new Potion(*cauldGO1, "recursos/img/potions.png",0));
+    cauldGO1->layer = 10;
+
+    // Posição do texto
+    cauldGO1->box.x = 200;
+    cauldGO1->box.y = 650;
+
+    AddObject(cauldGO1);
+
+    GameObject *cauldGO2= new GameObject();
+    cauldGO2->AddComponent(new Potion(*cauldGO2, "recursos/img/potions.png",1));
+    cauldGO2->layer = 10;
+
+    // Posição do texto
+    cauldGO2->box.x = 250;
+    cauldGO2->box.y = 650;
+    AddObject(cauldGO2);
+
+
+    GameObject *textGO2 = new GameObject();
+    std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
+    bosshpText = new Text(*textGO2, "recursos/font/neodgm.ttf", 24, BLENDED, bhpString, white);
+    textGO2->AddComponent(bosshpText);
+    textGO2->layer = 10;
+
+    bosshpText->SetCameraFollower(true);
+    // Posição do texto
+    textGO2->box.x = 700;
+    textGO2->box.y = 650;
+
+    AddObject(textGO2);
 }
 
 void StageState::Update(float dt)
@@ -269,6 +298,10 @@ void StageState::Update(float dt)
         std::string hpString = "HP: " + std::to_string(Character::player->GetHP());
         hpText->SetText(hpString);
     }
+    if (bosshpText){
+        std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
+        bosshpText->SetText(bhpString);
+    }
 
     //Caixa do cooldown do disparo
     if (spellText && Character::player != nullptr){
@@ -306,7 +339,7 @@ void StageState::Render()
     SDL_RenderClear(renderer);
 
     // Desenha todos os game objects
-    std::sort(objectArray.begin()+2, objectArray.end(),[](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b) {
+    std::sort(objectArray.begin(), objectArray.end(),[](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b) {
         return a->layer < b->layer;
     });
     RenderArray();
