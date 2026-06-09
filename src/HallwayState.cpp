@@ -242,8 +242,11 @@ void HallwayState::Update(float dt)
     for (auto &obj : objectArray)
     {
         Collider *collider = (Collider *)obj->GetComponent("Collider");
-        if (collider)
+        if (collider) {
             collider->Update(0); // forçando update
+
+        }
+            
     }
 
     // Verifica colisões dos GameObjects

@@ -10,6 +10,8 @@
 #include "HallwayState.h"
 #include "Missile.h"
 #include "bounceBall.h"
+#include "WavyNote.h"
+#include "BeatWave.h"
 #include "Bullet.h"
 
 #include <iostream>
@@ -224,8 +226,12 @@ void CorridorGhost::BounceATK(int offset) {
     GameObject *bounceGO = new GameObject();
     bounceGO->box.x = associated.box.x + associated.box.w + (float) offset;  // Centro do mapa
     bounceGO->box.y = associated.box.y + associated.box.h/2; // Altura maior
+    //bounceGO->box.y = (rand() % 400) + 100;  // Centro do mapa
+    //bounceGO->box.y =  + 500;  // Centro do mapa
 
     bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
+    //bounceGO->AddComponent(new WavyNote(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
+    //bounceGO->AddComponent(new BeatWave(*bounceGO, "recursos/img/BeatWave.png")); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(bounceGO);
 }
 void CorridorGhost::MissileATK(int offset,int color) {

@@ -18,7 +18,7 @@ Missile::Missile(GameObject &associated, const std::string &spritePath, int colo
     associated.blockable = 3;
     associated.damage = 1;
     
-    auto renderer = new SpriteRenderer(associated, spritePath, 2, 6);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 6);
     associated.AddComponent(renderer);
     renderer->SetScale(1.5,2);
     associated.angleDeg = 270;
@@ -29,13 +29,14 @@ Missile::Missile(GameObject &associated, const std::string &spritePath, int colo
     //fallSound = Sound();
 
     // Cria as animações
-    associated.color = color;
+    finalcolor = color;
     auto animator = new Animator(associated);
-    int base = 4 * associated.color;
-    animator->AddAnimation("floating", Animation(base + 0,base + 1, 0.5f));
-    animator->AddAnimation("dissipating", Animation(base + 2, base + 3, 0.25f));
+    int base = 8 * color;
+    animator->AddAnimation("hoaming", Animation(base + 0,base + 1, 0.3f));
+    animator->AddAnimation("floating", Animation(base + 2,base + 3, 0.5f));
+    animator->AddAnimation("dissipating", Animation(base + 4, base + 5, 0.15f));
     associated.AddComponent(animator);
-    animator->SetAnimation("floating");
+    animator->SetAnimation("hoaming");
 
     associated.AddComponent(new Collider(associated,Vec2(0.8,0.8)));
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
@@ -55,6 +56,7 @@ void Missile::Start()
 void Missile::Update(float dt)
 {
     // Ao morrer -------------------------------------------------------------------------------
+    Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
     if (associated.box.x < -120) {
         associated.RequestDelete();
     }
@@ -70,7 +72,6 @@ void Missile::Update(float dt)
             fallSound.Play(1);
 
             // seta animação "popping"
-            Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
             if (animator)
                 animator->SetAnimation("dissipating");
             deathTimer.Restart();
@@ -80,7 +81,7 @@ void Missile::Update(float dt)
         deathTimer.Update(dt);
 
         // só deleta após 0.5s
-        if (deathTimer.Get() > 0.5f)
+        if (deathTimer.Get() > 0.3f)
             associated.RequestDelete();
 
         return; // não executa mais lógica de movimento
@@ -111,8 +112,14 @@ void Missile::Update(float dt)
             else {
                 speed.y = -200;
             }
+            if (LockinTimer.Get() > 4.5) {
+                animator->SetAnimation("floating");
+                associated.color = finalcolor;
+            }
             if (LockinTimer.Get() > 5.0) {
                 launched = true;
+                
+                
         }
         }
     }

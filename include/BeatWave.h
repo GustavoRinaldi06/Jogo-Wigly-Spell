@@ -1,5 +1,5 @@
-#ifndef MISSILE_H
-#define MISSILE_H
+#ifndef BEATWAVE_H
+#define BEATWAVE_H
 
 #include "Component.h"
 #include "Rect_Vec2.h"
@@ -9,12 +9,12 @@
 #include <queue>
 #include <memory>
 
-class Missile : public Component
+class BeatWave : public Component
 {
 public:
 
-    Missile(GameObject &associated, const std::string &spritePath, int color = 0);
-    ~Missile();
+    BeatWave(GameObject &associated, const std::string &spritePath);
+    ~BeatWave();
 
     void Start() override;
     void Update(float dt) override;
@@ -27,23 +27,24 @@ public:
 
 private:
     // Valores de controle plataforma
-    Vec2 speed = Vec2(0,0);
+    Vec2 speed = Vec2(-50,0);
+    
 
     bool destroyed = false;
-    int blockable = 9;
-    int finalcolor = 0;
+
 
     // Death e hit
     Sound hitSound, fallSound, deathSound;
     Timer lifespan;
     Timer deathTimer;
+    bool active = false;
     bool deathAnimTriggered{false};
-    
 
     // Verificadores de inversão
-    Timer LockinTimer;
-    bool launched = false;
-    float linearSpeed = 600;
+    bool bouncing = false;
+    int blockable = 5;
+
+    float linearSpeed;
     
     
 };

@@ -90,7 +90,7 @@ private:
     Timer dashTimer;
     Timer jumpTimer;
     Timer purpleTimer;
-
+    Timer initTimer;
 
     // Config basica
     float linearSpeed;

@@ -28,9 +28,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     renderer->SetCameraFollower(false);
     associated.AddComponent(renderer);
 
-
-    //associated.box.w = 50;  // ou a largura desejada
-    //associated.box.h = 100; // altura desejada
+    speed = Vec2(0,0);
 
     // Novos sons
     //hitSound = Sound();
@@ -56,7 +54,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     animator->AddAnimation("idleair", Animation(18, 19, 0.25f));
     animator->AddAnimation("walking_wall", Animation(44, 47, 0.25f));
     animator->AddAnimation("idlewall", Animation(32, 43, 0.1));
-    animator->AddAnimation("dead", Animation(6, 13, 0.8f));
+    animator->AddAnimation("dead", Animation(6, 15, 0.2f));
     associated.AddComponent(animator);
 
     Collider *col = new Collider(associated); 
@@ -72,7 +70,8 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     wasInverted = GameData::inverted; // Faz track da direção da gravidade
     Inversion = false;
 
-    
+    //colorInventory.push_back(RED);
+    //colorInventory.push_back(BLUE);
     invTimer.Set(100);
     purpleTimer.Set(100);
 
@@ -83,6 +82,10 @@ Character::Character(GameObject &associated, const std::string &spritePath)
 
     SpriteRenderer *bubrenderer = (SpriteRenderer *)bubble->GetComponent("SpriteRenderer");
     bubrenderer->SetFrame(0,SDL_FLIP_NONE);
+    deathAnimTriggered = false;
+    deathTimer.Restart();
+    initTimer.Restart();
+    hp = 100;
 
 }
 
@@ -99,7 +102,12 @@ void Character::Start()
 void Character::Update(float dt)
 {
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
-    
+
+    initTimer.Update(dt);
+    if (initTimer.Get() < 1.0) {
+        return;
+    }
+
     // Ao morrer -------------------------------------------------------------------------------
     if (associated.box.y > 750 || associated.box.y < -50 || hp <= 0)
     {
@@ -116,45 +124,22 @@ void Character::Update(float dt)
             if (animator)
                 animator->SetAnimation("dead");
 
-
-            
-            // solta a câmera se é player e esta com a camera seguindo
+            // solta a câmera se é player
             if(this == Character::player)
                 Camera::GetInstance().Unfollow();
 
             deathTimer.Restart();
         }
 
-        SpriteRenderer *renderer = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
-        if (renderer && animator)
-        {
-            int frame = animator->GetCurrentFrame();
-
-            // sem nenhum flip
-            SDL_RendererFlip flip = SDL_FLIP_NONE;
-
-            // Se estiver virado para a esquerda, aplica o flip horizontal
-            if (facingDir == -1)
-            {
-                flip = (SDL_RendererFlip)(flip | SDL_FLIP_HORIZONTAL);
-            }
-            // Se a gravidade estiver invertida, adiciona o flip vertical ao estado atual
-            if (GameData::inverted && GameData::gameMode == 1)
-            {
-                flip = (SDL_RendererFlip)(flip | SDL_FLIP_VERTICAL);
-            }
-            // Aplica o resultado final 
-            renderer->SetFrame(frame, flip);
-        }
-
         // avança timer de morte
         deathTimer.Update(dt);
 
         // só deleta após 6s
-        if (deathTimer.Get() > 6.0f){
+        if (deathTimer.Get() > 6.0f || animator->GetCurrentFrame() == 15) {
             bubble->RequestDelete();
             associated.RequestDelete();
         }
+
 
         return; // não executa mais lógica de movimento
     }
@@ -195,7 +180,8 @@ void Character::Update(float dt)
         bubrenderer->SetFrame(0,SDL_FLIP_NONE);
     }
     
-
+    
+    
     // Pega input de pulo ---------------------------------------------------------------------
     InputManager &input = InputManager::GetInstance();
     if (GameData::gameMode == 1){
@@ -208,7 +194,7 @@ void Character::Update(float dt)
                     longdash = false;   // Se não segura por tempo suficiente, o dash é curto
                 }
             }
-            if ((dtimer > 0.15 && !longdash) || (dtimer > 0.3 && longdash)) {
+            if (dtimer > 0.15 && !longdash || dtimer > 0.3 && longdash) {
                 animator->SetAnimation("dashend");
                 dashing = false;
                 dashTimer.Restart();
@@ -338,11 +324,18 @@ void Character::Update(float dt)
         surfacespeed = Vec2(0,0);
     }
     Vec2 uspeed = GameData::universalspeed;
+    //initTimer.Update(dt);
+    //if (initTimer.Get() < 0.5) {
+    //    speed = Vec2(0,0);
+    //}
     associated.box.x += (speed.x + surfacespeed.x + uspeed.x)* dt;
     associated.box.y += (speed.y + surfacespeed.y + uspeed.y)* dt;
+    
+    
 
     // Atualiza animação de acordo com a movimentação
-    
+    SpriteRenderer *renderer = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
+
     if (animator)
     {
         animator->Update(dt);
@@ -367,7 +360,7 @@ void Character::Update(float dt)
             
         }
         else if (!dashing) {
-            if (fabs(speed.x) > 1.0f && isOnGround)
+            if (fabs(speed.x) > 1.0f && isOnGround && GameData::gameMode > 0)
                 animator->SetAnimation("walking_X");
             // GameMode menu
             else if (GameData::gameMode == 0)
@@ -393,8 +386,7 @@ void Character::Update(float dt)
         facingDir = 1;
 
     // Flip horizontal/vertical de acordo a direção ---------------------------------------------------------------
-    SpriteRenderer *renderer = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
-
+    
     if (renderer && animator)
     {
         int frame = animator->GetCurrentFrame();
