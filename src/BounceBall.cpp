@@ -61,6 +61,7 @@ void BounceBall::Update(float dt)
     if (destroyed)
     {
         // dispara animação e som apenas uma vez
+        associated.damage = -1;
         if (!deathAnimTriggered)
         {
             deathAnimTriggered = true;

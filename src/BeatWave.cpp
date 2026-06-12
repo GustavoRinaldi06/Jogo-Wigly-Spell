@@ -16,7 +16,7 @@ BeatWave::BeatWave(GameObject &associated, const std::string &spritePath)
     : Component(associated)
 {
     associated.layer = 5.1;
-    associated.blockable = 3;
+    associated.blockable = -1;
     associated.damage = 1;
     auto renderer = new SpriteRenderer(associated, spritePath, 3, 1);
     associated.AddComponent(renderer);
