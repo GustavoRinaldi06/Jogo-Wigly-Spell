@@ -6,6 +6,9 @@
 #include "SDL_include.h"
 #include <string>
 
+
+struct Mix_Chunk;
+
 class Sound
 {
 public:

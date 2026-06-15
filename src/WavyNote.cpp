@@ -104,7 +104,7 @@ void WavyNote::Update(float dt)
     
     // Atualiza animação de acordo com a movimentação
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
-    SpriteRenderer *renderer = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
+    //SpriteRenderer *renderer = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
     if (animator)
     {
         animator->Update(dt);

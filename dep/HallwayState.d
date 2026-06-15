@@ -117,25 +117,25 @@ dep/HallwayState.d bin/HallwayState.o: src/HallwayState.cpp \
  src/../include/Rect_Vec2.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/cmath \
  C:/TDM-GCC-32/include/math.h src/../include/Music.h \
- src/../include/SDL_include.h C:/SDL2-2.32.0/include/SDL2/SDL.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_main.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_stdinc.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_config.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_platform.h \
- C:/SDL2-2.32.0/include/SDL2/begin_code.h \
- C:/SDL2-2.32.0/include/SDL2/close_code.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_config_windows.h \
+ src/../include/SDL_include.h C:\SDL2-2.32.0\include\SDL2\SDL.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_main.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_stdinc.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_config.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_platform.h \
+ C:\SDL2-2.32.0\include\SDL2\begin_code.h \
+ C:\SDL2-2.32.0\include\SDL2\close_code.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_config_windows.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/stdlib.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_assert.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_atomic.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_audio.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_error.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_endian.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_mutex.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_thread.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_rwops.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_clipboard.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_cpuinfo.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_assert.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_atomic.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_audio.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_error.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_endian.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_mutex.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_thread.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_rwops.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_clipboard.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_cpuinfo.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/immintrin.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/mmintrin.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/xmmintrin.h \
@@ -204,40 +204,40 @@ dep/HallwayState.d bin/HallwayState.o: src/HallwayState.cpp \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/clflushoptintrin.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/wbnoinvdintrin.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/pkuintrin.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_events.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_video.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_pixels.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_rect.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_surface.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_blendmode.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_keyboard.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_keycode.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_scancode.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_mouse.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_joystick.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_guid.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_gamecontroller.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_sensor.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_quit.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_gesture.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_touch.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_filesystem.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_haptic.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_hidapi.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_hints.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_loadso.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_log.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_messagebox.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_metal.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_power.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_render.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_shape.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_system.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_timer.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_version.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_locale.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_misc.h \
- C:/SDL2-2.32.0/include/SDL2/SDL_mixer.h src/../include/EndState.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_events.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_video.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_pixels.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_rect.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_surface.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_blendmode.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_keyboard.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_keycode.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_scancode.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_mouse.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_joystick.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_guid.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_gamecontroller.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_sensor.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_quit.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_gesture.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_touch.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_filesystem.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_haptic.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_hidapi.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_hints.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_loadso.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_log.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_messagebox.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_metal.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_power.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_render.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_shape.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_system.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_timer.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_version.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_locale.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_misc.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL_mixer.h src/../include/EndState.h \
  src/../include/GameData.h src/../include/InputManager.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/unordered_map \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/hashtable.h \
@@ -245,8 +245,8 @@ dep/HallwayState.d bin/HallwayState.o: src/HallwayState.cpp \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/limits \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/unordered_map.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/erase_if.h \
- src/../include/Game.h C:/SDL2-2.32.0/include/SDL2/SDL_image.h \
- C:/SDL2-2.32.0/include/SDL2/SDL.h C:/SDL2-2.32.0/include/SDL2/SDL_ttf.h \
+ src/../include/Game.h C:\SDL2-2.32.0\include\SDL2\SDL_image.h \
+ C:\SDL2-2.32.0\include\SDL2\SDL.h C:\SDL2-2.32.0\include\SDL2\SDL_ttf.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/stack \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/deque \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/stl_deque.h \
@@ -429,25 +429,25 @@ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/cmath:
 C:/TDM-GCC-32/include/math.h:
 src/../include/Music.h:
 src/../include/SDL_include.h:
-C:/SDL2-2.32.0/include/SDL2/SDL.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_main.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_stdinc.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_config.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_platform.h:
-C:/SDL2-2.32.0/include/SDL2/begin_code.h:
-C:/SDL2-2.32.0/include/SDL2/close_code.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_config_windows.h:
+C:\SDL2-2.32.0\include\SDL2\SDL.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_main.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_stdinc.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_config.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_platform.h:
+C:\SDL2-2.32.0\include\SDL2\begin_code.h:
+C:\SDL2-2.32.0\include\SDL2\close_code.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_config_windows.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/stdlib.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_assert.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_atomic.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_audio.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_error.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_endian.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_mutex.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_thread.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_rwops.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_clipboard.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_cpuinfo.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_assert.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_atomic.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_audio.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_error.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_endian.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_mutex.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_thread.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_rwops.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_clipboard.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_cpuinfo.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/immintrin.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/mmintrin.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/xmmintrin.h:
@@ -516,40 +516,40 @@ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/clwbintrin.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/clflushoptintrin.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/wbnoinvdintrin.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/pkuintrin.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_events.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_video.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_pixels.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_rect.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_surface.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_blendmode.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_keyboard.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_keycode.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_scancode.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_mouse.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_joystick.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_guid.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_gamecontroller.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_sensor.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_quit.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_gesture.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_touch.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_filesystem.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_haptic.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_hidapi.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_hints.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_loadso.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_log.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_messagebox.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_metal.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_power.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_render.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_shape.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_system.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_timer.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_version.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_locale.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_misc.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_mixer.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_events.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_video.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_pixels.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_rect.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_surface.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_blendmode.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_keyboard.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_keycode.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_scancode.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_mouse.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_joystick.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_guid.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_gamecontroller.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_sensor.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_quit.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_gesture.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_touch.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_filesystem.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_haptic.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_hidapi.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_hints.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_loadso.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_log.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_messagebox.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_metal.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_power.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_render.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_shape.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_system.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_timer.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_version.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_locale.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_misc.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_mixer.h:
 src/../include/EndState.h:
 src/../include/GameData.h:
 src/../include/InputManager.h:
@@ -560,9 +560,9 @@ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/limits:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/unordered_map.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/erase_if.h:
 src/../include/Game.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_image.h:
-C:/SDL2-2.32.0/include/SDL2/SDL.h:
-C:/SDL2-2.32.0/include/SDL2/SDL_ttf.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_image.h:
+C:\SDL2-2.32.0\include\SDL2\SDL.h:
+C:\SDL2-2.32.0\include\SDL2\SDL_ttf.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/stack:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/deque:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/stl_deque.h:

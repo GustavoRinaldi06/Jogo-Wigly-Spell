@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "SpriteRenderer.h"
 #include "Animator.h"
-#include "State.h" 
+#include "State.h"
 #include "Camera.h"
 #include "Collider.h"
 #include "Game.h"
@@ -20,7 +20,8 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     : Component(associated), linearSpeed(250), hp(100)
 {
     associated.layer = 5.0;
-    if (player == nullptr){
+    if (player == nullptr)
+    {
         player = this;
     }
 
@@ -28,12 +29,12 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     renderer->SetCameraFollower(false);
     associated.AddComponent(renderer);
 
-    speed = Vec2(0,0);
+    speed = Vec2(0, 0);
 
     // Novos sons
-    //hitSound = Sound();
-    //deathSound = Sound();
-    //fallSound = Sound();
+    // hitSound = Sound();
+    // deathSound = Sound();
+    // fallSound = Sound();
     walkSound = Sound("recursos/audio/AndandoGrama.mp3");
     spellSound = Sound("recursos/audio/Spell.mp3");
     spell_red_Sound = Sound("recursos/audio/Spell2.mp3");
@@ -47,8 +48,8 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     auto animator = new Animator(associated);
     animator->AddAnimation("idle", Animation(22, 25, 0.5f));
     animator->AddAnimation("walking_X", Animation(26, 29, 0.2f));
-    animator->AddAnimation("dashstart", Animation(0, 2+1, 0.15f));
-    animator->AddAnimation("dashend", Animation(4, 5+1, 0.15f));     //+1 serve para detecção quando a animação deveria trocar
+    animator->AddAnimation("dashstart", Animation(0, 2 + 1, 0.15f));
+    animator->AddAnimation("dashend", Animation(4, 5 + 1, 0.15f)); //+1 serve para detecção quando a animação deveria trocar
     animator->AddAnimation("dashing", Animation(3, 3, 10.0f));
     animator->AddAnimation("jumping", Animation(16, 17, 0.25f));
     animator->AddAnimation("idleair", Animation(18, 19, 0.25f));
@@ -57,36 +58,34 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     animator->AddAnimation("dead", Animation(6, 15, 0.2f));
     associated.AddComponent(animator);
 
-    Collider *col = new Collider(associated); 
+    Collider *col = new Collider(associated);
 
-
-    col->SetScale(Vec2(0.65,1.0));
-    //col->SetOffset(Vec2(associated.box.w*(1-0.65)/2,0));
+    col->SetScale(Vec2(0.65, 1.0));
+    // col->SetOffset(Vec2(associated.box.w*(1-0.65)/2,0));
 
     associated.AddComponent(col);
     spellTimer.Set(0.8);
     spellMixTimer.Set(5.0);
- 
+
     wasInverted = GameData::inverted; // Faz track da direção da gravidade
     Inversion = false;
 
-    //colorInventory.push_back(RED);
-    //colorInventory.push_back(BLUE);
+    // colorInventory.push_back(RED);
+    // colorInventory.push_back(BLUE);
     invTimer.Set(100);
     purpleTimer.Set(100);
 
     GameObject *bubbleGO = new GameObject();
-    bubbleGO->AddComponent(new Bubble(*bubbleGO,"recursos/img/bubble.png"));
+    bubbleGO->AddComponent(new Bubble(*bubbleGO, "recursos/img/bubble.png"));
     Game::GetInstance().GetCurrentState().AddObject(bubbleGO);
     bubble = bubbleGO;
 
     SpriteRenderer *bubrenderer = (SpriteRenderer *)bubble->GetComponent("SpriteRenderer");
-    bubrenderer->SetFrame(0,SDL_FLIP_NONE);
+    bubrenderer->SetFrame(0, SDL_FLIP_NONE);
     deathAnimTriggered = false;
     deathTimer.Restart();
     initTimer.Restart();
     hp = 100;
-
 }
 
 Character::~Character()
@@ -96,15 +95,16 @@ Character::~Character()
 }
 
 void Character::Start()
-{}
-
+{
+}
 
 void Character::Update(float dt)
 {
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
 
     initTimer.Update(dt);
-    if (initTimer.Get() < 1.0) {
+    if (initTimer.Get() < 1.0)
+    {
         return;
     }
 
@@ -125,7 +125,7 @@ void Character::Update(float dt)
                 animator->SetAnimation("dead");
 
             // solta a câmera se é player
-            if(this == Character::player)
+            if (this == Character::player)
                 Camera::GetInstance().Unfollow();
 
             deathTimer.Restart();
@@ -135,11 +135,11 @@ void Character::Update(float dt)
         deathTimer.Update(dt);
 
         // só deleta após 6s
-        if (deathTimer.Get() > 6.0f || animator->GetCurrentFrame() == 15) {
+        if (deathTimer.Get() > 6.0f || animator->GetCurrentFrame() == 15)
+        {
             bubble->RequestDelete();
             associated.RequestDelete();
         }
-
 
         return; // não executa mais lógica de movimento
     }
@@ -149,85 +149,103 @@ void Character::Update(float dt)
     invTimer.Update(dt);
     purpleTimer.Update(dt);
     shieldTimer.Update(dt);
-    if (damageCooldown.Get() < 2.0) {
-        if ((int)((damageCooldown.Get() * 10)) % 4 == 0) {
+    if (damageCooldown.Get() < 2.0)
+    {
+        if ((int)((damageCooldown.Get() * 10)) % 4 == 0)
+        {
             transparent = !transparent;
         }
-        else {
+        else
+        {
             transparent = false;
         }
     }
-    if (shieldTimer.Get() > 10) {
+    if (shieldTimer.Get() > 10)
+    {
         shield = 0;
     }
     SpriteRenderer *rend = (SpriteRenderer *)associated.GetComponent("SpriteRenderer");
-    if (transparent) {
+    if (transparent)
+    {
         rend->SetTransparency(128);
     }
-    else {
+    else
+    {
         rend->SetTransparency(255);
     }
     GameData::playerHP = hp; // Atualiza variavel global
 
     SpriteRenderer *bubrenderer = (SpriteRenderer *)bubble->GetComponent("SpriteRenderer");
-    if (invTimer.Get() < 9) {
-        bubrenderer->SetFrame(2,SDL_FLIP_NONE);
+    if (invTimer.Get() < 9)
+    {
+        bubrenderer->SetFrame(2, SDL_FLIP_NONE);
     }
-    else if (shield > 0) {
-        bubrenderer->SetFrame(1,SDL_FLIP_NONE);
+    else if (shield > 0)
+    {
+        bubrenderer->SetFrame(1, SDL_FLIP_NONE);
     }
-    else {
-        bubrenderer->SetFrame(0,SDL_FLIP_NONE);
+    else
+    {
+        bubrenderer->SetFrame(0, SDL_FLIP_NONE);
     }
-    
-    
-    
+
     // Pega input de pulo ---------------------------------------------------------------------
     InputManager &input = InputManager::GetInstance();
-    if (GameData::gameMode == 1){
-        
-        if (dashing) {
+    if (GameData::gameMode == 1)
+    {
+
+        if (dashing)
+        {
             dashTimer.Update(dt);
             float dtimer = dashTimer.Get();
-            if (dtimer < 0.15) {
-                if (!input.IsKeyDown(SDLK_LSHIFT)) {
-                    longdash = false;   // Se não segura por tempo suficiente, o dash é curto
+            if (dtimer < 0.15)
+            {
+                if (!input.IsKeyDown(SDLK_LSHIFT))
+                {
+                    longdash = false; // Se não segura por tempo suficiente, o dash é curto
                 }
             }
-            if (dtimer > 0.15 && !longdash || dtimer > 0.3 && longdash) {
+            if ((dtimer > 0.15 && !longdash) || (dtimer > 0.3 && longdash))
+            {
                 animator->SetAnimation("dashend");
                 dashing = false;
                 dashTimer.Restart();
                 speed.x = 0;
             }
-            else {
-                speed.x = facingDir *500.0f;
-                if (animator->GetCurrentFrame() == 3 && animator->GetAnimation() == "dashstart") {
+            else
+            {
+                speed.x = facingDir * 500.0f;
+                if (animator->GetCurrentFrame() == 3 && animator->GetAnimation() == "dashstart")
+                {
                     animator->SetAnimation("dashing");
                 }
             }
         }
         if (input.KeyPress(SDLK_LSHIFT) && !dashed)
         {
-            speed.x = facingDir * 500.0f;  // ajustar a força de pulo na grvidade invertida
+            speed.x = facingDir * 500.0f; // ajustar a força de pulo na grvidade invertida
             speed.y = 0;
             dashed = true; // se pulou
             dashing = true;
             animator->SetAnimation("dashstart");
             dashTimer.Restart();
             longdash = true;
-        } 
-        if (jumping) {
+        }
+        if (jumping)
+        {
             jumpTimer.Update(dt);
             float jtimer = jumpTimer.Get();
-            if (jtimer < 0.15) {
-                if (!input.IsKeyDown(SDLK_SPACE)) {
-                    jumping = false;   // Se não segura por tempo suficiente, o salto é curto
+            if (jtimer < 0.15)
+            {
+                if (!input.IsKeyDown(SDLK_SPACE))
+                {
+                    jumping = false; // Se não segura por tempo suficiente, o salto é curto
                     jumpTimer.Restart();
                     speed.y *= 0.5;
                 }
             }
-            else {
+            else
+            {
 
                 jumping = false;
                 jumpTimer.Restart();
@@ -238,11 +256,11 @@ void Character::Update(float dt)
             if (GameData::inverted == false)
                 speed.y = -700.0f; // ajustar a força de pulo
             else if (GameData::inverted == true)
-                speed.y = 700.0f;  // ajustar a força de pulo na grvidade invertida
+                speed.y = 700.0f; // ajustar a força de pulo na grvidade invertida
 
             // Pulou
             isOnGround = false; // se está no chão
-            jumped = true; // se pulou
+            jumped = true;      // se pulou
             jumping = true;
             animator->SetAnimation("jumping");
         }
@@ -252,12 +270,11 @@ void Character::Update(float dt)
                 speed.y = -600.0f; // ajustar a força de pulo
             else if (GameData::inverted == true)
                 speed.y = 600.0f; // ajustar a força de pulo na grvidade invertida
-                
-            Djumped = true;      // se pulou duas vezes
+
+            Djumped = true; // se pulou duas vezes
             jumping = true;
             animator->SetAnimation("jumping");
         }
-
     }
 
     // Aplica a gravidade --------------------------------------------------------------------
@@ -268,19 +285,22 @@ void Character::Update(float dt)
             isOnGround = false;
             Inversion = true;
 
-            //Reseta os pulos para evitar que o player pule "no ar" logo após inverter
+            // Reseta os pulos para evitar que o player pule "no ar" logo após inverter
             jumped = false;
             Djumped = false;
-            if (!dashing) {
+            if (!dashing)
+            {
                 dashed = false;
             }
-            
+
             // Dá um empurrão na direção da nova gravidade para desgrudar o colisor do chão/teto
-            if (GameData::inverted == true){
+            if (GameData::inverted == true)
+            {
                 speed.y = -15.0f; // Empurra levemente pra cima
             }
-            else{
-                speed.y = 15.0f; // Empurra levemente pra baixo 
+            else
+            {
+                speed.y = 15.0f; // Empurra levemente pra baixo
             }
 
             // Atualiza a memória do estado
@@ -288,15 +308,14 @@ void Character::Update(float dt)
         }
 
         // Aplica a gravidade --------------------------------------------------------------------
-        if (!dashing){
+        if (!dashing)
+        {
             if (GameData::inverted == false)
                 speed.y += gravity * dt;
             else
                 speed.y -= gravity * dt; // gravidade invertida, puxa pro teto
         }
     }
-
-    
 
     // Realiza os movimentos e ações ---------------------------------------------------------
     spellTimer.Update(dt);
@@ -311,27 +330,25 @@ void Character::Update(float dt)
             Vec2 dir = (current.pos - associated.box.GetCenter()).Normalize();
             speed.x = dir.x * linearSpeed;
 
-            
-            if (GameData::gameMode == 0){
+            if (GameData::gameMode == 0)
+            {
                 speed.y = dir.y * linearSpeed;
             }
             taskQueue.pop();
-
-        }    
+        }
     }
     surfaceTimer.Update(dt);
-    if (surfaceTimer.Get() > 0.1) {
-        surfacespeed = Vec2(0,0);
+    if (surfaceTimer.Get() > 0.1)
+    {
+        surfacespeed = Vec2(0, 0);
     }
     Vec2 uspeed = GameData::universalspeed;
-    //initTimer.Update(dt);
-    //if (initTimer.Get() < 0.5) {
-    //    speed = Vec2(0,0);
-    //}
-    associated.box.x += (speed.x + surfacespeed.x + uspeed.x)* dt;
-    associated.box.y += (speed.y + surfacespeed.y + uspeed.y)* dt;
-    
-    
+    // initTimer.Update(dt);
+    // if (initTimer.Get() < 0.5) {
+    //     speed = Vec2(0,0);
+    // }
+    associated.box.x += (speed.x + surfacespeed.x + uspeed.x) * dt;
+    associated.box.y += (speed.y + surfacespeed.y + uspeed.y) * dt;
 
     // Atualiza animação de acordo com a movimentação
     SpriteRenderer *renderer = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
@@ -340,26 +357,33 @@ void Character::Update(float dt)
     {
         animator->Update(dt);
         //  Reseta animações
-        if (animator->GetAnimation() == "dashend" && animator->GetCurrentFrame() == 6) {
-            if (isOnGround) {
+        if (animator->GetAnimation() == "dashend" && animator->GetCurrentFrame() == 6)
+        {
+            if (isOnGround)
+            {
                 animator->SetAnimation("idle");
             }
-            else {
+            else
+            {
                 animator->SetAnimation("idleair");
             }
         }
-        else if (animator->GetAnimation() == "jumping") {
-            if (!jumping) {
-                if (GameData::inverted && speed.y < 50) {
+        else if (animator->GetAnimation() == "jumping")
+        {
+            if (!jumping)
+            {
+                if (GameData::inverted && speed.y < 50)
+                {
                     animator->SetAnimation("idleair");
                 }
-                else if (!GameData::inverted && speed.y > -50) {
+                else if (!GameData::inverted && speed.y > -50)
+                {
                     animator->SetAnimation("idleair");
                 }
             }
-            
         }
-        else if (!dashing) {
+        else if (!dashing)
+        {
             if (fabs(speed.x) > 1.0f && isOnGround && GameData::gameMode > 0)
                 animator->SetAnimation("walking_X");
             // GameMode menu
@@ -370,10 +394,12 @@ void Character::Update(float dt)
                 else
                     animator->SetAnimation("idlewall");
             }
-            else if (isOnGround) {
+            else if (isOnGround)
+            {
                 animator->SetAnimation("idle");
             }
-            else {
+            else
+            {
                 animator->SetAnimation("idleair");
             }
         }
@@ -386,7 +412,7 @@ void Character::Update(float dt)
         facingDir = 1;
 
     // Flip horizontal/vertical de acordo a direção ---------------------------------------------------------------
-    
+
     if (renderer && animator)
     {
         int frame = animator->GetCurrentFrame();
@@ -395,30 +421,34 @@ void Character::Update(float dt)
         SDL_RendererFlip flip = SDL_FLIP_NONE;
 
         // Se estiver virado para a esquerda, aplica o flip horizontal
-        if (facingDir == -1){
+        if (facingDir == -1)
+        {
             flip = (SDL_RendererFlip)(flip | SDL_FLIP_HORIZONTAL);
         }
 
         // Se a gravidade estiver invertida, adiciona o flip vertical ao estado atual (apenas no plataformer)
-        if (GameData::inverted && GameData::gameMode == 1){
+        if (GameData::inverted && GameData::gameMode == 1)
+        {
             flip = (SDL_RendererFlip)(flip | SDL_FLIP_VERTICAL);
         }
 
         // Aplica o resultado final (que pode ser nenhum, um, ou ambos os flips)
         renderer->SetFrame(frame, flip);
-
     }
     walkSoundCall(dt);
 
     speed.x = 0;
-    if(GameData::gameMode == 0){
+    if (GameData::gameMode == 0)
+    {
         speed.y = 0;
     }
     Vec2 campos = (Camera::GetInstance()).GetPosition();
-    if (associated.box.x < campos.x) {
+    if (associated.box.x < campos.x)
+    {
         associated.box.x = campos.x;
     }
-    if (associated.box.x + associated.box.w > campos.x + 1200) {
+    if (associated.box.x + associated.box.w > campos.x + 1200)
+    {
         associated.box.x = campos.x + 1200 - associated.box.w - 5;
     }
 }
@@ -442,7 +472,7 @@ void Character::NotifyCollision(GameObject &other)
 
     // Se colidir com chão
     Collider *collider = (Collider *)other.GetComponent("Collider");
-    Collider * col = (Collider *)associated.GetComponent("Collider");
+    Collider *col = (Collider *)associated.GetComponent("Collider");
     int dir = col->ColDir(collider);
     if (collider && collider->tag == "solid")
     {
@@ -450,72 +480,86 @@ void Character::NotifyCollision(GameObject &other)
         Floor *floor = (Floor *)other.GetComponent("Floor");
         surfacespeed = floor->speed;
         // Ajusta posição
-        if (dir == 0) {
+        if (dir == 0)
+        {
             associated.box.y = other.box.y - associated.box.h;
             speed.y = 0;
-            if (!GameData::inverted) {
+            if (!GameData::inverted)
+            {
                 isOnGround = true; // está tocando no chão
-                if (!dashing) {
+                if (!dashing)
+                {
                     dashed = false;
                 }
-                if(jumped || Inversion){ // pulou e precisa limpar lista de comandos realizados no ar
+                if (jumped || Inversion)
+                { // pulou e precisa limpar lista de comandos realizados no ar
                     jumped = false;
                     Djumped = false;
                     Inversion = false;
-                    
-                    for (int i = 0; i < (int)taskQueue.size(); i++){
+
+                    for (int i = 0; i < (int)taskQueue.size(); i++)
+                    {
                         taskQueue.pop();
                     }
                 }
             }
-            
         }
-        else if (dir == 1) {
+        else if (dir == 1)
+        {
             associated.box.y = other.box.y + other.box.h;
             speed.y = 0;
-            if (GameData::inverted) {
+            if (GameData::inverted)
+            {
                 isOnGround = true; // está tocando no chão
-                if (!dashing) {
+                if (!dashing)
+                {
                     dashed = false;
                 }
-                if (jumped || Inversion){ // pulou e precisa limpar lista de comandos realizados no ar
+                if (jumped || Inversion)
+                { // pulou e precisa limpar lista de comandos realizados no ar
                     jumped = false;
                     Djumped = false;
                     Inversion = false;
-                    for (int i = 0; i < (int)taskQueue.size(); i++){
+                    for (int i = 0; i < (int)taskQueue.size(); i++)
+                    {
                         taskQueue.pop();
                     }
                 }
             }
-            
-            
         }
-        else if (dir == 2) {
+        else if (dir == 2)
+        {
             associated.box.x = other.box.x - associated.box.w;
             speed.x = 0;
         }
-        else if (dir == 3) {
+        else if (dir == 3)
+        {
             associated.box.x = other.box.x + other.box.w;
             speed.x = 0;
         }
     }
-    else if (other.color > 0 && dashing) {
+    else if (other.color > 0 && dashing)
+    {
         CollectColor(static_cast<Character::Color>(other.color));
-        if (other.blockable >= 0) {
+        if (other.blockable >= 0)
+        {
             other.color = -1;
             other.damage = -1;
         }
-
     }
-    else if (other.damage >= 0 && damageCooldown.Get() > 2.0 && invTimer.Get() > 10) {
+    else if (other.damage >= 0 && damageCooldown.Get() > 2.0 && invTimer.Get() > 10)
+    {
         float dist = associated.box.y - other.box.y;
-        if (abs(dist) < other.box.h/2 + 0.8*(associated.box.h/2)) { // Diminuindo hitbox vertical contra dano
+        if (abs(dist) < other.box.h / 2 + 0.8 * (associated.box.h / 2))
+        { // Diminuindo hitbox vertical contra dano
             damageCooldown.Restart();
-            if (shield > 0) {
-                shield -=1;
+            if (shield > 0)
+            {
+                shield -= 1;
             }
-            else {
-                hp -= other.damage*20;
+            else
+            {
+                hp -= other.damage * 20;
             }
         }
     }
@@ -531,9 +575,11 @@ int Character::GetCool() const
     return static_cast<int>(spellMixTimer.Get());
 }
 
-void Character::walkSoundCall(float dt){
+void Character::walkSoundCall(float dt)
+{
     // Fazer as passadas do wigly e seu som ao andar  (Pataformer)
-    if (GameData::gameMode == 1){
+    if (GameData::gameMode == 1)
+    {
         if (fabs(speed.x) > 1.0f && isOnGround == true) // está andando
         {
             walkSoundTimer.Update(dt);
@@ -587,31 +633,34 @@ void Character::Shoot1(Vec2 targetPos)
 
         float angle = atan2(direction.y, direction.x);
         float speed = 350.0f;
-         int damage;
-         int bulcolor;
-        if (purpleTimer.Get() < 30.0) {
+        int damage;
+        int bulcolor;
+        if (purpleTimer.Get() < 30.0)
+        {
             damage = 15;
             bulcolor = 3;
         }
-        else {
+        else
+        {
             damage = 10;
             bulcolor = 0;
         }
-           
+
         float maxDistance = 1700.0f;
         bool targetsPlayer = false;
-        
+
         GameObject *spellGO = new GameObject();
         spellGO->box.x = shooterCenter.x;
         spellGO->box.y = shooterCenter.y - 20;
-        if (bulcolor == 3 ) {
-            spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/purpleshot.png",bulcolor));
+        if (bulcolor == 3)
+        {
+            spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/purpleshot.png", bulcolor));
         }
-        else {
-            spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/Bullet.png",bulcolor));
+        else
+        {
+            spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/Bullet.png", bulcolor));
+        }
 
-        }
-        
         Game::GetInstance().GetCurrentState().AddObject(spellGO);
         spellTimer.Restart();
     }
@@ -636,15 +685,17 @@ void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDista
     spell2GO->box.y = shooterCenter.y - 20; // Para ajustar a altura do tiro
 
     // Passa as variáveis  recebidas para o componente Bullet
-    spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, targetsPlayer, spritePath,color));
+    spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, targetsPlayer, spritePath, color));
     Game::GetInstance().GetCurrentState().AddObject(spell2GO);
 }
 
-bool Character::IsDashing() {
+bool Character::IsDashing()
+{
     return dashing;
 }
 
-Rect Character::PlayerBox() {
+Rect Character::PlayerBox()
+{
     return player->associated.box;
 }
 
@@ -686,7 +737,7 @@ void Character::UseSpell(Vec2 targetPos)
             spell_red_Sound.Play(1); // Som da magia vermelha
             damage = 50;
             speed = 400.0f;
-            spritePath = "recursos/img/redsmall.png"; 
+            spritePath = "recursos/img/redsmall.png";
             shouldShoot = true;
         }
         else if (unica == BLUE)
@@ -703,11 +754,11 @@ void Character::UseSpell(Vec2 targetPos)
     {
         Color c1 = colorInventory[0];
         Color c2 = colorInventory[1];
-        
+
         if (c1 == RED && c2 == RED)
         {
             spell_scarlet_Sound.Play(1);
-            damage = 150;             
+            damage = 150;
             speed = 450.0f;
             spritePath = "recursos/img/redbig.png";
             shouldShoot = true;
@@ -726,12 +777,12 @@ void Character::UseSpell(Vec2 targetPos)
             spell_purple_Sound.Play(1);
             colorInventory.clear();  // Apaga as cores
             spellMixTimer.Restart(); // Reseta o cooldown
-            purpleTimer.Restart(); 
+            purpleTimer.Restart();
             // damage = 100;
-            //speed = 350.0f;
-            //maxDistance = 1700.0f;
-            //spritePath = "recursos/img/purpleshot.png";
-            //shouldShoot = true;
+            // speed = 350.0f;
+            // maxDistance = 1700.0f;
+            // spritePath = "recursos/img/purpleshot.png";
+            // shouldShoot = true;
             col = 3;
         }
     }
@@ -739,12 +790,11 @@ void Character::UseSpell(Vec2 targetPos)
     // Se a combinação gerou um disparo válido, executa o tiro e limpa as cores
     if (shouldShoot)
     {
-        ShootMix(targetPos, speed, damage, maxDistance, spritePath,col);
+        ShootMix(targetPos, speed, damage, maxDistance, spritePath, col);
 
         colorInventory.clear();  // Apaga as cores
         spellMixTimer.Restart(); // Reseta o cooldown
     }
-    
 }
 
 std::vector<Character::Color> Character::GetColorInventory() const

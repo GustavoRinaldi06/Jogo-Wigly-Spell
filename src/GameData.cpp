@@ -20,3 +20,4 @@ bool GameData::Djump = true;
 bool GameData::spell = true;
 
 bool GameData::aimed = true;
+bool GameData::isMuted = false;

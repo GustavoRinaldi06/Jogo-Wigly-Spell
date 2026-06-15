@@ -31,6 +31,8 @@ public:
 
     // Colocar com mira ou sem mira
     static bool aimed;
+
+    static bool isMuted;
 };
 
 #endif // GAMEDATA_H

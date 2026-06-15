@@ -1,109 +1,66 @@
-COMPILER = g++
-RMDIR = rm -rdf
-RM = rm -f
+# Compilador
+CC = g++
 
-DEP_FLAGS = -M -MT $@ -MT $(BIN_PATH)/$(*F).o -MP -MF $@
-LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lm
+# Caminhos das bibliotecas SDL2
+SDL_PATH = C:/SDL2
+INCLUDE_PATH = $(SDL_PATH)/include
+LIB_PATH = $(SDL_PATH)/lib
 
-INC_PATHS = -I$(INC_PATH) $(addprefix -I,$(SDL_INC_PATH))
+# Flags do compilador
+CFLAGS = -Wall -g -Iinclude -I$(INCLUDE_PATH)
+LDFLAGS = -L$(LIB_PATH) -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
-FLAGS = -std=c++11 -Wall -pedantic -Wextra -Wno-unused-parameter -Werror=init-self
+# Diretórios do projeto
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
 
-DFLAGS = -ggdb -O0 -DDEBUG
+# Lista todos os arquivos .cpp dentro de src/
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 
-RFLAGS = -O3 -mtune=native
+# Cria os objetos baseados nos .cpp
+OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 
-INC_PATH = include
-SRC_PATH = src
-BIN_PATH = bin
-DEP_PATH = dep
+# Nome do executável final
+TARGET = $(BIN_DIR)/WiglySpell.exe
 
-CPP_FILES = $(wildcard $(SRC_PATH)/*.cpp)
-INC_FILES = $(wildcard $(SRC_PATH)/*.hpp)
-FILE_NAMES = $(sort $(notdir $(CPP_FILES:.cpp=)) $(notdir $(INC_FILES:.h=)))
-DEP_FILES = $(addprefix $(DEP_PATH)/,$(addsuffix .d,$(FILE_NAMES)))
-OBJ_FILES = $(addprefix $(BIN_PATH)/,$(notdir $(CPP_FILES:.cpp=.o)))
+# Detecta sistema operacional para ajustar comandos
+OS := $(shell uname -s 2>/dev/null || echo Windows)
 
-#EXEC = test
-EXEC = WiglySpell
-
-# SE FOR WINDOWS
-ifeq ($(OS),Windows_NT)
-RMDIR = rd /s /q
-RM = del /q
-
-SDL_PATHS = C:/SDL2-2.32.0
-
-SDL_INC_PATH += $(addsuffix /include/SDL2,$(SDL_PATHS))
-LINK_PATH = $(addprefix -L,$(addsuffix /lib,$(SDL_PATHS)))
-#FLAGS += -mwindows
-DFLAGS += -mconsole
-LIBS := -lmingw32 -lSDL2main $(LIBS)
-
-EXEC := $(EXEC).exe
-
+# Comandos para criar diretórios corretamente no Windows e Linux
+ifeq ($(OS), Windows)
+    MKDIR = if not exist $(1) mkdir $(1)
+    RM = rmdir /S /Q $(1) 2> NUL || exit 0
 else
-
-UNAME_S := $(shell uname -s)
-
-# SE FOR MAC
-ifeq ($(UNAME_S), Darwin)
-
-LIBS = -lm -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_ttf
-
-endif
+    MKDIR = mkdir -p $(1)
+    RM = rm -rf $(1)
 endif
 
-.PRECIOUS: $(DEP_FILES)
-.PHONY: release debug clean folders help
+# Compilar tudo
+all: folders $(TARGET)
 
-all: $(EXEC)
-
-$(EXEC): $(OBJ_FILES)
-	$(COMPILER) -o $@ $^ $(LINK_PATH) $(LIBS) $(FLAGS)
-
-$(BIN_PATH)/%.o: $(DEP_PATH)/%.d | folders
-	$(COMPILER) $(INC_PATHS) $(addprefix $(SRC_PATH)/,$(notdir $(<:.d=.cpp))) -c $(FLAGS) -o $@
-
-$(DEP_PATH)/%.d: $(SRC_PATH)/%.cpp | folders
-	$(COMPILER) $(INC_PATHS) $< $(DEP_FLAGS) $(FLAGS)
-
-clean:
-	$(RMDIR) $(DEP_PATH)
-	$(RMDIR) $(BIN_PATH)
-	$(RM) $(EXEC)
-
-release: FLAGS += $(RFLAGS)
-release: $(EXEC)
-
-debug: FLAGS += $(DFLAGS)
-debug: $(EXEC)
-
+# Criar diretórios, se não existirem
 folders:
-ifeq ($(OS), Windows_NT)
-	@if NOT exist $(DEP_PATH) (mkdir $(DEP_PATH))
-	@if NOT exist $(BIN_PATH) (mkdir $(BIN_PATH))
-	@if NOT exist $(INC_PATH) (mkdir $(INC_PATH))
-	@if NOT exist $(SRC_PATH) (mkdir $(SRC_PATH))
-else
-	@mkdir -p $(DEP_PATH) $(BIN_PATH) $(INC_PATH) $(SRC_PATH)
-endif
+	$(call MKDIR, $(OBJ_DIR))
+	$(call MKDIR, $(BIN_DIR))
 
-print-% : ; echo $* = $($*)
+# Compilar o executável
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS)
 
-help:
-ifeq ($(OS), Windows_NT)
-	echo.
-endif
-	@echo Available targets:
-	@echo - release: Builds the release version
-	@echo - debug: Builds the debug version
-	@echo - clean: Cleans generated files
-	@echo - folders: Generates project directories
-	@echo - help: Show help
-ifeq ($(OS), Windows_NT)
-	echo.
-endif
+# Compilar cada .cpp em .o
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
 
-.SECONDEXPANSION:
--include $$(DEP_FILES)
+# Limpar arquivos compilados
+clean:
+	$(call RM, $(OBJ_DIR))
+	$(call RM, $(BIN_DIR))
+
+# Executar o jogo
+run: all
+	./$(TARGET)
+
+# Modo debug (adiciona símbolos extras)
+debug: CFLAGS += -DDEBUG
+debug: all
