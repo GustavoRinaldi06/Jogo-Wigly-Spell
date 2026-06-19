@@ -9,6 +9,7 @@
 #include "../include/HomingProj.h"
 #include "../include/Missile.h"
 #include "../include/CorrGhost.h"
+#include "../include/DiscoGhost.h"
 #include "../include/Potion.h"
 #include "../include/Floor.h"
 #include "../include/Haze.h"
@@ -36,8 +37,8 @@ DiscoState::~DiscoState()
 
 void DiscoState::LoadAssets()
 {
-    std::cout << "\n Carregando fase 1 WiglySpell:" << "\n"; // Alertar LoadAssets
-    GameData::universalspeed = Vec2(-50,0); 
+    std::cout << "\n Carregando fase 3 WiglySpell:" << "\n"; // Alertar LoadAssets
+    GameData::universalspeed = Vec2(0,0); 
     // Fundo -------------------------------------------------------------------------------------------------------------------
     //GameObject *bgObject = new GameObject();
     //SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
@@ -61,11 +62,11 @@ void DiscoState::LoadAssets()
     AddObject(ceilGO);
 
     GameObject *bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,1)); // substitua pela imagem correta
-    AddObject(bgGO);
-    bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,2)); // substitua pela imagem correta
-    AddObject(bgGO);
+    //bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,1)); // substitua pela imagem correta
+    //AddObject(bgGO);
+    //bgGO = new GameObject();
+    //bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,2)); // substitua pela imagem correta
+    //AddObject(bgGO);
 
     bgGO = new GameObject();
     bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,3)); // substitua pela imagem correta
@@ -102,20 +103,12 @@ void DiscoState::LoadAssets()
     AddObject(missileGO);
     */
     float prevy = 0;
-    for (int i = 0; i < 8; i++) {
-        GameObject *hazeGO = new GameObject();
-        hazeGO->AddComponent(new Haze(*hazeGO, "recursos/img/purplehaze.png",SDL_FLIP_NONE,0)); // substitua pela imagem correta
-        hazeGO->box.x = 0;  // Centro do mapa
-        hazeGO->box.y = prevy; // Altura maior
-        AddObject(hazeGO);
-        prevy = hazeGO->box.y + hazeGO->box.h;
-    }
-    GameObject *corridorGO = new GameObject();
-    corridorGO->box.x = 850;  // Centro do mapa
-    corridorGO->box.y = 250; // Altura maior
+    GameObject *discoGO = new GameObject();
+    discoGO->box.x = 850;  // Centro do mapa
+    discoGO->box.y = 150; // Altura maior
 
-    corridorGO->AddComponent(new CorridorGhost(*corridorGO, "recursos/img/CorrGhost.png")); // substitua pela imagem correta
-    AddObject(corridorGO);
+    discoGO->AddComponent(new DiscoGhost(*discoGO, "recursos/img/discoGhost.png")); // substitua pela imagem correta
+    AddObject(discoGO);
 
 
     // Música --------------------------------------------------------------------------------------------------------------------

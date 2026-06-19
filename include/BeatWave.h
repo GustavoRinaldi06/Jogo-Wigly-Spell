@@ -13,7 +13,7 @@ class BeatWave : public Component
 {
 public:
 
-    BeatWave(GameObject &associated, const std::string &spritePath);
+    BeatWave(GameObject &associated, const std::string &spritePath, int side = 0);
     ~BeatWave();
 
     void Start() override;
@@ -45,6 +45,7 @@ private:
     int blockable = 5;
 
     float linearSpeed;
+    int side = 0;
     
     
 };

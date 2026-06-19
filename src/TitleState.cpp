@@ -1,4 +1,5 @@
 #include "TitleState.h"
+#include "DiscoState.h"
 #include "Game.h"
 #include "HallwayState.h"
 #include "InputManager.h"
@@ -103,7 +104,9 @@ void TitleState::Update(float dt)
         // Botão 2: Novo Jogo (Empilha HallwayState)
         if (IsButtonClicked(btnNewGame))
         {
-            Game::GetInstance().Push(new HallwayState());
+
+            // Game::GetInstance().Push(new HallwayState()); // Comentado por razoes de teste
+            Game::GetInstance().Push(new DiscoState());
             return;
         }
 

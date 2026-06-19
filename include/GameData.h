@@ -33,6 +33,7 @@ public:
     static bool aimed;
 
     static bool isMuted;
+    static bool summonalive[6];
 };
 
 #endif // GAMEDATA_H

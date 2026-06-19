@@ -13,7 +13,7 @@ class WavyNote : public Component
 {
 public:
 
-    WavyNote(GameObject &associated, const std::string &spritePath);
+    WavyNote(GameObject &associated, const std::string &spritePath, int color = 0);
     ~WavyNote();
 
     void Start() override;
@@ -27,7 +27,7 @@ public:
 
 private:
     // Valores de controle plataforma
-    Vec2 speed = Vec2(-50,0);
+    Vec2 speed = Vec2(-80,0);
     
 
     bool destroyed = false;

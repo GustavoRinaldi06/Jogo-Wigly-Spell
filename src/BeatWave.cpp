@@ -12,10 +12,10 @@
 
 #include <iostream>
 
-BeatWave::BeatWave(GameObject &associated, const std::string &spritePath)
+BeatWave::BeatWave(GameObject &associated, const std::string &spritePath, int argside)
     : Component(associated)
 {
-    associated.layer = 5.1;
+    associated.layer = 3.1;
     associated.blockable = -1;
     associated.damage = 1;
     auto renderer = new SpriteRenderer(associated, spritePath, 3, 1);
@@ -38,8 +38,16 @@ BeatWave::BeatWave(GameObject &associated, const std::string &spritePath)
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     lifespan.Restart();
-    speed.x = -150;
+    speed.x = -200;
     associated.damage = -1;
+    if (argside > 0) {
+        renderer->SetFrame(0,SDL_FLIP_VERTICAL);
+        associated.box.y = -10;
+    }
+    else {
+        renderer->SetFrame(0,SDL_FLIP_NONE);
+    }
+    side = argside;
 }
 
 BeatWave::~BeatWave()
@@ -112,11 +120,9 @@ void BeatWave::Update(float dt)
     }
     // Enquanto funcional --------------------------------------------------------------------------
     speed.y = 0;
-
-    Vec2 uspeed = GameData::universalspeed;
-    uspeed = Vec2(0,0);
-    associated.box.x += (speed.x + uspeed.x) * dt;
-    associated.box.y += (speed.y + uspeed.y)* dt;
+ 
+    associated.box.x += (speed.x) * dt;
+    associated.box.y += (speed.y)* dt;
     
     // Atualiza animação de acordo com a movimentação
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
@@ -125,6 +131,13 @@ void BeatWave::Update(float dt)
     {
         animator->Update(dt);
         animator->SetAnimation("flowing");         
+    }
+    SpriteRenderer *rend = (SpriteRenderer *)associated.GetComponent("SpriteRenderer");
+    if (side > 0) {
+        rend->SetFrame(animator->GetCurrentFrame(),SDL_FLIP_VERTICAL);
+    }
+    else {
+        rend->SetFrame(animator->GetCurrentFrame(),SDL_FLIP_NONE);
     }
 }
 

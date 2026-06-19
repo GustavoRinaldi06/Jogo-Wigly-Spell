@@ -1,0 +1,338 @@
+#include "DiscoGhost.h"
+#include "GameObject.h"
+#include "SpriteRenderer.h"
+#include "Animator.h"
+#include "State.h" 
+#include "Camera.h"
+#include "Collider.h"
+#include "Game.h"
+#include "GameData.h"
+#include "HallwayState.h"
+#include "Missile.h"
+#include "bounceBall.h"
+#include "WavyNote.h"
+#include "BeatWave.h"
+#include "DanceGhost.h"
+#include "Bullet.h"
+
+#include <iostream>
+
+DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
+    : Component(associated)
+{
+    associated.layer = 4.5;
+    associated.damage = 1;
+  
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 9);
+
+    associated.AddComponent(renderer);
+
+    renderer->SetScale(1.0,1.0);
+    
+
+    // Novos sons
+    //hitSound = Sound();
+    //deathSound = Sound();
+    //fallSound = Sound();
+
+    // Cria as animações
+
+    auto animator = new Animator(associated);
+    animator->AddAnimation("idle", Animation(0, 3, 0.15f));
+    animator->AddAnimation("prepgrav", Animation(11, 11, 2.0f));
+    animator->AddAnimation("downgrav", Animation(8, 11, 0.4f));
+    animator->AddAnimation("upgrav", Animation(4, 7, 0.4f));
+    animator->AddAnimation("recdowngrav", Animation(11, 11, 0.4f));
+    animator->AddAnimation("recupgrav", Animation(7, 7, 0.4f));
+    animator->AddAnimation("summon", Animation(12, 15, 0.4f));
+    animator->AddAnimation("smnrecover", Animation(14, 14, 0.25f));
+    animator->AddAnimation("disco", Animation(16, 19, 0.15f));
+    animator->AddAnimation("discorecover", Animation(19, 19, 0.15f));
+    animator->AddAnimation("death", Animation(20, 33, 0.1f));
+    associated.AddComponent(animator);
+    animator->SetAnimation("idle");
+
+    Collider *col = new Collider(associated,Vec2(Vec2(0.6,0.8)));
+    associated.AddComponent(col);
+    //associated.AddComponent(new Collider(associated,Vec2(1,1)));
+    deathTimer.Restart();
+    specialInvuln.Restart();
+    health = 800;
+    dead = false;
+    ATK = 0;    
+    SmnTimer.Set(9999); 
+
+}
+
+DiscoGhost::~DiscoGhost()
+{
+}
+
+void DiscoGhost::Start()
+{}
+
+
+void DiscoGhost::Update(float dt)
+{
+    GameData::bossHP = health;
+    if (health <= 0) {
+        dead = true;
+    }
+    // Ao morrer -------------------------------------------------------------------------------
+    if (dead)
+    { 
+        // dispara animação e som apenas uma vez
+
+        associated.damage = -1;
+        if (!deathAnimTriggered)
+        {
+            deathAnimTriggered = true;
+            //fallSound.Play(1);
+
+            // seta animação "popping"
+            Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+            if (animator)
+                animator->SetAnimation("death");
+            deathTimer.Restart();
+        }
+
+        // avança timer de morte
+        deathTimer.Update(dt);
+
+        // só deleta após 0.5s
+        if (deathTimer.Get() > 3.0f)
+            associated.RequestDelete();
+
+        return; // não executa mais lógica de movimento
+    }
+    
+    Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+    NoteTimer.Update(dt);
+    specialInvuln.Update(dt);
+    AnimTimer.Update(dt);
+    SmnTimer.Update(dt);
+    DiscoTimer.Update(dt);
+    if (NoteTimer.Get() > noteTime && health > 300) {
+        NoteTimer.Restart();
+        noteTime = 8 + rand() % 5;
+        int count = 1;
+        if (health < 900 ) {
+            int random = rand() % 6;
+            if (random >= 5) {
+                count += 0;
+            }
+            else if (random > 2) {
+                count += 0;
+            }
+        }
+        for (int i = 0; i < count; i++) {
+            int colorchk = (rand() % 100);
+            int color = 0;
+            if (colorchk < 25) {
+                color = 1;
+            }
+            else if (colorchk < 50) {
+                color = 2;
+            }
+            NoteATK(color);
+        }
+    }
+    if (ATK == 0) {
+        AtkTimer.Update(dt);
+        if (AtkTimer.Get() > atkTime) {
+            AtkTimer.Restart();
+            if (health > 900) {
+                atkTime = 2 + rand() % 2;
+            }
+            else {
+                atkTime = 1 + rand() % 2;
+            }
+            
+            swapcount -= 1;
+            
+            if (swapcount <= 0) {
+                swapcount = 2 + (rand() % 2);
+                ATK = 2;
+                animator->SetAnimation("prepgrav");
+                AnimTimer.Restart();
+                attacked = false;
+            }
+            else {
+                int choice = rand() % 100;
+                if (DiscoTimer.Get() > discoTime && choice < 50) {
+                    ATK = 4;
+                    animator->SetAnimation("disco");
+                    attacked = false;
+                }
+                else if (SmnTimer.Get() > smnTime && choice < 75 && choice >= 25) {
+                    ATK = 3;
+                    animator->SetAnimation("summon");
+                    attacked = false;
+                }
+                else {
+                    ATK = 1;
+                    animator->SetAnimation("summon");
+                    attacked = false;
+                }
+                
+            }
+        }
+    }
+    else if (ATK == 1) {
+
+        if (!attacked && animator->GetCurrentFrame() == 15) {
+            WaveATK(0);
+            WaveATK(1);
+            attacked = true;
+            animator->SetAnimation("smnrecover");
+            AnimTimer.Restart();
+        }
+        else if (attacked && AnimTimer.Get() > 0.25) {
+            ATK = 0;
+            animator->SetAnimation("idle");
+        }
+    }
+    else if (ATK == 2) {
+        if (attacked && AnimTimer.Get() > 1.0 ) {
+            ATK = 0;
+            AnimTimer.Restart();
+            animator->SetAnimation("idle");
+        }
+        else if (!attacked && AnimTimer.Get() > 1.5) {
+            if  (GameData::inverted) {
+                animator->SetAnimation("downgrav");
+                AnimTimer.Restart();
+            }
+            else {
+                animator->SetAnimation("upgrav");
+                AnimTimer.Restart();
+            }
+        }
+        
+        if (!attacked && !GameData::inverted && animator->GetCurrentFrame() == 7) { 
+            attacked = true;
+            GameData::inverted = true;
+            AnimTimer.Restart();
+            animator->SetAnimation("recupgrav");
+        }
+        if (!attacked && GameData::inverted && animator->GetCurrentFrame() == 11) {
+            attacked = true;
+            GameData::inverted = false;
+            AnimTimer.Restart();
+            animator->SetAnimation("recdowngrav");
+        }
+    }
+    else if (ATK == 3) {
+        if (!attacked && animator->GetCurrentFrame() == 15) {
+            int pos = rand() % 3;
+            int startpos = pos;
+            bool exit =  false;
+            while (GameData::summonalive[pos] || GameData::summonalive[5-pos]) {
+                pos= (pos + 1) %3;
+                if (pos == startpos) {
+                    exit = true;
+                    break;
+                }
+            }
+            if (!exit){
+                GameData::summonalive[pos] = true;
+                GameData::summonalive[5-pos] = true;
+                SmnATK(0,pos);
+                SmnATK(1,pos);
+                attacked = true;
+                animator->SetAnimation("smnrecover");
+                AnimTimer.Restart();
+            }
+            else {
+                ATK = 2;    // Transforma em mudança de gravidade
+            }
+        }
+        else if (attacked && AnimTimer.Get() > 0.25) {
+            ATK = 0;
+            animator->SetAnimation("idle");
+            SmnTimer.Restart();
+            smnTime = 15 + rand() % 30;
+        }
+    }
+    else if (ATK == 4) {
+        // Ataque do Disco, enquanto ATK for igual a 4, pula os outros ataques ativos
+        if (!attacked && animator->GetCurrentFrame() == 19) {
+            // Coloca numa animação fixa por um tempo e inicia o ataque 
+            attacked = true;
+            animator->SetAnimation("discorecover");
+            AnimTimer.Restart();
+        }
+        else if (attacked && AnimTimer.Get() > 0.25) {
+            // Após um certo tempo retorna para idle (pode usar condições diferentes para isso, esse é meu default)
+            ATK = 0;
+            animator->SetAnimation("idle");
+            DiscoTimer.Restart();
+            discoTime = 20 + rand() % 40;
+        }
+    }
+}
+
+void DiscoGhost::Render() {}
+
+bool DiscoGhost::Is(const std::string &type)
+{
+    return type == "DiscoGhost";
+}
+
+void DiscoGhost::NoteATK(int color) {
+    GameObject *noteGO = new GameObject();
+    noteGO->box.x = associated.box.x + associated.box.w;  
+    int notepos = (rand() % 8)*60; 
+    while (notepos == lastnote) {
+        notepos = (rand() % 8)*60; 
+    }
+    lastnote = notepos;
+    noteGO->box.y = notepos + 120;  // Centro do mapa
+
+    noteGO->AddComponent(new WavyNote(*noteGO, "recursos/img/homingProj.png",color)); // substitua pela imagem correta
+    Game::GetInstance().GetCurrentState().AddObject(noteGO);
+}
+
+void DiscoGhost::WaveATK(int side) {
+    GameObject *waveGO = new GameObject();
+    waveGO->box.x = associated.box.x + associated.box.w;  // Centro do mapa
+    waveGO->box.y = + 500;  // Centro do mapa 
+    waveGO->AddComponent(new BeatWave(*waveGO, "recursos/img/BeatWave.png",side)); // substitua pela imagem correta
+    Game::GetInstance().GetCurrentState().AddObject(waveGO);
+    
+}
+
+void DiscoGhost::SmnATK(int side,int pos) {
+    GameObject *ghostGO = new GameObject();
+    ghostGO->box.x = associated.box.x + associated.box.w;  // Centro do mapa
+    if (side == 0) {
+        ghostGO->box.y = pos*110 + 60;  // Centro do mapa
+    }
+    else {
+        ghostGO->box.y = 590 - pos*100;  // Centro do mapa
+    }
+    int position = pos;
+    if (side > 0) {
+        position = 5 - pos;
+    }
+    ghostGO->AddComponent(new DanceGhost(*ghostGO, "recursos/img/danceghost.png",position)); // substitua pela imagem correta
+    Game::GetInstance().GetCurrentState().AddObject(ghostGO);
+}
+
+void DiscoGhost::NotifyCollision(GameObject &other)
+{
+    Collider *collider = (Collider *)other.GetComponent("Collider");
+    if (collider && collider->tag == "bullet" && specialInvuln.Get() > 2.0)
+    {
+        
+        Bullet* bul = (Bullet *)other.GetComponent("Bullet");
+        health -= bul->damage;
+        if (bul->bulletcolor == 0 || bul->bulletcolor == 3) {
+            other.RequestDelete();
+        }
+        else {
+            specialInvuln.Restart();
+        }
+    }
+}
+

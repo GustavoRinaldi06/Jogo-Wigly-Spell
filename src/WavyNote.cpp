@@ -11,15 +11,15 @@
 
 #include <iostream>
 
-WavyNote::WavyNote(GameObject &associated, const std::string &spritePath)
+WavyNote::WavyNote(GameObject &associated, const std::string &spritePath, int color)
     : Component(associated)
 {
     associated.layer = 5.1;
     associated.blockable = 3;
     associated.damage = 1;
-    auto renderer = new SpriteRenderer(associated, spritePath, 2, 4);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 6);
     associated.AddComponent(renderer);
-    renderer->SetScale(1,1);
+    renderer->SetScale(2.5,2.5);
     
 
     // Novos sons
@@ -29,10 +29,10 @@ WavyNote::WavyNote(GameObject &associated, const std::string &spritePath)
 
     // Cria as animações
     auto animator = new Animator(associated);
-    animator->AddAnimation("floating", Animation(0, 1, 0.25f));
-    animator->AddAnimation("bouncing", Animation(2, 3, 0.2f));
-    animator->AddAnimation("above", Animation(4, 5, 0.75f));
-    animator->AddAnimation("popping", Animation(6, 7, 0.25f));
+    int base = 8 * color;
+    animator->AddAnimation("hoaming", Animation(base + 0,base + 1, 0.3f));
+    animator->AddAnimation("floating", Animation(base + 2,base + 3, 0.5f));
+    animator->AddAnimation("dissipating", Animation(base + 4, base + 5, 0.15f));
     associated.AddComponent(animator);
     animator->SetAnimation("floating");
 
@@ -42,6 +42,7 @@ WavyNote::WavyNote(GameObject &associated, const std::string &spritePath)
     lifespan.Restart();
     sinval = 0;
     speed.x = -50;
+    associated.color = color;
 }
 
 WavyNote::~WavyNote()
@@ -58,6 +59,10 @@ void WavyNote::Update(float dt)
     if (associated.box.y < -120 || associated.box.y > 1400 || associated.box.x < -120) {
          associated.RequestDelete();
     }
+
+    if (associated.color < 0) {
+        destroyed = true;
+    }
     
     if (destroyed)
     {
@@ -72,7 +77,7 @@ void WavyNote::Update(float dt)
             // seta animação "popping"
             Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
             if (animator)
-                animator->SetAnimation("popping");
+                animator->SetAnimation("dissipating");
             deathTimer.Restart();
         }
 
@@ -122,5 +127,18 @@ bool WavyNote::Is(const std::string &type)
 
 void WavyNote::NotifyCollision(GameObject &other)
 {
+    Collider *collider = (Collider *)other.GetComponent("Collider");
+    if (collider && collider->tag == "bullet") {
+        Bullet* bul = (Bullet *)other.GetComponent("Bullet");
+        if (bul->bulletcolor == 3 && bul->purpledurability > 0 && blockable > 0) {
+            int block = blockable;
+            blockable -= bul->purpledurability;
+            bul->purpledurability -= block;
+            if (blockable <= 0) {
+                destroyed = true; 
+            }
+            
+        }
+    }
 }
 

@@ -116,7 +116,9 @@ void ScenaryGenerator::Update(float dt)
             refx = reference->box.x;
             refw = reference->box.w;
         }
-        GenerateBatch(Vec2(refx+refw,basestart.y),pat);
+        if (abs(GameData::universalspeed.x) > 0) {
+            GenerateBatch(Vec2(refx+refw,basestart.y),pat);
+        }
     }
 }
 

@@ -21,3 +21,5 @@ bool GameData::spell = true;
 
 bool GameData::aimed = true;
 bool GameData::isMuted = false;
+
+bool GameData::summonalive[6] = {false,false,false,false,false,false};

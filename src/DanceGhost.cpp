@@ -15,7 +15,7 @@
 
 #include <iostream>
 
-DanceGhost::DanceGhost(GameObject &associated, const std::string &spritePath)
+DanceGhost::DanceGhost(GameObject &associated, const std::string &spritePath, int position)
     : Component(associated)
 {
     associated.layer = 4.7;
@@ -50,7 +50,7 @@ DanceGhost::DanceGhost(GameObject &associated, const std::string &spritePath)
     specialInvuln.Restart();
     health = 50;
     dead = false;
-
+    pos = position;
 }
 
 DanceGhost::~DanceGhost()
@@ -88,6 +88,10 @@ void DanceGhost::Update(float dt)
 
         // só deleta após 0.5s
         if (deathTimer.Get() > 0.55f)
+            if (pos > 0) {
+                GameData::summonalive[pos] = false;
+            }
+            
             associated.RequestDelete();
 
         return; // não executa mais lógica de movimento
@@ -142,7 +146,7 @@ bool DanceGhost::Is(const std::string &type)
 void DanceGhost::StarATK() {
     GameObject *starGO = new GameObject();
     starGO->box.x = associated.box.x ;  // Centro do mapa
-    starGO->box.y = associated.box.y + 3*associated.box.h/4; // Altura maior
+    starGO->box.y = associated.box.y + associated.box.h/2; // Altura maior
 
     starGO->AddComponent(new StarProj(*starGO, "recursos/img/starProj.png")); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(starGO);

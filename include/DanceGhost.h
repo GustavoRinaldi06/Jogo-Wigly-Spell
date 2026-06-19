@@ -9,7 +9,7 @@
 class DanceGhost : public Component
 {
 public:
-    DanceGhost(GameObject &associated,  const std::string &spritePath);
+    DanceGhost(GameObject &associated,  const std::string &spritePath, int pos = -1);
     ~DanceGhost();
     void Start() override;
     void Update(float dt) override;
@@ -33,6 +33,7 @@ public:
     Timer deathTimer;
     Timer specialInvuln;
     bool deathAnimTriggered{false};
+    int pos;
 };
 
 #endif
