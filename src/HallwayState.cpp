@@ -110,11 +110,13 @@ void HallwayState::LoadAssets()
         AddObject(hazeGO);
         prevy = hazeGO->box.y + hazeGO->box.h;
     }
+
     GameObject *corridorGO = new GameObject();
     corridorGO->box.x = 850; // Centro do mapa
     corridorGO->box.y = 250; // Altura maior
 
-    corridorGO->AddComponent(new CorridorGhost(*corridorGO, "recursos/img/CorrGhost.png")); // substitua pela imagem correta
+    bossComponent = new CorridorGhost(*corridorGO, "recursos/img/CorrGhost.png");
+    corridorGO->AddComponent(bossComponent);
     AddObject(corridorGO);
 
     // Música --------------------------------------------------------------------------------------------------------------------
@@ -304,7 +306,15 @@ void HallwayState::Update(float dt)
     }
     if (bosshpText)
     {
-        std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
+        std::string bhpString = "";
+
+        if (GameData::bossHP <= 0){
+            bhpString = "Boss HP: 0";
+        }
+        else{
+            bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
+        }
+            
         bosshpText->SetText(bhpString);
     }
 
@@ -328,10 +338,32 @@ void HallwayState::Update(float dt)
             spellText->SetText("");
     }
 
+    // Checagem de vitoria
+    if (!bossDefeated && (bossComponent == nullptr || bossComponent->health <= 0))
+    {
+        bossDefeated = true;
+        victoryTimer.Restart(); // Zera o cronômetro para começar a contar
+        GameData::playerVictory_1 = true;
+    }
+
+    // Se o Boss já foi derrotado
+    if (bossDefeated)
+    {
+        victoryTimer.Update(dt);
+
+        float delay = 3.0f; // Tempo em segundos (ex: 2 segundos de delay)
+        if (victoryTimer.Get() >= delay)
+        {
+            popRequested = true;
+            Game::GetInstance().Push(new DiscoState());
+            return; 
+        }
+    }
+
     // Checagem de fim Derrota
     if (Character::player == nullptr || Character::player->GetGameObject()->IsDead()) // Se o player tiver morrido
     {
-        GameData::playerVictory_1 = false;
+        GameData::playerVictory_2 = false;
         popRequested = true;
         Game::GetInstance().Push(new EndState());
         return;

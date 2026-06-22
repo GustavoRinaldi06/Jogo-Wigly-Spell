@@ -19,7 +19,6 @@ void EndState::LoadAssets()
         {
             bgRenderer->Open("recursos/img/Win.png");
             backgroundMusic.Open("recursos/audio/endStateWin.ogg");
-            GameData::complete1 = true;
         }
         else // Se o jogador morreu
         {
@@ -34,7 +33,6 @@ void EndState::LoadAssets()
         {
             bgRenderer->Open("recursos/img/Win.png");
             backgroundMusic.Open("recursos/audio/endStateWin.ogg");
-            GameData::complete2 = true;
         }
         else // Se o jogador morreu
         {
@@ -49,7 +47,6 @@ void EndState::LoadAssets()
         {
             bgRenderer->Open("recursos/img/Win.png");
             backgroundMusic.Open("recursos/audio/endStateWin.ogg");
-            GameData::complete3 = true;
         }
         else // Se o jogador morreu
         {

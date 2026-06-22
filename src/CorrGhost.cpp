@@ -51,7 +51,7 @@ CorridorGhost::CorridorGhost(GameObject &associated, const std::string &spritePa
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     specialInvuln.Restart();
-    health = 1000;
+    health = 100;
     dead = false;
 
 }

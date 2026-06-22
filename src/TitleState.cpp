@@ -103,8 +103,8 @@ void TitleState::Update(float dt)
         if (IsButtonClicked(btnNewGame))
         {
 
-            //Game::GetInstance().Push(new HallwayState()); // Comentado por razoes de teste
-            Game::GetInstance().Push(new DiscoState());
+            Game::GetInstance().Push(new HallwayState()); // Comentado por razoes de teste
+            //Game::GetInstance().Push(new DiscoState());
             return;
         }
 

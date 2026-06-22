@@ -1,3 +1,4 @@
+#pragma once
 #include "State.h"
 #include "Music.h"
 #include "EndState.h"

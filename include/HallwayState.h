@@ -1,6 +1,9 @@
 #include "State.h"
 #include "Music.h"
-#include "EndState.h"
+#include "DiscoState.h"
+#include "Timer.h"
+
+class CorridorGhost;
 
 class HallwayState : public State
 {
@@ -26,4 +29,8 @@ public:
 private:
 
     Music backgroundMusic;
+    CorridorGhost *bossComponent;
+
+    Timer victoryTimer;
+    bool bossDefeated = false;
 };
