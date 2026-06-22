@@ -343,10 +343,25 @@ void Character::Update(float dt)
         surfacespeed = Vec2(0, 0);
     }
     Vec2 uspeed = GameData::universalspeed;
+
     // initTimer.Update(dt);
     // if (initTimer.Get() < 0.5) {
     //     speed = Vec2(0,0);
     // }
+
+    if (GameData::gameMode == 0)
+    {
+        // Se o personagem estiver se movendo
+        if (speed.Magnitude() > 1.0f)
+        {
+            speed = speed.Normalize();
+
+            // Diminuir um pouco a velocidade na parede
+            float velocidadeParede = 120.0f;
+            speed = speed * velocidadeParede;
+        }
+    }
+
     associated.box.x += (speed.x + surfacespeed.x + uspeed.x) * dt;
     associated.box.y += (speed.y + surfacespeed.y + uspeed.y) * dt;
 
@@ -411,6 +426,31 @@ void Character::Update(float dt)
     else if (speed.x > 0.1f)
         facingDir = 1;
 
+    // Angulação da sprite na parede ---------------------------
+    if (GameData::gameMode == 0)
+    {
+        if (speed.Magnitude() > 1.0f)
+        {
+            if (fabs(speed.x) < 5.0f)
+            {
+                if (speed.y < 0)
+                    associated.angleDeg = 180.0f; // Apertando W
+                else if (speed.y > 0)
+                    associated.angleDeg = 0.0f; // Apertando S
+            }
+            else
+            {
+                // Movimento diagonal ou horizontal
+                float angleRad = atan2(speed.y, speed.x);
+                associated.angleDeg = (angleRad * (180.0f / M_PI)) - 90.0f;
+            }
+        }
+    }
+    else
+    {
+        associated.angleDeg = 0.0f;
+    }
+
     // Flip horizontal/vertical de acordo a direção ---------------------------------------------------------------
 
     if (renderer && animator)
@@ -420,8 +460,8 @@ void Character::Update(float dt)
         // Começamos sem nenhum flip
         SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-        // Se estiver virado para a esquerda, aplica o flip horizontal
-        if (facingDir == -1)
+        // PARTE ALTERADA: Se estiver virado para a esquerda, aplica o flip horizontal APENAS no Modo 1
+        if (GameData::gameMode == 1 && facingDir == -1)
         {
             flip = (SDL_RendererFlip)(flip | SDL_FLIP_HORIZONTAL);
         }
