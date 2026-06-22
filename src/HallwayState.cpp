@@ -17,7 +17,6 @@
 #include "../include/Collision.h"
 #include "../include/ScenaryGenerator.h"
 
-
 #include "Text.h"
 
 #define INCLUDE_SDL
@@ -35,7 +34,7 @@ HallwayState::~HallwayState()
 
 void HallwayState::LoadAssets()
 {
-    std::cout << "\n Carregando fase 1 WiglySpell:" << "\n"; // Alertar LoadAssets
+    std::cout << "\n Carregando fase 2 WiglySpell:" << "\n"; // Alertar LoadAssets
     GameData::universalspeed = Vec2(-50, 0);
     // Fundo -------------------------------------------------------------------------------------------------------------------
     // GameObject *bgObject = new GameObject();
@@ -308,13 +307,15 @@ void HallwayState::Update(float dt)
     {
         std::string bhpString = "";
 
-        if (GameData::bossHP <= 0){
+        if (GameData::bossHP <= 0)
+        {
             bhpString = "Boss HP: 0";
         }
-        else{
+        else
+        {
             bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
         }
-            
+
         bosshpText->SetText(bhpString);
     }
 
@@ -343,7 +344,7 @@ void HallwayState::Update(float dt)
     {
         bossDefeated = true;
         victoryTimer.Restart(); // Zera o cronômetro para começar a contar
-        GameData::playerVictory_1 = true;
+        GameData::playerVictory_2 = true;
     }
 
     // Se o Boss já foi derrotado
@@ -356,7 +357,7 @@ void HallwayState::Update(float dt)
         {
             popRequested = true;
             Game::GetInstance().Push(new DiscoState());
-            return; 
+            return;
         }
     }
 

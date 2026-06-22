@@ -330,7 +330,7 @@ void DiscoState::Update(float dt)
     // Checagem de fim Derrota
     if (Character::player == nullptr || Character::player->GetGameObject()->IsDead()) // Se o player tiver morrido
     {
-        GameData::playerVictory_1 = false;
+        GameData::playerVictory_3 = false;
         popRequested = true;
         Game::GetInstance().Push(new EndState());
         return;

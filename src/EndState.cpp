@@ -2,6 +2,8 @@
 #include "SpriteRenderer.h"
 #include "InputManager.h"
 #include "GameObject.h"
+#include <iostream>
+#include <fstream>
 
 EndState::EndState() {}
 
@@ -64,6 +66,36 @@ void EndState::LoadAssets()
     AddObject(bgObject);
 
     backgroundMusic.Play(); // musica de vitória ou derrota
+
+    // estrutura do autosave
+    std::cout << "Salvando o progresso...\n";
+    std::ofstream saveFile("save.txt"); // Cria ou sobrescreve o arquivo save.txt
+    if (saveFile.is_open())
+    {
+        if (GameData::playerVictory_3)
+        {
+            saveFile << "Fase_Atual=Jogo_Concluido\n";
+        }
+        else if (GameData::playerVictory_2)
+        {
+            saveFile << "Fase_Atual=Fase_3\n";
+        }
+        else if (GameData::playerVictory_1)
+        {
+            saveFile << "Fase_Atual=Fase_2\n";
+        }
+        else
+        {
+            saveFile << "Fase_Atual=Fase_1\n";
+        }
+
+        saveFile.close();
+        std::cout << "Progresso salvo com sucesso em save.txt!\n";
+    }
+    else
+    {
+        std::cerr << "Erro ao criar o arquivo de save!\n";
+    }
 }
 
 void EndState::Update(float dt)

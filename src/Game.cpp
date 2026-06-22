@@ -2,7 +2,9 @@
 #include "../include/Resources.h"
 #include "../include/InputManager.h"
 #include "../include/State.h"
+#include "../include/GameData.h"
 #include <iostream>
+#include <fstream>
 
 // Inicializa a variável estática 'instance' como nullptr
 Game *Game::instance = nullptr;
@@ -132,6 +134,36 @@ void Game::Run()
 
         SDL_RenderPresent(renderer);
         SDL_Delay(33); // ~30 FPS
+    }
+
+    // estrutura do autosave
+    std::cout << "Salvando o progresso...\n";
+    std::ofstream saveFile("save.txt"); // Cria ou sobrescreve o arquivo save.txt
+    if (saveFile.is_open())
+    {
+        if (GameData::playerVictory_3)
+        {
+            saveFile << "Fase_Atual=Jogo_Concluido\n";
+        }
+        else if (GameData::playerVictory_2)
+        {
+            saveFile << "Fase_Atual=Fase_3\n";
+        }
+        else if (GameData::playerVictory_1)
+        {
+            saveFile << "Fase_Atual=Fase_2\n";
+        }
+        else
+        {
+            saveFile << "Fase_Atual=Fase_1\n";
+        }
+
+        saveFile.close();
+        std::cout << "Progresso salvo com sucesso em save.txt!\n";
+    }
+    else
+    {
+        std::cerr << "Erro ao criar o arquivo de save!\n";
     }
 }
 

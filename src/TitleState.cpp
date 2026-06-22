@@ -7,6 +7,8 @@
 #include "GameObject.h"
 #include "GameData.h"
 
+#include <fstream> // Incluído para leitura do save.txt
+
 #define INCLUDE_SDL
 #include "SDL_include.h"
 
@@ -25,7 +27,6 @@ void TitleState::LoadAssets()
     AddObject(titleGO);
 
     // Configurações comuns de texto
-    //SDL_Color white = {255, 255, 255, 255};
     SDL_Color black = {0, 0, 0, 255};
     std::string fontPath = "recursos/font/neodgm.ttf";
     int fontSize = 24;
@@ -33,9 +34,29 @@ void TitleState::LoadAssets()
     int spacing = 60; // Espaçamento vertical entre os botões
     int posX = 480;   // Posição X dos botões
 
+    // Verificar se existe um save válido para definir a cor do botão Continuar ---------------------
+    std::string faseSalva = "";
+    std::ifstream saveFile("save.txt");
+    if (saveFile.is_open())
+    {
+        std::string linha;
+        if (std::getline(saveFile, linha))
+        {
+            size_t pos = linha.find('=');
+            if (pos != std::string::npos)
+            {
+                faseSalva = linha.substr(pos + 1);
+            }
+        }
+        saveFile.close();
+    }
+
+    // se não houver save ou o jogo já foi concluído, deixa o botão cinza
+    SDL_Color continueColor = (faseSalva.empty() || faseSalva == "Jogo_Concluido") ? SDL_Color{128, 128, 128, 100} : black;
+
     // Botão: Continuar Jogo -----------------------------------------------------------------------
     btnContinue = new GameObject();
-    Text *txtContinue = new Text(*btnContinue, fontPath, fontSize, BLENDED, "CONTINUAR JOGO", black);
+    Text *txtContinue = new Text(*btnContinue, fontPath, fontSize, BLENDED, "CONTINUAR JOGO", continueColor);
     btnContinue->AddComponent(txtContinue);
     txtContinue->SetCameraFollower(true);
     btnContinue->box.x = posX;
@@ -95,16 +116,47 @@ void TitleState::Update(float dt)
         // Botão 1: Continuar Jogo
         if (IsButtonClicked(btnContinue))
         {
-            // Lógica de buscar jogo salvo aqui
+            std::ifstream saveFile("save.txt");
+            std::string faseSalva = "";
+
+            if (saveFile.is_open())
+            {
+                std::string linha;
+                if (std::getline(saveFile, linha))
+                {
+                    size_t pos = linha.find('=');
+                    if (pos != std::string::npos)
+                        faseSalva = linha.substr(pos + 1);
+                }
+                saveFile.close();
+            }
+
+            // Apenas prossegue se houver um save válido e não finalizado
+            if (!faseSalva.empty() && faseSalva != "Jogo_Concluido")
+            {
+                if (faseSalva == "Fase_2")
+                {
+                    Game::GetInstance().Push(new HallwayState());
+                }
+                else if (faseSalva == "Fase_3")
+                {
+                    Game::GetInstance().Push(new DiscoState());
+                }
+                else
+                {
+                    Game::GetInstance().Push(new HallwayState()); // por enquanto não há a primeira fase
+                }
+                return;
+            }
+
+            // Clique ignorado caso não exista arquivo de save
             return;
         }
 
         // Botão 2: Novo Jogo (Empilha HallwayState)
         if (IsButtonClicked(btnNewGame))
         {
-
-            Game::GetInstance().Push(new HallwayState()); // Comentado por razoes de teste
-            //Game::GetInstance().Push(new DiscoState());
+            Game::GetInstance().Push(new HallwayState());
             return;
         }
 
