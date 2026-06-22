@@ -17,7 +17,7 @@
 #include "../include/Collider.h"
 #include "../include/Collision.h"
 #include "../include/ScenaryGenerator.h"
-
+#include "../include/Dancefloor.h"
 
 #include "Text.h"
 
@@ -72,6 +72,23 @@ void DiscoState::LoadAssets()
     bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,3)); // substitua pela imagem correta
     AddObject(bgGO);
 
+    // Pista de danca ---------------------------------------------------------------------------------------------------------
+    GameObject *danceFloorGO = new GameObject();
+
+    // centro da tela
+    danceFloorGO->box.x = 20.0f;
+    danceFloorGO->box.y = 100.0f; 
+    danceFloorGO->layer = 2;
+
+    float danceTileSize = 80.0f;
+    danceFloorGO->box.w = 9 * danceTileSize;
+    danceFloorGO->box.h = 4 * danceTileSize;
+
+    DanceFloor *danceFloor = new DanceFloor(*danceFloorGO, "recursos/img/Dancefloor.png", danceTileSize);
+    danceFloorGO->AddComponent(danceFloor);
+
+    AddObject(danceFloorGO);
+    
     // Personagem ----------------------------------------------------------------------------------------------------------------
     GameObject *playerGO = new GameObject();
     playerGO->box.x = 500;  // Centro do mapa
@@ -102,7 +119,7 @@ void DiscoState::LoadAssets()
     missileGO->AddComponent(new Missile(*missileGO, "recursos/img/homingProj.png")); // substitua pela imagem correta
     AddObject(missileGO);
     */
-    float prevy = 0;
+    //float prevy = 0;
     GameObject *discoGO = new GameObject();
     discoGO->box.x = 850;  // Centro do mapa
     discoGO->box.y = 150; // Altura maior

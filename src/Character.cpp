@@ -707,7 +707,7 @@ bool Character::CollectColor(Color newColor)
         return false;
     }
     colorInventory.push_back(newColor); // Adiciona a nova cor
-    std::cout << "Cor" << newColor << "coletada, Total no inventário: " << colorInventory.size() << std::endl;
+    std::cout << "Cor " << newColor << "coletada, Total no inventário: " << colorInventory.size() << std::endl;
     return true;
 }
 

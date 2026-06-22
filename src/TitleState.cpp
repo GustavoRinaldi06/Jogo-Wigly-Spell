@@ -95,9 +95,7 @@ void TitleState::Update(float dt)
         // Botão 1: Continuar Jogo
         if (IsButtonClicked(btnContinue))
         {
-            // Lógica de buscar jogo salvo aqui...
-            // Exemplo: GameData::LoadGame();
-            // Game::GetInstance().Push(new HallwayState());
+            // Lógica de buscar jogo salvo aqui
             return;
         }
 
@@ -105,7 +103,7 @@ void TitleState::Update(float dt)
         if (IsButtonClicked(btnNewGame))
         {
 
-            // Game::GetInstance().Push(new HallwayState()); // Comentado por razoes de teste
+            //Game::GetInstance().Push(new HallwayState()); // Comentado por razoes de teste
             Game::GetInstance().Push(new DiscoState());
             return;
         }
@@ -113,7 +111,7 @@ void TitleState::Update(float dt)
         // Botão 3: Silenciar Música
         if (IsButtonClicked(btnMute))
         {
-            GameData::isMuted = !GameData::isMuted; // Inverte o estado global
+            GameData::isMuted = !GameData::isMuted;
 
             if (GameData::isMuted)
             {
@@ -137,7 +135,7 @@ void TitleState::Update(float dt)
     }
 }
 
-// Função auxiliar para checar se o clique do mouse ocorreu dentro da caixa do botão
+// checar se o clique do mouse ocorreu dentro da caixa do botão
 bool TitleState::IsButtonClicked(GameObject *buttonGO)
 {
     if (!buttonGO)
@@ -147,7 +145,6 @@ bool TitleState::IsButtonClicked(GameObject *buttonGO)
     int mouseX = input.GetMouseX();
     int mouseY = input.GetMouseY();
 
-    // Checa colisão Ponto (Mouse) vs Retângulo (Box do GameObject)
     return (mouseX >= buttonGO->box.x && mouseX <= buttonGO->box.x + buttonGO->box.w &&
             mouseY >= buttonGO->box.y && mouseY <= buttonGO->box.y + buttonGO->box.h);
 }

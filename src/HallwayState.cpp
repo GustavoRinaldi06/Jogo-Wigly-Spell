@@ -33,56 +33,55 @@ HallwayState::~HallwayState()
     objectArray.clear(); // Limpa os GameObjects automaticamente graças ao unique_ptr
 }
 
-
 void HallwayState::LoadAssets()
 {
     std::cout << "\n Carregando fase 1 WiglySpell:" << "\n"; // Alertar LoadAssets
-    GameData::universalspeed = Vec2(-50,0); 
+    GameData::universalspeed = Vec2(-50, 0);
     // Fundo -------------------------------------------------------------------------------------------------------------------
-    //GameObject *bgObject = new GameObject();
-    //SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
-    //bgRenderer->Open("recursos/img/FundoTest.png");
-    //bgRenderer->SetCameraFollower(false);
+    // GameObject *bgObject = new GameObject();
+    // SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
+    // bgRenderer->Open("recursos/img/FundoTest.png");
+    // bgRenderer->SetCameraFollower(false);
 
-    //bgObject->box.x = 0;
-    //bgObject->box.y = 0;
+    // bgObject->box.x = 0;
+    // bgObject->box.y = 0;
 
-    //bgObject->AddComponent(bgRenderer);
-    //AddObject(bgObject);
+    // bgObject->AddComponent(bgRenderer);
+    // AddObject(bgObject);
 
     // Mapa --------------------------------------------------------------------------------------------------------------------
 
     GameObject *floorGO = new GameObject();
-    floorGO->AddComponent(new ScenaryGenerator(*floorGO, Vec2(0.0,0.0),Vec2(0,650),Vec2(-120,0),SDL_FLIP_NONE,0.0)); // substitua pela imagem correta
+    floorGO->AddComponent(new ScenaryGenerator(*floorGO, Vec2(0.0, 0.0), Vec2(0, 650), Vec2(-120, 0), SDL_FLIP_NONE, 0.0)); // substitua pela imagem correta
     AddObject(floorGO);
 
     GameObject *ceilGO = new GameObject();
-    ceilGO->AddComponent(new ScenaryGenerator(*ceilGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-120,0),SDL_FLIP_VERTICAL,0.0)); // substitua pela imagem correta
+    ceilGO->AddComponent(new ScenaryGenerator(*ceilGO, Vec2(0.0, 0.0), Vec2(0, 0), Vec2(-120, 0), SDL_FLIP_VERTICAL, 0.0)); // substitua pela imagem correta
     AddObject(ceilGO);
 
     GameObject *bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,1)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0, 0.0), Vec2(0, 0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 1)); // substitua pela imagem correta
     AddObject(bgGO);
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,2)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0, 0.0), Vec2(0, 0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 2)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,3)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0, 0.0), Vec2(0, 0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 3)); // substitua pela imagem correta
     AddObject(bgGO);
 
     // Personagem ----------------------------------------------------------------------------------------------------------------
     GameObject *playerGO = new GameObject();
-    playerGO->box.x = 500;  // Centro do mapa
+    playerGO->box.x = 500; // Centro do mapa
     playerGO->box.y = 300; // Altura maior
 
     playerGO->AddComponent(new Character(*playerGO, "recursos/img/wigly.png")); // substitua pela imagem correta
     playerGO->AddComponent(new PlayerController(*playerGO));
 
-    GameData::playerHP = 100; // Reseta vida do personagem
+    GameData::playerHP = 100;                      // Reseta vida do personagem
     Camera::GetInstance().SetPosition(Vec2(0, 0)); // Puxa a câmera de volta pro (0,0)
-    
-    //Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
+
+    // Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
 
     AddObject(playerGO);
     GameData::inverted = false;
@@ -102,28 +101,28 @@ void HallwayState::LoadAssets()
     AddObject(missileGO);
     */
     float prevy = 0;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++)
+    {
         GameObject *hazeGO = new GameObject();
-        hazeGO->AddComponent(new Haze(*hazeGO, "recursos/img/purplehaze.png",SDL_FLIP_NONE,0)); // substitua pela imagem correta
-        hazeGO->box.x = 0;  // Centro do mapa
-        hazeGO->box.y = prevy; // Altura maior
+        hazeGO->AddComponent(new Haze(*hazeGO, "recursos/img/purplehaze.png", SDL_FLIP_NONE, 0)); // substitua pela imagem correta
+        hazeGO->box.x = 0;                                                                        // Centro do mapa
+        hazeGO->box.y = prevy;                                                                    // Altura maior
         AddObject(hazeGO);
         prevy = hazeGO->box.y + hazeGO->box.h;
     }
     GameObject *corridorGO = new GameObject();
-    corridorGO->box.x = 850;  // Centro do mapa
+    corridorGO->box.x = 850; // Centro do mapa
     corridorGO->box.y = 250; // Altura maior
 
     corridorGO->AddComponent(new CorridorGhost(*corridorGO, "recursos/img/CorrGhost.png")); // substitua pela imagem correta
     AddObject(corridorGO);
 
-
     // Música --------------------------------------------------------------------------------------------------------------------
-        backgroundMusic.Open("recursos/audio/Fundo.mp3");
-        if (!GameData::isMuted)
-        {
-            backgroundMusic.Play();
-        }
+    backgroundMusic.Open("recursos/audio/Fundo.mp3");
+    if (!GameData::isMuted)
+    {
+        backgroundMusic.Play();
+    }
 
     // Texto da vida do personagem------------------------------------------------------------------------------------------------
 
@@ -157,9 +156,9 @@ void HallwayState::LoadAssets()
     AddObject(textGO1);
 
     */
-    
+
     GameObject *cauldGO1 = new GameObject();
-    cauldGO1->AddComponent(new Potion(*cauldGO1, "recursos/img/potions.png",0));
+    cauldGO1->AddComponent(new Potion(*cauldGO1, "recursos/img/potions.png", 0));
     cauldGO1->layer = 10;
 
     // Posição do texto
@@ -168,15 +167,14 @@ void HallwayState::LoadAssets()
 
     AddObject(cauldGO1);
 
-    GameObject *cauldGO2= new GameObject();
-    cauldGO2->AddComponent(new Potion(*cauldGO2, "recursos/img/potions.png",1));
+    GameObject *cauldGO2 = new GameObject();
+    cauldGO2->AddComponent(new Potion(*cauldGO2, "recursos/img/potions.png", 1));
     cauldGO2->layer = 10;
 
     // Posição do texto
     cauldGO2->box.x = 250;
     cauldGO2->box.y = 650;
     AddObject(cauldGO2);
-
 
     GameObject *textGO2 = new GameObject();
     std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
@@ -209,8 +207,8 @@ void HallwayState::Update(float dt)
     if (input.KeyPress(SDLK_m))
     {
         std::cout << "Troca de modos acionada!" << std::endl;
-        if (GameData::gameMode==0)
-            GameData::gameMode = 1; //trocca para plataforma
+        if (GameData::gameMode == 0)
+            GameData::gameMode = 1; // trocca para plataforma
         else
             GameData::gameMode = 0; // troca para menu
     }
@@ -244,11 +242,10 @@ void HallwayState::Update(float dt)
     for (auto &obj : objectArray)
     {
         Collider *collider = (Collider *)obj->GetComponent("Collider");
-        if (collider) {
+        if (collider)
+        {
             collider->Update(0); // forçando update
-
         }
-            
     }
 
     // Verifica colisões dos GameObjects
@@ -299,19 +296,23 @@ void HallwayState::Update(float dt)
         }
     }
 
-    //CAixa de texto de vida
-    if (hpText && Character::player != nullptr){
+    // CAixa de texto de vida
+    if (hpText && Character::player != nullptr)
+    {
         std::string hpString = "HP: " + std::to_string(Character::player->GetHP());
         hpText->SetText(hpString);
     }
-    if (bosshpText){
+    if (bosshpText)
+    {
         std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
         bosshpText->SetText(bhpString);
     }
 
-    //Caixa do cooldown do disparo
-    if (spellText && Character::player != nullptr){
-        if(GameData::spell == true){
+    // Caixa do cooldown do disparo
+    if (spellText && Character::player != nullptr)
+    {
+        if (GameData::spell == true)
+        {
             if (Character::player->GetCool() < 5)
             {
                 std::string spellCooldown = "Acumulando magia novamente... " + std::to_string(5 - Character::player->GetCool());
@@ -345,15 +346,13 @@ void HallwayState::Render()
     SDL_RenderClear(renderer);
 
     // Desenha todos os game objects
-    std::sort(objectArray.begin(), objectArray.end(),[](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b) {
-        return a->layer < b->layer;
-    });
+    std::sort(objectArray.begin(), objectArray.end(), [](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b)
+              { return a->layer < b->layer; });
     RenderArray();
 
     // Apresenta o frame
     SDL_RenderPresent(renderer);
 }
-
 
 void HallwayState::Start()
 {
@@ -367,10 +366,10 @@ void HallwayState::Start()
 
 void HallwayState::Pause()
 {
-   // Não sei ainda
+    // Não sei ainda
 }
 
 void HallwayState::Resume()
 {
-  // Não sei ainda
+    // Não sei ainda
 }
