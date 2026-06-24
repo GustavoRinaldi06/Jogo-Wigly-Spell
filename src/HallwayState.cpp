@@ -122,7 +122,7 @@ void HallwayState::LoadAssets()
     backgroundMusic.Open("recursos/audio/Fundo.mp3");
     if (!GameData::isMuted)
     {
-        backgroundMusic.Play();
+        backgroundMusic.Play(-1);
     }
 
     // Texto da vida do personagem------------------------------------------------------------------------------------------------

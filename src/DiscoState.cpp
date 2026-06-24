@@ -122,7 +122,8 @@ void DiscoState::LoadAssets()
 
 
     // Música --------------------------------------------------------------------------------------------------------------------
-
+    if (!GameData::isMuted)
+    {
     backgroundMusic.Open("recursos/audio/Fundo.mp3");
     backgroundMusic.Play(-1);
     currentTrack = "recursos/audio/Fundo.mp3";
@@ -136,6 +137,7 @@ void DiscoState::LoadAssets()
     for (const auto &musicaPath : playlist)
     {
         Resources::GetMusic(musicaPath);
+    }
     }
 
     // Texto da vida do personagem------------------------------------------------------------------------------------------------
@@ -394,27 +396,29 @@ DanceFloor* DiscoState::getDancefloor(){
 
 void DiscoState::DontStopTheMusic()
 {
-    // Para a música atual e toca o efeito sonoro de transição
-    Mix_HaltMusic();
-    vinilSwipe.Play(1);
+    if (!GameData::isMuted){
+        // Para a música atual e toca o efeito sonoro de transição
+        Mix_HaltMusic();
+        vinilSwipe.Play(1);
 
-    // Garante que há músicas na playlist
-    if (!playlist.empty())
-    {
-        // Sorteia um índice inicial
-        int randomIndex = rand() % playlist.size();
-        // Se a música sorteada for igual à atual
-        if (playlist[randomIndex] == currentTrack && playlist.size() > 1)
+        // Garante que há músicas na playlist
+        if (!playlist.empty())
         {
-            // Avança para o próximo índice de forma circular
-            randomIndex = (randomIndex + 1) % playlist.size();
+            // Sorteia um índice inicial
+            int randomIndex = rand() % playlist.size();
+            // Se a música sorteada for igual à atual
+            if (playlist[randomIndex] == currentTrack && playlist.size() > 1)
+            {
+                // Avança para o próximo índice de forma circular
+                randomIndex = (randomIndex + 1) % playlist.size();
+            }
+
+            // Atualiza a faixa atual 
+            currentTrack = playlist[randomIndex];
+
+            // Carrega a nova música e bota para rodar
+            backgroundMusic.Open(currentTrack);
+            backgroundMusic.Play(-1);
         }
-
-        // Atualiza a faixa atual 
-        currentTrack = playlist[randomIndex];
-
-        // Carrega a nova música e bota para rodar
-        backgroundMusic.Open(currentTrack);
-        backgroundMusic.Play(-1);
     }
 }

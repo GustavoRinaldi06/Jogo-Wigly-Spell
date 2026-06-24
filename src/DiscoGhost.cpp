@@ -407,7 +407,7 @@ void DiscoGhost::Update(float dt)
             }
 
             // Fim do tempo do Round Atual
-            if (roundActive && !feedbackActive && discoRoundTimer.Get() >= 5.0f)
+            if (roundActive && !feedbackActive && discoRoundTimer.Get() >= 2.5f)
             {
                 feedbackActive = true;
                 discoRoundTimer.Restart(); // Reinicia o timer para contar os 2 segundos de respiro
@@ -448,7 +448,7 @@ void DiscoGhost::Update(float dt)
             }
 
             // Tempo de respiro mostrando o resultado
-            if (feedbackActive && discoRoundTimer.Get() >= 2.0f)
+            if (feedbackActive && discoRoundTimer.Get() >= 1.5f)
             {
                 feedbackActive = false; // Desliga o feedback
                 roundActive = false;    // Desativa o round atual para disparar o sorteio do próximo
