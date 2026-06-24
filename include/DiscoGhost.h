@@ -6,6 +6,8 @@
 #include "Timer.h"
 #include "SpriteRenderer.h"
 
+class Text;
+
 class DiscoGhost : public Component
 {
 public:
@@ -42,6 +44,15 @@ public:
     bool deathAnimTriggered{false};
 
     bool fightbegan = true;
+
+private:
+    // Variáveis para o ataque 4
+    Timer discoRoundTimer;         // cronômetro para contar tempo de cada round
+    int discoCurrentRound = 0;     // round atual
+    int targetColor = -1;          // armazena a cor correta da rodada
+    bool roundActive = false;      // se o round atual está em andamento
+    Text *discoInfoText = nullptr; // TEXTO boss
+    bool feedbackActive = false;
 };
 
 #endif

@@ -2,6 +2,7 @@
 #include "State.h"
 #include "Music.h"
 #include "EndState.h"
+#include "DanceFloor.h"
 
 class DiscoState : public State
 {
@@ -22,9 +23,9 @@ public:
     Text *spellText = nullptr;
     Text *bosshpText = nullptr;
 
-
+    DanceFloor* getDancefloor();
 
 private:
-
+    DanceFloor *dancefloor = nullptr;
     Music backgroundMusic;
 };

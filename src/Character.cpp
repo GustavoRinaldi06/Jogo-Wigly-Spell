@@ -846,3 +846,13 @@ std::vector<Character::Color> Character::GetColorInventory() const
 {
     return colorInventory;
 }
+
+void Character::SetSpeedY(float speedY)
+{
+    speed.y = speedY;
+}
+
+void Character::ApplyDamage(int damage)
+{
+    hp -= damage;
+}

@@ -20,3 +20,5 @@ bool GameData::aimed = true;
 bool GameData::isMuted = false;
 
 bool GameData::summonalive[6] = {false,false,false,false,false,false};
+
+DanceFloor *GameData::danceFloorPtr = nullptr; //pista fase 3

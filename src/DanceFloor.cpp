@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "State.h"
 #include "SpriteRenderer.h"
+#include "GameData.h"
 #include <cstdlib>
 
 DanceFloor::DanceFloor(GameObject &associated, std::string spritePath, float tileSize)
@@ -10,6 +11,8 @@ DanceFloor::DanceFloor(GameObject &associated, std::string spritePath, float til
 {
     grid.resize(rows, std::vector<int>(cols, 0));
     tileObjects.resize(rows, std::vector<GameObject *>(cols, nullptr));
+
+    GameData::danceFloorPtr = this;
 }
 
 DanceFloor::~DanceFloor()
@@ -30,17 +33,15 @@ void DanceFloor::Update(float dt)
 {
     auto &state = Game::GetInstance().GetCurrentState();
 
-    // Cria as tiles
+    // Cria as tiles se não existirem
     if (!tilesCreated)
     {
         float spacing = 50.0f;
-
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < cols; c++)
             {
                 GameObject *tileGO = new GameObject();
-
                 tileGO->box.x = associated.box.x + (c * tileSize) + (c * spacing);
                 tileGO->box.y = associated.box.y + (r * tileSize) + (r * spacing);
                 tileGO->box.w = tileSize;
@@ -60,17 +61,8 @@ void DanceFloor::Update(float dt)
         return;
     }
 
-    // Ativa a pista caso mude a gravidade para parede
-    if (GameData::gameMode == 0)
-    {
-        if (grid[0][0] == 0)
-        {
-            ActivateDisco();
-        }
-    }
-
-    // Desliga a pista
-    else
+    // Se NÃO estiver no modo de dança, apaga a luz da pista
+    if (GameData::gameMode != 0)
     {
         for (int r = 0; r < rows; r++)
         {
@@ -81,6 +73,7 @@ void DanceFloor::Update(float dt)
         }
     }
 
+    // Aplica os frames dos Sprites baseados estritamente na matriz grid
     for (int r = 0; r < rows; r++)
     {
         for (int c = 0; c < cols; c++)
@@ -108,19 +101,36 @@ void DanceFloor::ActivateDisco()
     }
 }
 
+void DanceFloor::Error(){
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            grid[r][c] = 5;
+        }
+    }
+}
+
 void DanceFloor::Render() {}
 
-int DanceFloor::GetColorAtPosition(float x, float y) // Função para indicar a cor que o jogador está (erro/acerto do jogador)
+int DanceFloor::GetColorAtPosition(float x, float y)
 {
-    float spacing = 50.0f;
-    int c = (x - associated.box.x) / (tileSize + spacing);
-    int r = (y - associated.box.y) / (tileSize + spacing);
-
-    if (r >= 0 && r < rows && c >= 0 && c < cols) // indica a cor onde ele está
+    for (int r = 0; r < rows; r++)
     {
-        return grid[r][c];
+        for (int c = 0; c < cols; c++)
+        {
+            GameObject *tile = tileObjects[r][c];
+            if (tile != nullptr)
+            {
+                // Verifica se as coordenadas estão dentro desta tile
+                if (x >= tile->box.x && x <= (tile->box.x + tile->box.w) &&  y >= tile->box.y && y <= (tile->box.y + tile->box.h))
+                {
+                    return grid[r][c];
+                }
+            }
+        }
     }
-    return -1; // caso esteja nas margens da pista
+    return -1; // Caso ele esteja nos espaços vazios
 }
 
 bool DanceFloor::Is(const std::string &type)

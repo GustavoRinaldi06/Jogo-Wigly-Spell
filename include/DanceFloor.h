@@ -15,6 +15,7 @@ public:
     bool Is(const std::string &type) override;
 
     void ActivateDisco();
+    void Error();
     int GetColorAtPosition(float x, float y);
 
 private:

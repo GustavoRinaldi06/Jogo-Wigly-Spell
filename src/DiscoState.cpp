@@ -76,8 +76,8 @@ void DiscoState::LoadAssets()
     danceFloorGO->box.w = 9 * danceTileSize;
     danceFloorGO->box.h = 4 * danceTileSize;
 
-    DanceFloor *danceFloor = new DanceFloor(*danceFloorGO, "recursos/img/Dancefloor.png", danceTileSize);
-    danceFloorGO->AddComponent(danceFloor);
+    DanceFloor *dancefloor = new DanceFloor(*danceFloorGO, "recursos/img/Dancefloor.png", danceTileSize);
+    danceFloorGO->AddComponent(dancefloor);
 
     AddObject(danceFloorGO);
     
@@ -373,4 +373,8 @@ void DiscoState::Pause()
 void DiscoState::Resume()
 {
   // Não sei ainda
+}
+
+DanceFloor* DiscoState::getDancefloor(){
+    return dancefloor;
 }

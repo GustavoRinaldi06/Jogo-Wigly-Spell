@@ -2,6 +2,8 @@
 #define GAMEDATA_H
 #include "Rect_Vec2.h"
 
+class DanceFloor;
+
 class GameData
 {
 public:
@@ -31,6 +33,8 @@ public:
 
     static bool isMuted;
     static bool summonalive[6];
+
+    static DanceFloor *danceFloorPtr;
 };
 
 #endif // GAMEDATA_H

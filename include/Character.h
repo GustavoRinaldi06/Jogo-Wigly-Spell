@@ -69,6 +69,10 @@ public:
     void ShootMix(Vec2 targetPos, float speed, int damage, float maxDistance, std::string spritePath, int color = 0);
     std::vector<Color> GetColorInventory() const; // Colocar na interface
     bool IsDashing();
+
+    void SetSpeedY(float speedY);
+    void ApplyDamage(int damage);
+
 private:
     std::queue<Command> taskQueue;
 

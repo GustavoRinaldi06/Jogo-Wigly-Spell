@@ -156,7 +156,7 @@ void TitleState::Update(float dt)
         // Botão 2: Novo Jogo (Empilha HallwayState)
         if (IsButtonClicked(btnNewGame))
         {
-            Game::GetInstance().Push(new HallwayState());
+            Game::GetInstance().Push(new DiscoState());
             return;
         }
 
