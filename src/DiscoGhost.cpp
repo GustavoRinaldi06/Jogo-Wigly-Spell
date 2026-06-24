@@ -337,7 +337,12 @@ void DiscoGhost::Update(float dt)
                 discoInfoText->SetText("PREPARE-SE PARA DANCAR! DJ TOCA O SOM...");
             }
 
-            // Adicionar função dj
+            // função dj
+            DiscoState *currentState = dynamic_cast<DiscoState *>(&Game::GetInstance().GetCurrentState());
+            if (currentState != nullptr)
+            {
+                currentState->DontStopTheMusic();
+            }
 
             discoRoundTimer.Restart();
         }

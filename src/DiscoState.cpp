@@ -10,6 +10,7 @@
 #include "../include/Collision.h"
 #include "../include/ScenaryGenerator.h"
 #include "../include/Dancefloor.h"
+#include "../include/Resources.h"
 
 #include "Text.h"
 
@@ -123,7 +124,19 @@ void DiscoState::LoadAssets()
     // Música --------------------------------------------------------------------------------------------------------------------
 
     backgroundMusic.Open("recursos/audio/Fundo.mp3");
-    backgroundMusic.Play();
+    backgroundMusic.Play(-1);
+    currentTrack = "recursos/audio/Fundo.mp3";
+
+    vinilSwipe = Sound("recursos/audio/vinilswipe.mp3");
+    // Playlist DJ
+    playlist.push_back("recursos/audio/playlist/FP.mp3");
+    playlist.push_back("recursos/audio/playlist/IWS.mp3");
+    playlist.push_back("recursos/audio/playlist/BW.mp3");
+
+    for (const auto &musicaPath : playlist)
+    {
+        Resources::GetMusic(musicaPath);
+    }
 
     // Texto da vida do personagem------------------------------------------------------------------------------------------------
 
@@ -377,4 +390,31 @@ void DiscoState::Resume()
 
 DanceFloor* DiscoState::getDancefloor(){
     return dancefloor;
+}
+
+void DiscoState::DontStopTheMusic()
+{
+    // Para a música atual e toca o efeito sonoro de transição
+    Mix_HaltMusic();
+    vinilSwipe.Play(1);
+
+    // Garante que há músicas na playlist
+    if (!playlist.empty())
+    {
+        // Sorteia um índice inicial
+        int randomIndex = rand() % playlist.size();
+        // Se a música sorteada for igual à atual
+        if (playlist[randomIndex] == currentTrack && playlist.size() > 1)
+        {
+            // Avança para o próximo índice de forma circular
+            randomIndex = (randomIndex + 1) % playlist.size();
+        }
+
+        // Atualiza a faixa atual 
+        currentTrack = playlist[randomIndex];
+
+        // Carrega a nova música e bota para rodar
+        backgroundMusic.Open(currentTrack);
+        backgroundMusic.Play(-1);
+    }
 }

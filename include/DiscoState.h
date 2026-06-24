@@ -3,6 +3,9 @@
 #include "Music.h"
 #include "EndState.h"
 #include "DanceFloor.h"
+#include "Sound.h"
+#include <vector>
+#include <string>
 
 class DiscoState : public State
 {
@@ -24,8 +27,14 @@ public:
     Text *bosshpText = nullptr;
 
     DanceFloor* getDancefloor();
+    void DontStopTheMusic();
 
 private:
     DanceFloor *dancefloor = nullptr;
+
+    // DJ
     Music backgroundMusic;
+    Sound vinilSwipe;
+    std::vector<std::string> playlist;
+    std::string currentTrack;
 };
