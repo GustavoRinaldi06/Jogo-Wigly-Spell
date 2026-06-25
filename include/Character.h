@@ -109,7 +109,7 @@ private:
     bool deathAnimTriggered{false};
 
     // Walk config
-    Sound walkSound;
+    Sound walkSound, wallWalkSound;
     Timer walkSoundTimer; // Timer para controlar o som de andar
     void walkSoundCall(float dt);
 

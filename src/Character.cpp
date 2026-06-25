@@ -36,6 +36,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     // deathSound = Sound();
     // fallSound = Sound();
     walkSound = Sound("recursos/audio/AndandoGrama.mp3");
+    wallWalkSound = Sound("recursos/audio/wallWalk.mp3");
     spellSound = Sound("recursos/audio/Spell.mp3");
     spell_red_Sound = Sound("recursos/audio/Spell2.mp3");
     spell_scarlet_Sound = Sound("recursos/audio/Spell2.mp3");
@@ -357,7 +358,7 @@ void Character::Update(float dt)
             speed = speed.Normalize();
 
             // Diminuir um pouco a velocidade na parede
-            float velocidadeParede = 120.0f;
+            float velocidadeParede = 180.0f;
             speed = speed * velocidadeParede;
         }
     }
@@ -383,7 +384,7 @@ void Character::Update(float dt)
                 animator->SetAnimation("idleair");
             }
         }
-        else if (animator->GetAnimation() == "jumping")
+        else if (animator->GetAnimation() == "jumping" && GameData::gameMode == 1)
         {
             if (!jumping)
             {
@@ -399,23 +400,29 @@ void Character::Update(float dt)
         }
         else if (!dashing)
         {
-            if (fabs(speed.x) > 1.0f && isOnGround && GameData::gameMode > 0)
-                animator->SetAnimation("walking_X");
             // GameMode menu
-            else if (GameData::gameMode == 0)
+            if (GameData::gameMode == 0)
             { // Decide a direção que vai ficar verticalmente
-                if (speed.Magnitude() > 5.0)
+                isOnGround = true;
+                jumped = false;
+                Djumped = false;
+                if (speed.Magnitude() > 4.0)
                     animator->SetAnimation("walking_wall");
                 else
                     animator->SetAnimation("idlewall");
             }
-            else if (isOnGround)
-            {
-                animator->SetAnimation("idle");
-            }
-            else
-            {
-                animator->SetAnimation("idleair");
+            else{
+                if (fabs(speed.x) > 1.0f && isOnGround && GameData::gameMode > 0){
+                    animator->SetAnimation("walking_X");
+                }
+                else if (isOnGround)
+                {
+                    animator->SetAnimation("idle");
+                }
+                else
+                {
+                    animator->SetAnimation("idleair");
+                }
             }
         }
     }
@@ -639,13 +646,13 @@ void Character::walkSoundCall(float dt)
     // FAzer as passadas do wigly e seu som de andar (Menu)
     else if (GameData::gameMode == 0)
     {
-        if (fabs(speed.x) > 1.0f || fabs(speed.y) > 1.0f) // está andando
+        if (fabs(speed.x) > 0.5f || fabs(speed.y) > 0.5f) // está andando
         {
             walkSoundTimer.Update(dt);
 
             if (walkSoundTimer.Get() >= 0.3f) // intervalo entre passos
             {
-                walkSound.Play(1);
+                wallWalkSound.Play(1);
                 walkSoundTimer.Restart();
             }
         }

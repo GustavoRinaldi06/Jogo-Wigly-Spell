@@ -68,7 +68,7 @@ void DanceFloor::Update(float dt)
         {
             for (int c = 0; c < cols; c++)
             {
-                grid[r][c] = 0;
+                grid[r][c] = 5;
             }
         }
     }
@@ -96,7 +96,7 @@ void DanceFloor::ActivateDisco()
     {
         for (int c = 0; c < cols; c++)
         {
-            grid[r][c] = 1 + (rand() % 4);
+            grid[r][c] = 0 + (rand() % 4);
         }
     }
 }
@@ -106,7 +106,7 @@ void DanceFloor::Error(){
     {
         for (int c = 0; c < cols; c++)
         {
-            grid[r][c] = 5;
+            grid[r][c] = 4;
         }
     }
 }

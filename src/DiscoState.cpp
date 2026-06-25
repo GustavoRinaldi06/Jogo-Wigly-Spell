@@ -375,7 +375,7 @@ void DiscoState::Start()
     LoadAssets();
     StartArray(); // Agora a classe state é responsável
     started = true;
-    GameData::currentState = 1; // Essa sendo a primeira fase state será 1
+    GameData::currentState = 3; // Essa sendo a tercceira fase
     GameData::gameMode = 1;
     GameData::playerVictory_1 = false; // Reinicia a fase e apaga save de vitória anterior
 }

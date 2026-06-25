@@ -24,7 +24,7 @@ void EndState::LoadAssets()
         }
         else // Se o jogador morreu
         {
-            bgRenderer->Open("recursos/img/Fim.png");
+            bgRenderer->Open("recursos/img/GAME_OVER.jpg");
             backgroundMusic.Open("recursos/audio/teen_titans.mp3");
         }
     }
@@ -38,7 +38,7 @@ void EndState::LoadAssets()
         }
         else // Se o jogador morreu
         {
-            bgRenderer->Open("recursos/img/Fim.png");
+            bgRenderer->Open("recursos/img/GAME_OVER.jpg");
             backgroundMusic.Open("recursos/audio/teen_titans.mp3");
         }
     }
@@ -52,7 +52,7 @@ void EndState::LoadAssets()
         }
         else // Se o jogador morreu
         {
-            bgRenderer->Open("recursos/img/Fim.png");
+            bgRenderer->Open("recursos/img/GAME_OVER.jpg");
             backgroundMusic.Open("recursos/audio/teen_titans.mp3");
         }
     }

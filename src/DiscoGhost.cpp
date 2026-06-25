@@ -91,6 +91,7 @@ void DiscoGhost::Update(float dt)
     if (health <= 0)
     {
         dead = true;
+        health = 0;
     }
     // Ao morrer -------------------------------------------------------------------------------
     if (dead)
@@ -114,7 +115,7 @@ void DiscoGhost::Update(float dt)
         deathTimer.Update(dt);
 
         // só deleta após 0.5s
-        if (deathTimer.Get() > 3.0f)
+        if (deathTimer.Get() > 1.0f)
             associated.RequestDelete();
 
         return; // não executa mais lógica de movimento
@@ -387,16 +388,16 @@ void DiscoGhost::Update(float dt)
                 }
 
                 // Escolhe um valor de cor randômico entre 1 e 4
-                targetColor = 1 + (rand() % 4);
+                targetColor = 0 + (rand() % 4);
 
                 // Texto da cor para guiar o player
                 std::string corNome;
-                if (targetColor == 1)
+                if (targetColor == 0)
+                    corNome = "ROSA";
+                else if (targetColor == 1)
                     corNome = "AMARELO";
                 else if (targetColor == 2)
-                    corNome = "MAGENTA";
-                else if (targetColor == 3)
-                    corNome = "CIANO";
+                    corNome = "AZUL";
                 else
                     corNome = "VERDE";
 
@@ -538,16 +539,17 @@ void DiscoGhost::NotifyCollision(GameObject &other)
     Collider *collider = (Collider *)other.GetComponent("Collider");
     if (collider && collider->tag == "bullet" && specialInvuln.Get() > 2.0)
     {
-
-        Bullet *bul = (Bullet *)other.GetComponent("Bullet");
-        health -= bul->damage;
-        if (bul->bulletcolor == 0 || bul->bulletcolor == 3)
-        {
-            other.RequestDelete();
-        }
-        else
-        {
-            specialInvuln.Restart();
+        if (!dead){
+            Bullet *bul = (Bullet *)other.GetComponent("Bullet");
+            health -= bul->damage;
+            if (bul->bulletcolor == 0 || bul->bulletcolor == 3)
+            {
+                other.RequestDelete();
+            }
+            else
+            {
+                specialInvuln.Restart();
+            }
         }
     }
 }
