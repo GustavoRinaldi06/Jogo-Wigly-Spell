@@ -132,6 +132,9 @@ private:
     bool wasInverted;
     bool Inversion;
     GameObject *bubble;
+
+    // auxilio para troca de modos
+    int wasGameMode;
 };
 
 #endif

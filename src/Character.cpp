@@ -87,6 +87,8 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     deathTimer.Restart();
     initTimer.Restart();
     hp = 100;
+
+    wasGameMode = GameData::gameMode;
 }
 
 Character::~Character()
@@ -107,6 +109,12 @@ void Character::Update(float dt)
     if (initTimer.Get() < 1.0)
     {
         return;
+    }
+
+    if (GameData::gameMode != wasGameMode) // porteger ao trocar de modo
+    {
+        damageCooldown.Restart();      
+        wasGameMode = GameData::gameMode;
     }
 
     // Ao morrer -------------------------------------------------------------------------------
