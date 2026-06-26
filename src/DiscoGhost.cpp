@@ -77,7 +77,7 @@ void DiscoGhost::Start()
     SDL_Color white = {255, 255, 255, 255};
     GameObject *textGO = new GameObject();
     textGO->layer = 11;
-    textGO->box.x = 450;
+    textGO->box.x = 300;
     textGO->box.y = 40;
 
     // inicia com a string vazia
