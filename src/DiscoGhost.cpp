@@ -60,8 +60,11 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     specialInvuln.Restart();
     health = 800;
     dead = false;
-    ATK = 0;
+    ATK = -1;
     SmnTimer.Set(9999);
+
+    Error = Sound("recursos/audio/Erro.mp3");
+    Right_Place = Sound("recursos/audio/Right_Place.mp3");
 }
 
 DiscoGhost::~DiscoGhost()
@@ -157,6 +160,173 @@ void DiscoGhost::Update(float dt)
                 color = 2;
             }
             NoteATK(color);
+        }
+    }
+    else if (ATK == -1)
+    {
+        // Inicialização do Ataque de Disco (tutorial)
+        if (!attacked)
+        {
+            attacked = true;
+            discoCurrentRound = -2;
+            roundActive = false;
+
+            // Atualiza o texto
+            if (discoInfoText != nullptr)
+            {
+                discoInfoText->SetText("VAMOS VER SE VOCE SABE DANCAR! DJ TOCA O SOM...");
+            }
+
+            discoRoundTimer.Restart();
+        }
+        else
+        {
+            discoRoundTimer.Update(dt);
+
+            if (discoCurrentRound == -2){
+                float delayAntesDeMudarModo = 2.0f;
+
+                if (discoRoundTimer.Get() >= delayAntesDeMudarModo)
+                {
+                    // levanta o jogador
+                    Character::player->SetSpeedY(-900.0f);
+
+                    // função dj
+                    DiscoState *currentState = dynamic_cast<DiscoState *>(&Game::GetInstance().GetCurrentState());
+                    if (currentState != nullptr)
+                    {
+                        currentState->DontStopTheMusic();
+                    }
+
+                    discoCurrentRound = -1;
+                    discoRoundTimer.Restart();
+                }
+            }
+
+            if (discoCurrentRound == -1) // Adiciona tempo de "voo"
+            {
+                float delayAntesDeMudarModo = 0.4f;
+
+                if (discoRoundTimer.Get() >= delayAntesDeMudarModo)
+                {
+                    GameData::gameMode = 0;
+                    animator->SetAnimation("idle");
+
+                    discoCurrentRound = 0;
+                    discoRoundTimer.Restart();
+                }
+            }
+
+            // Tempo de respiro até inicio do primeiro round
+            if (discoCurrentRound == 0)
+            {
+                float delayNaParede = 1.0f;
+                if (discoRoundTimer.Get() >= delayNaParede)
+                {
+                    discoInfoText->SetText("ACERTE O PASSO DE DANCA E EU TE LIBERO!");
+                    if(discoRoundTimer.Get() >= 2.5f){
+                        discoCurrentRound = 1; // Começa o Round de verdade!
+                        roundActive = false;
+                    }
+                }
+            }
+
+            // Inicio de um novo round tutorial, escolhe a cor, sinaliza e espera
+            if (!roundActive && (discoCurrentRound <= 1 && discoCurrentRound > 0))
+            {
+                roundActive = true;
+                discoRoundTimer.Restart();
+
+                if (GameData::danceFloorPtr != nullptr)
+                {
+                    GameData::danceFloorPtr->ActivateDisco();
+                }
+
+                // Escolhe um valor de cor randômico entre 1 e 4
+                targetColor = 0 + (rand() % 4);
+
+                // Texto da cor para guiar o player
+                std::string corNome;
+                if (targetColor == 0)
+                    corNome = "ROSA";
+                else if (targetColor == 1)
+                    corNome = "AMARELO";
+                else if (targetColor == 2)
+                    corNome = "AZUL";
+                else
+                    corNome = "VERDE";
+
+                if (discoInfoText != nullptr)
+                {
+                    discoInfoText->SetText("MOSTRE QUE SABE DANCAR VA PARA A COR " + corNome + "!");
+                }
+            }
+
+            // Fim do tempo do Round Atual
+            if (roundActive && !feedbackActive && discoRoundTimer.Get() >= 2.5f)
+            {
+                feedbackActive = true;
+                discoRoundTimer.Restart(); // Reinicia o timer para contar os 2 segundos de respiro
+
+                if (Character::player != nullptr)
+                {
+                    if (GameData::danceFloorPtr != nullptr)
+                    {
+                        // posição X e Y do player
+                        float px = Character::player->GetGameObject()->box.GetCenter().x;
+                        float py = Character::player->GetGameObject()->box.GetCenter().y;
+
+                        int playerColor = GameData::danceFloorPtr->GetColorAtPosition(px, py);
+
+                        // Se o jogador não estiver na cor certa, aplica dano
+                        if (playerColor != targetColor)
+                        {
+                            GameData::danceFloorPtr->Error();   // Pista fica inteira vermelha
+
+                            if (discoInfoText != nullptr) // Texto boss
+                            {
+                                Error.Play();
+                                discoInfoText->SetText("ERROU! TENTE NOVAMENTE NO PROXIMA PASSO!");
+                            }
+                        }
+                        // Se o jogador estiver na cor certa
+                        else
+                        {
+                            if (discoInfoText != nullptr)
+                            {
+                                Right_Place.Play();
+                                discoInfoText->SetText("MUITO BEM! AGORA SEI QUE VOCE SABE DANCAR...");
+                                acertou = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Tempo de respiro mostrando o resultado
+            if (feedbackActive && discoRoundTimer.Get() >= 2.0f)
+            {
+                feedbackActive = false; // Desliga o feedback
+                roundActive = false;    // Desativa o round atual para disparar o sorteio do próximo
+                
+                if (acertou){
+                    // Retira o texto
+                    if (discoInfoText != nullptr)
+                    {
+                        discoInfoText->SetText("");
+                    }
+
+                    // Retorna as configurações padrões do jogo
+                    GameData::gameMode = 1;
+                    GameData::inverted = false;
+
+                    // Reseta estados do Boss
+                    ATK = 0;
+                    animator->SetAnimation("idle");
+                    DiscoTimer.Restart();
+                    discoTime = 20 + rand() % 40;
+                }
+            }
         }
     }
     /*
@@ -426,6 +596,7 @@ void DiscoGhost::Update(float dt)
                         // Se o jogador não estiver na cor certa, aplica dano
                         if (playerColor != targetColor)
                         {
+                            Error.Play();
                             Character::player->ApplyDamage(10); // Dá 10 de dano
                             GameData::danceFloorPtr->Error();   // Pista fica inteira vermelha
 
@@ -438,6 +609,7 @@ void DiscoGhost::Update(float dt)
                         // Se o jogador estiver na cor certa
                         else
                         {
+                            Right_Place.Play();
                             if (discoInfoText != nullptr)
                             {
                                 discoInfoText->SetText("MUITO BEM! VOCE E BOM DE DANCA!");

@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Rect_Vec2.h"
 #include "Timer.h"
+#include "Sound.h"
 #include "SpriteRenderer.h"
 
 class Text;
@@ -52,7 +53,9 @@ private:
     int targetColor = -1;          // armazena a cor correta da rodada
     bool roundActive = false;      // se o round atual está em andamento
     Text *discoInfoText = nullptr; // TEXTO boss
-    bool feedbackActive = false;
+    bool feedbackActive = false;   // Tempo de feedback
+    bool acertou = false;          // Acertou no tutorial
+    Sound Error, Right_Place;
 };
 
 #endif
