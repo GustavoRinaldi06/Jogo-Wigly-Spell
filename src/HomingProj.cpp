@@ -18,7 +18,7 @@ HomingProj::HomingProj(GameObject &associated, const std::string &spritePath)
     associated.blockable = 5;
     associated.damage = 1;
     
-    auto renderer = new SpriteRenderer(associated, spritePath, 2, 6);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 9);
     associated.AddComponent(renderer);
     renderer->SetScale(1.5,2);
 

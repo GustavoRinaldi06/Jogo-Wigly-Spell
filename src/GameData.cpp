@@ -16,6 +16,8 @@ bool GameData::playerVictory_3 = false; // Jogador ainda não ganhou
 bool GameData::Djump = true;
 bool GameData::spell = true;
 
+bool GameData::finalfase = false;
+
 bool GameData::aimed = true;
 bool GameData::isMuted = false;
 

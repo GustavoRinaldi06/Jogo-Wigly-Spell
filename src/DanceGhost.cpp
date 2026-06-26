@@ -21,11 +21,11 @@ DanceGhost::DanceGhost(GameObject &associated, const std::string &spritePath, in
     associated.layer = 4.7;
     associated.damage = 1;
   
-    auto renderer = new SpriteRenderer(associated, spritePath, 2, 6);
+    auto renderer = new SpriteRenderer(associated, spritePath, 8, 8);
 
     associated.AddComponent(renderer);
 
-    renderer->SetScale(1.5,1.5);
+    renderer->SetScale(1,1);
     
 
     // Novos sons
@@ -36,10 +36,10 @@ DanceGhost::DanceGhost(GameObject &associated, const std::string &spritePath, in
     // Cria as animações
 
     auto animator = new Animator(associated);
-    animator->AddAnimation("rush", Animation(0, 1, 0.15f));
-    animator->AddAnimation("idle", Animation(2, 3, 0.4f));
-    animator->AddAnimation("attack", Animation(4, 5, 0.4f));
-    animator->AddAnimation("death", Animation(6, 11, 0.1f));
+    animator->AddAnimation("rush", Animation(8, 11, (1.0/24)));
+    animator->AddAnimation("idle", Animation(0, 7, (1.0/24)));
+    animator->AddAnimation("attack", Animation(24, 37, (1.0/24)));
+    animator->AddAnimation("death", Animation(6, 11, (1.0/24)));
     associated.AddComponent(animator);
     animator->SetAnimation("rush");
 
@@ -51,6 +51,7 @@ DanceGhost::DanceGhost(GameObject &associated, const std::string &spritePath, in
     health = 50;
     dead = false;
     pos = position;
+    attacked = false;
 }
 
 DanceGhost::~DanceGhost()
@@ -63,9 +64,14 @@ void DanceGhost::Start()
 
 void DanceGhost::Update(float dt)
 {
+    SpriteRenderer *renderer = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
     if (health <= 0) {
         dead = true;
     }
+    if (GameData::finalfase) {
+        dead = true;
+    }
+
     // Ao morrer -------------------------------------------------------------------------------
     if (dead)
     { 
@@ -99,40 +105,52 @@ void DanceGhost::Update(float dt)
     
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
     
+    
     specialInvuln.Update(dt);
     AtkTimer.Update(dt);
     if (rushing) {
         AtkTimer.Restart();
         speed.x = -400;
         speed.y = 0;
-        associated.angleDeg = -90;
         if (associated.box.x < 100) {
             rushing = false;
             animator->SetAnimation("idle");
         }
     }
     else {
-        associated.angleDeg = 0;
         speed.x = 0;
         speed.y = 0;
-        if (AtkTimer.Get() > startime) {
+        if (!attacking && AtkTimer.Get() > startime) {
             if (!attacking) {
                 AtkTimer.Restart();
                 animator->SetAnimation("attack");
                 attacking = true;
-            }
-            else {
+                attacked = false;
+            }   
+        }
+        if (attacking) {
+            
+            if (animator->GetCurrentFrame() == 30 && !attacked) {
+                attacked = true; 
                 StarATK();
-                AtkTimer.Restart();
+            }
+
+            else if (attacked && animator->wrapped) {
                 animator->SetAnimation("idle");
                 attacking = false;
+                attacked = false;
+                AtkTimer.Restart();
             }
-            
         }
+
     }
 
     associated.box.x += (speed.x) * dt;
     associated.box.y += (speed.y)* dt;
+    if (!rushing) {
+        renderer->SetFrame(animator->GetCurrentFrame(),SDL_FLIP_HORIZONTAL);
+    }
+
 }
 
 void DanceGhost::Render() {}
@@ -148,7 +166,7 @@ void DanceGhost::StarATK() {
     starGO->box.x = associated.box.x ;  // Centro do mapa
     starGO->box.y = associated.box.y + associated.box.h/2; // Altura maior
 
-    starGO->AddComponent(new StarProj(*starGO, "recursos/img/starProj.png")); // substitua pela imagem correta
+    starGO->AddComponent(new StarProj(*starGO, "recursos/img/miniatk.png")); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(starGO);
     
 }

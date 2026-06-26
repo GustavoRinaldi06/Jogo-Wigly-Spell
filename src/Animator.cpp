@@ -6,18 +6,21 @@ Animator::Animator(GameObject &associated)
 void Animator::Update(float dt)
 {
     // Atualizei a animação baseado em dt
+    
     if (frameTime != 0)
     {
         timeElapsed += dt;
 
         if (timeElapsed > frameTime)
         {
+            
             currentFrame++;
             timeElapsed -= frameTime;
 
             if (currentFrame > frameEnd)
             {
                     currentFrame = frameStart; // Loop normal para outras animações
+                    wrapped = true;
             }
 
             // Atualiza o frame do SpriteRenderer
@@ -43,7 +46,7 @@ bool Animator::Is(const std::string &type)
 void Animator::SetAnimation(const std::string &name)
 {
     if (current == name) return; // evita resetar animação todo frame
-
+    wrapped = false;
     auto setA = animations.find(name);
     if (setA != animations.end()) // Se achou a animação
     {

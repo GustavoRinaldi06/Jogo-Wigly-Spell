@@ -63,12 +63,15 @@ void WavyNote::Update(float dt)
     if (associated.color < 0) {
         destroyed = true;
     }
+    if (GameData::finalfase) {
+        destroyed = true;
+    }
     
     if (destroyed)
     {
         // dispara animação e som apenas uma vez
 
-        associated.damage = -1;
+        associated.damage = -1; 
         if (!deathAnimTriggered)
         {
             deathAnimTriggered = true;
@@ -99,6 +102,12 @@ void WavyNote::Update(float dt)
     // Enquanto funcional --------------------------------------------------------------------------
 
     sinval += dt;
+    if (GameData::bossHP > 900) {
+        speed.x = -50;
+    }
+    else {
+        speed.x = -100;
+    }
 
     speed.y = 150*cos(1.5*sinval);
         

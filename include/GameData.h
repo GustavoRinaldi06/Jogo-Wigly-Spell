@@ -33,6 +33,7 @@ public:
 
     static bool isMuted;
     static bool summonalive[6];
+    static bool finalfase;
 
     static DanceFloor *danceFloorPtr;
 };

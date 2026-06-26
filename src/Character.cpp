@@ -111,10 +111,12 @@ void Character::Update(float dt)
         return;
     }
 
+
     if (GameData::gameMode != wasGameMode) // porteger ao trocar de modo
     {
         damageCooldown.Restart();      
         wasGameMode = GameData::gameMode;
+        dashing = false;
     }
 
     // Ao morrer -------------------------------------------------------------------------------

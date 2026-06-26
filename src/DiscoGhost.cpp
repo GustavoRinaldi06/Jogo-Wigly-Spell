@@ -58,7 +58,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     // associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     specialInvuln.Restart();
-    health = 800;
+    health = 1500;
     dead = false;
     ATK = -1;
     SmnTimer.Set(9999);
@@ -66,7 +66,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     Error = Sound("recursos/audio/Erro.mp3");
     Right_Place = Sound("recursos/audio/Right_Place.mp3");
 }
-
+ 
 DiscoGhost::~DiscoGhost()
 {
 }
@@ -86,6 +86,7 @@ void DiscoGhost::Start()
     discoInfoText->SetCameraFollower(true);
 
     Game::GetInstance().GetCurrentState().AddObject(textGO);
+    ATK = 0;
 }
 
 void DiscoGhost::Update(float dt)
@@ -130,36 +131,41 @@ void DiscoGhost::Update(float dt)
     AnimTimer.Update(dt);
     SmnTimer.Update(dt);
     DiscoTimer.Update(dt);
-    if (NoteTimer.Get() > noteTime && health > 300)
+    if (GameData::finalfase) {
+        noteTime = 1;
+        atkTime = 3;
+    }
+    if (NoteTimer.Get() > noteTime)
     {
         NoteTimer.Restart();
-        noteTime = 8 + rand() % 5;
-        int count = 1;
-        if (health < 900)
-        {
-            int random = rand() % 6;
-            if (random >= 5)
-            {
-                count += 0;
+        if (!GameData::finalfase) {
+            if (health > 900) {
+                noteTime = 8 + rand() % 5;;
             }
-            else if (random > 2)
+            else {
+                noteTime = 6 + rand() % 3;
+            }
+            
+            
+            int count = 1;
+            for (int i = 0; i < count; i++)
             {
-                count += 0;
+                int colorchk = (rand() % 100);
+                int color = 0;
+                if (colorchk < 25)
+                {
+                    color = 1;
+                }
+                else if (colorchk < 50)
+                {
+                    color = 2;
+                }
+                NoteATK(color);
             }
         }
-        for (int i = 0; i < count; i++)
-        {
-            int colorchk = (rand() % 100);
-            int color = 0;
-            if (colorchk < 25)
-            {
-                color = 1;
-            }
-            else if (colorchk < 50)
-            {
-                color = 2;
-            }
-            NoteATK(color);
+        else {
+            WaveATK(nextwave);
+            nextwave = (nextwave+1) % 2;
         }
     }
     else if (ATK == -1)
@@ -347,50 +353,62 @@ void DiscoGhost::Update(float dt)
     */
     if (ATK == 0)
     {
+        if (health <= 300) {
+            GameData::finalfase = true;
+        }
         AtkTimer.Update(dt);
         if (AtkTimer.Get() > atkTime)
         {
             AtkTimer.Restart();
-            if (health > 900)
-            {
-                atkTime = 2 + rand() % 2;
-            }
-            else
-            {
-                atkTime = 1 + rand() % 2;
-            }
-
-            swapcount -= 1;
-
-            if (swapcount <= 0)
-            {
-                swapcount = 2 + (rand() % 2);
-                ATK = 2;
-                animator->SetAnimation("prepgrav");
-                AnimTimer.Restart();
-                attacked = false;
-            }
-            else
-            {
-                int choice = rand() % 100;
-                if (DiscoTimer.Get() > discoTime && choice < 50)
+            if (!GameData::finalfase) {
+                if (health > 900)
                 {
-                    ATK = 4;
-                    animator->SetAnimation("disco");
-                    attacked = false;
+                    atkTime = 2 + rand() % 2;
                 }
-                else if (SmnTimer.Get() > smnTime && choice < 75 && choice >= 25)
+                else
                 {
-                    ATK = 3;
-                    animator->SetAnimation("summon");
+                    atkTime = 1.5 + (rand() % 2) /2;
+                }
+
+                swapcount -= 1;
+
+                if (swapcount <= 0)
+                {
+                    swapcount = 2 + (rand() % 2);
+                    ATK = 2;
+                    animator->SetAnimation("prepgrav");
+                    AnimTimer.Restart();
                     attacked = false;
                 }
                 else
                 {
-                    ATK = 1;
-                    animator->SetAnimation("summon");
-                    attacked = false;
+                    int choice = rand() % 100;
+                    if (DiscoTimer.Get() > discoTime && choice < 50)
+                    {
+                        ATK = 4;
+                        animator->SetAnimation("disco");
+                        attacked = false;
+                    }
+                    else if (SmnTimer.Get() > smnTime && choice < 75 && choice >= 25)
+                    {
+                        ATK = 3;
+                        animator->SetAnimation("summon");
+                        attacked = false;
+                    }
+                    else
+                    {
+                        ATK = 1;
+                        animator->SetAnimation("summon");
+                        attacked = false;
+                    }
                 }
+            }
+            else {
+                atkTime = 2;
+                ATK = 2;
+                animator->SetAnimation("prepgrav");
+                AnimTimer.Restart();
+                attacked = false;
             }
         }
     }
@@ -691,18 +709,18 @@ void DiscoGhost::SmnATK(int side, int pos)
     ghostGO->box.x = associated.box.x + associated.box.w; // Centro do mapa
     if (side == 0)
     {
-        ghostGO->box.y = pos * 110 + 60; // Centro do mapa
+        ghostGO->box.y = pos * 100 + 60; // Centro do mapa
     }
     else
     {
-        ghostGO->box.y = 590 - pos * 100; // Centro do mapa
+        ghostGO->box.y = 520 - pos * 100; // Centro do mapa
     }
     int position = pos;
     if (side > 0)
     {
         position = 5 - pos;
     }
-    ghostGO->AddComponent(new DanceGhost(*ghostGO, "recursos/img/danceghost.png", position)); // substitua pela imagem correta
+    ghostGO->AddComponent(new DanceGhost(*ghostGO, "recursos/img/minionghost.png", position)); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(ghostGO);
 }
 

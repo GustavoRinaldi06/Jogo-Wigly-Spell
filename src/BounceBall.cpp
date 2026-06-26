@@ -17,7 +17,7 @@ BounceBall::BounceBall(GameObject &associated, const std::string &spritePath)
     associated.layer = 5.1;
     associated.blockable = 3;
     associated.damage = 1;
-    auto renderer = new SpriteRenderer(associated, spritePath, 2, 4);
+    auto renderer = new SpriteRenderer(associated, spritePath, 3, 3);
     associated.AddComponent(renderer);
     renderer->SetScale(1,1);
     
@@ -29,10 +29,9 @@ BounceBall::BounceBall(GameObject &associated, const std::string &spritePath)
 
     // Cria as animações
     auto animator = new Animator(associated);
-    animator->AddAnimation("floating", Animation(0, 1, 0.25f));
-    animator->AddAnimation("bouncing", Animation(2, 3, 0.2f));
-    animator->AddAnimation("above", Animation(4, 5, 0.75f));
-    animator->AddAnimation("popping", Animation(6, 7, 0.25f));
+    animator->AddAnimation("floating", Animation(0, 2, 0.25f));
+    animator->AddAnimation("bouncing", Animation(3, 5, 0.2f));
+    animator->AddAnimation("popping", Animation(6, 8, 0.25f));
     associated.AddComponent(animator);
     animator->SetAnimation("floating");
 

@@ -43,6 +43,8 @@ public:
     Timer deathTimer;
     Timer specialInvuln;
     bool deathAnimTriggered{false};
+    int nextwave = 0;
+    int finalfase = 0;
 
     bool fightbegan = true;
 

@@ -18,9 +18,9 @@ StarProj::StarProj(GameObject &associated, const std::string &spritePath)
     associated.blockable = 1;
     associated.damage = 1;
     
-    auto renderer = new SpriteRenderer(associated, spritePath, 2, 2);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 2);
     associated.AddComponent(renderer);
-    renderer->SetScale(1.5,1.5);
+    renderer->SetScale(1.0,1.0);
 
     // Novos sons
     //hitSound = Sound();
@@ -29,8 +29,8 @@ StarProj::StarProj(GameObject &associated, const std::string &spritePath)
 
     // Cria as animações
     auto animator = new Animator(associated);
-    animator->AddAnimation("floating", Animation(0, 1, 0.5f));
-    animator->AddAnimation("dissipating", Animation(2, 3, 0.25f));
+    animator->AddAnimation("floating", Animation(0, 4, (1.0/24)));
+    animator->AddAnimation("dissipating", Animation(4, 7, 0.25f));
     associated.AddComponent(animator);
     animator->SetAnimation("floating");
 

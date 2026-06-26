@@ -28,6 +28,7 @@ public:
     int ATK = 0;
     bool rushing = true;
     bool attacking = false;
+    bool attacked = false;
     Vec2 speed = Vec2(0,0);
     bool dead;
     Timer deathTimer;

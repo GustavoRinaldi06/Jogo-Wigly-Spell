@@ -18,9 +18,9 @@ Missile::Missile(GameObject &associated, const std::string &spritePath, int colo
     associated.blockable = 3;
     associated.damage = 1;
     
-    auto renderer = new SpriteRenderer(associated, spritePath, 4, 6);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 9);
     associated.AddComponent(renderer);
-    renderer->SetScale(1.5,2);
+    renderer->SetScale(1.25,1.25);
     associated.angleDeg = 270;
 
     // Novos sons
@@ -31,10 +31,10 @@ Missile::Missile(GameObject &associated, const std::string &spritePath, int colo
     // Cria as animações
     finalcolor = color;
     auto animator = new Animator(associated);
-    int base = 8 * color;
-    animator->AddAnimation("hoaming", Animation(base + 0,base + 1, 0.3f));
-    animator->AddAnimation("floating", Animation(base + 2,base + 3, 0.5f));
-    animator->AddAnimation("dissipating", Animation(base + 4, base + 5, 0.15f));
+    int base = 12 * color;
+    animator->AddAnimation("hoaming", Animation(base + 0,base + 3, (1.0/24)));
+    animator->AddAnimation("floating", Animation(base + 4,base + 7, (1.0/24)));
+    animator->AddAnimation("dissipating", Animation(base + 8, base + 11, (1.0/24)));
     associated.AddComponent(animator);
     animator->SetAnimation("hoaming");
 

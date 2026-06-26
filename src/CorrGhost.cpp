@@ -51,14 +51,14 @@ CorridorGhost::CorridorGhost(GameObject &associated, const std::string &spritePa
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     specialInvuln.Restart();
-    health = 100;
+    health = 1000;
     dead = false;
 
 }
 
 CorridorGhost::~CorridorGhost()
 {
-}
+} 
 
 void CorridorGhost::Start()
 {}
@@ -233,7 +233,7 @@ void CorridorGhost::BounceATK(int offset) {
     //bounceGO->box.y = (rand() % 15)*60 + 50;  // Centro do mapa
     //bounceGO->box.y =  + 500;  // Centro do mapa 
 
-    bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
+    bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bouncedisk.png")); // substitua pela imagem correta
     //bounceGO->AddComponent(new WavyNote(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
     //bounceGO->AddComponent(new BeatWave(*bounceGO, "recursos/img/BeatWave.png")); // substitua pela imagem correta
     //bounceGO->AddComponent(new DanceGhost(*bounceGO, "recursos/img/danceghost.png")); // substitua pela imagem correta
@@ -244,7 +244,7 @@ void CorridorGhost::MissileATK(int offset,int color) {
     missileGO->box.x = associated.box.x + offset;  // Centro do mapa
     missileGO->box.y = associated.box.y + associated.box.h/2; // Altura maior
 
-    missileGO->AddComponent(new Missile(*missileGO, "recursos/img/homingProj.png",color)); // substitua pela imagem correta
+    missileGO->AddComponent(new Missile(*missileGO, "recursos/img/garrafa.png",color)); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(missileGO);
     
 }
