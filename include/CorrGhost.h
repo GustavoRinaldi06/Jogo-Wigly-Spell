@@ -25,6 +25,7 @@ public:
     float bouncetime = 0.0;
     Timer MissSwap;
     float missTime = 5.0;
+    float missHold = 1.0;
     int misscount = 1;
     int misstotal = 0;
     int swapcount = 3;
@@ -34,6 +35,8 @@ public:
     bool dead;
     Timer deathTimer;
     Timer specialInvuln;
+    Timer animTimer;
+    
     bool deathAnimTriggered{false};
 };
 

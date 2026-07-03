@@ -133,7 +133,7 @@ void DiscoState::LoadAssets()
     playlist.push_back("recursos/audio/playlist/FP.mp3");
     playlist.push_back("recursos/audio/playlist/IWS.mp3");
     playlist.push_back("recursos/audio/playlist/BW.mp3");
-    playlist.push_back("recursos/audio/playlist/DM.mp3");
+    //playlist.push_back("recursos/audio/playlist/DM.mp3");
 
     for (const auto &musicaPath : playlist)
     {

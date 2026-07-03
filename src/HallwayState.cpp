@@ -84,21 +84,6 @@ void HallwayState::LoadAssets()
 
     AddObject(playerGO);
     GameData::inverted = false;
-    /*
-    GameObject *bounceGO = new GameObject();
-    bounceGO->box.x = 800;  // Centro do mapa
-    bounceGO->box.y = 450; // Altura maior
-
-    bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
-    AddObject(bounceGO);
-
-    GameObject *missileGO = new GameObject();
-    missileGO->box.x = 1100;  // Centro do mapa
-    missileGO->box.y = 450; // Altura maior
-
-    missileGO->AddComponent(new Missile(*missileGO, "recursos/img/homingProj.png")); // substitua pela imagem correta
-    AddObject(missileGO);
-    */
     float prevy = 0;
     for (int i = 0; i < 8; i++)
     {
@@ -111,10 +96,10 @@ void HallwayState::LoadAssets()
     }
 
     GameObject *corridorGO = new GameObject();
-    corridorGO->box.x = 850; // Centro do mapa
-    corridorGO->box.y = 250; // Altura maior
+    corridorGO->box.x = 750; // Centro do mapa
+    corridorGO->box.y = 200; // Altura maior
 
-    bossComponent = new CorridorGhost(*corridorGO, "recursos/img/CorrGhost.png");
+    bossComponent = new CorridorGhost(*corridorGO, "recursos/img/Bouncer_SpriteSheet.png");
     corridorGO->AddComponent(bossComponent);
     AddObject(corridorGO);
 

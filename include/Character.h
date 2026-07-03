@@ -7,6 +7,7 @@
 #include "Sound.h"
 #include "Bullet.h"
 #include "Bubble.h"
+#include "BubbleCD.h"
 #include <queue>
 #include <memory>
 
@@ -132,6 +133,7 @@ private:
     bool wasInverted;
     bool Inversion;
     GameObject *bubble;
+    GameObject *bubbleCD;
 
     // auxilio para troca de modos
     int wasGameMode;

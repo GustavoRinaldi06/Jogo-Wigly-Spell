@@ -17,9 +17,9 @@ WavyNote::WavyNote(GameObject &associated, const std::string &spritePath, int co
     associated.layer = 5.1;
     associated.blockable = 3;
     associated.damage = 1;
-    auto renderer = new SpriteRenderer(associated, spritePath, 4, 6);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 3);
     associated.AddComponent(renderer);
-    renderer->SetScale(2.5,2.5);
+    renderer->SetScale(1.5,1.5);
     
 
     // Novos sons
@@ -29,10 +29,14 @@ WavyNote::WavyNote(GameObject &associated, const std::string &spritePath, int co
 
     // Cria as animações
     auto animator = new Animator(associated);
-    int base = 8 * color;
-    animator->AddAnimation("hoaming", Animation(base + 0,base + 1, 0.3f));
-    animator->AddAnimation("floating", Animation(base + 2,base + 3, 0.5f));
-    animator->AddAnimation("dissipating", Animation(base + 4, base + 5, 0.15f));
+    int base = 0;
+    if (color == 1) {
+        base = 8;
+    }
+    else if (color == 2) {
+        base = 4;
+    }
+    animator->AddAnimation("floating", Animation(base,base + 3, 0.25f));
     associated.AddComponent(animator);
     animator->SetAnimation("floating");
 

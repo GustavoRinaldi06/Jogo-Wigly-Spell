@@ -23,11 +23,11 @@ CorridorGhost::CorridorGhost(GameObject &associated, const std::string &spritePa
     associated.layer = 4.5;
     associated.damage = 1;
   
-    auto renderer = new SpriteRenderer(associated, spritePath, 6, 14);
+    auto renderer = new SpriteRenderer(associated, spritePath, 12, 8);
 
     associated.AddComponent(renderer);
 
-    renderer->SetScale(1.5,1.5);
+    renderer->SetScale(1,1);
     
 
     // Novos sons
@@ -38,11 +38,21 @@ CorridorGhost::CorridorGhost(GameObject &associated, const std::string &spritePa
     // Cria as animações
 
     auto animator = new Animator(associated);
-    animator->AddAnimation("downgrav", Animation(0, 23, 0.2f));
-    animator->AddAnimation("upgrav", Animation(24, 47, 0.2f));
-    animator->AddAnimation("missile", Animation(48, 71, 0.1f));
-    animator->AddAnimation("idle", Animation(72, 77, 0.15f));
-    animator->AddAnimation("death", Animation(78, 78, 3.0f));
+    animator->AddAnimation("downgravprep", Animation(0, 9, (1.0/24)));
+    animator->AddAnimation("downgrav", Animation(10, 15, (1.0/24)));
+    animator->AddAnimation("downgravfin", Animation(16, 22,(1.0/24)));
+
+    animator->AddAnimation("upgravprep", Animation(23, 34, (1.0/24)));
+    animator->AddAnimation("upgrav", Animation(35, 40, (1.0/24)));
+    animator->AddAnimation("upgravfin", Animation(41, 47,(1.0/24)));
+
+    animator->AddAnimation("missileprep", Animation(61, 72, (1.0/24)));
+    animator->AddAnimation("missile", Animation(73, 78, (1.0/24)));
+    animator->AddAnimation("missilefin", Animation(79, 85,(1.0/24)));
+
+
+    animator->AddAnimation("idle", Animation(49, 60, (1.0/24)));
+    animator->AddAnimation("death", Animation(48, 48, 3.0f));
     associated.AddComponent(animator);
     animator->SetAnimation("idle");
 
@@ -53,6 +63,7 @@ CorridorGhost::CorridorGhost(GameObject &associated, const std::string &spritePa
     specialInvuln.Restart();
     health = 1000;
     dead = false;
+    animTimer.Restart();
 
 }
 
@@ -128,17 +139,17 @@ void CorridorGhost::Update(float dt)
                 swapcount = 2 + (rand() % 3);
                 ATK = 2;
                 if  (GameData::inverted) {
-                    animator->SetAnimation("downgrav");
+                    animator->SetAnimation("downgravprep");
                     attacked = false;
                 }
                 else {
-                    animator->SetAnimation("upgrav");
+                    animator->SetAnimation("upgravprep");
                     attacked = false;
                 }
             }
             else {
                 ATK = 1;
-                animator->SetAnimation("missile");
+                animator->SetAnimation("missileprep");
                 misstotal = 0;
                 misscount = 1;
                 if (health < 500) {
@@ -150,7 +161,20 @@ void CorridorGhost::Update(float dt)
         }
     }
     else if (ATK == 1) {
-        if (!attacked && animator->GetCurrentFrame() == 68) {
+        std::string current_anim = animator->GetAnimation();
+        if (current_anim == "missileprep" && animator-> wrapped) {
+            missHold = 1.0;
+            animator->SetAnimation("missile");
+            animTimer.Restart();
+        }
+        animTimer.Update(dt); 
+        if (animTimer.Get() > missHold) {
+            if (current_anim == "missile") {
+                animTimer.Restart();
+                animator->SetAnimation("missilefin");
+            }
+        }
+        if (!attacked && animator->GetCurrentFrame() == 80) {
             int colorchk = rand() % 4;
             if (misstotal == 0 && misscount == 1 && colorchk < 2) {
                 colorchk += 2;   // Sempre colorido se na primeira fase
@@ -177,38 +201,66 @@ void CorridorGhost::Update(float dt)
                     ATK = 2;
                     if  (GameData::inverted) {
                         animator->SetAnimation("downgrav");
-                        animator->SetCurrentFrame(3);
+                        animator->SetCurrentFrame(10);
                         attacked = false;
+                        animTimer.Restart();
                     }
                     else {
                         animator->SetAnimation("upgrav");
-                        animator->SetCurrentFrame(27);
+                        animator->SetCurrentFrame(35);
                         attacked = false;
+                        animTimer.Restart();
                     }
                 }
                 else {
-                    animator->SetCurrentFrame(63);
+                    animator->SetCurrentFrame(73);
+                    missHold = 0.6;
+                    animator->SetAnimation("missile");
+                    animTimer.Restart();
                 }
                 
             }
             
         }
-        else if (animator->GetCurrentFrame() == 71) {
+        else if (animator->GetAnimation() == "missilefin" && animator->wrapped) {
             ATK = 0;
+            
             animator->SetAnimation("idle");
         }
     }
     else if (ATK == 2) {
-        if (!attacked && !GameData::inverted && animator->GetCurrentFrame() == 44) {
+        std::string current_anim = animator->GetAnimation();
+        if (animator->wrapped) {
+            if (current_anim == "upgravprep") {
+                animator->SetAnimation("upgrav");
+                animTimer.Restart();
+            }
+            else if (current_anim == "downgravprep") {
+                animator->SetAnimation("downgrav");
+                animTimer.Restart();
+            }
+        }
+        animTimer.Update(dt);
+        if (animTimer.Get() > 3) {
+            if (current_anim == "upgrav") {
+                animTimer.Restart();
+                animator->SetAnimation("upgravfin");
+            }
+            else if (current_anim == "downgrav") {
+                animTimer.Restart();
+                animator->SetAnimation("downgravfin");
+            }
+        }
+        if (!attacked && !GameData::inverted && animator->GetCurrentFrame() == 42) {
             attacked = true;
             GameData::inverted = true;
         }
-        if (!attacked && GameData::inverted && animator->GetCurrentFrame() == 20) {
+        if (!attacked && GameData::inverted && animator->GetCurrentFrame() == 17) {
             attacked = true;
             GameData::inverted = false;
         }
 
-        if (animator->GetCurrentFrame() == 47 || animator->GetCurrentFrame() == 23) {
+        if (animator->GetCurrentFrame() == 47 || animator->GetCurrentFrame() == 22) {
             ATK = 0;
             animator->SetAnimation("idle");
         }
@@ -252,16 +304,18 @@ void CorridorGhost::MissileATK(int offset,int color) {
 void CorridorGhost::NotifyCollision(GameObject &other)
 {
     Collider *collider = (Collider *)other.GetComponent("Collider");
-    if (collider && collider->tag == "bullet" && specialInvuln.Get() > 2.0)
+    if (collider && collider->tag == "bullet")
     {
-        
         Bullet* bul = (Bullet *)other.GetComponent("Bullet");
-        health -= bul->damage;
-        if (bul->bulletcolor == 0 || bul->bulletcolor == 3) {
-            other.RequestDelete();
-        }
-        else {
-            specialInvuln.Restart();
+        if (specialInvuln.Get() > 2.0 || bul->bulletcolor == 0 || bul->bulletcolor == 3) {
+            
+            health -= bul->damage;
+            if (bul->bulletcolor == 0 || bul->bulletcolor == 3) {
+                other.RequestDelete();
+            }
+            else {
+                specialInvuln.Restart();
+            }
         }
     }
 }

@@ -16,12 +16,21 @@ Bubble::Bubble(GameObject &associated, const std::string &spritePath)
     : Component(associated)
 {
     associated.layer = 5.2;
-    auto renderer = new SpriteRenderer(associated, spritePath, 3, 1);
+    auto renderer = new SpriteRenderer(associated, spritePath, 5, 2);
     //printf("%f",associated.box.w);
+
     renderer->SetFrame(0,SDL_FLIP_NONE);
     associated.AddComponent(renderer);
     associated.box.x = Character::PlayerBox().x;
-    associated.box.y = Character::PlayerBox().y - 16;
+    associated.box.y = Character::PlayerBox().y - (Character::PlayerBox().h - associated.box.h)/2.0;
+
+     auto animator = new Animator(associated);
+    animator->AddAnimation("none", Animation(0, 0, (1.0/6)));
+    animator->AddAnimation("blue1", Animation(1, 4, (1.0/6)));
+    animator->AddAnimation("blue2", Animation(5, 8, (1.0/6)));
+    associated.AddComponent(animator);
+    animator->SetAnimation("none");
+
 }
 
 Bubble::~Bubble()
@@ -35,7 +44,7 @@ void Bubble::Start()
 void Bubble::Update(float dt)
 {
     associated.box.x = Character::PlayerBox().x;
-    associated.box.y = Character::PlayerBox().y - 16;
+    associated.box.y = Character::PlayerBox().y + (Character::PlayerBox().h - associated.box.h)/2.0 - 16;
 }
 
 void Bubble::Render() {}

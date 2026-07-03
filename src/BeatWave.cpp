@@ -18,9 +18,9 @@ BeatWave::BeatWave(GameObject &associated, const std::string &spritePath, int ar
     associated.layer = 3.1;
     associated.blockable = -1;
     associated.damage = 1;
-    auto renderer = new SpriteRenderer(associated, spritePath, 3, 1);
+    auto renderer = new SpriteRenderer(associated, spritePath, 4, 1);
     associated.AddComponent(renderer);
-    renderer->SetScale(1.5,1.5);
+    renderer->SetScale(1.65,1.65);
     
 
     // Novos sons
@@ -30,7 +30,7 @@ BeatWave::BeatWave(GameObject &associated, const std::string &spritePath, int ar
 
     // Cria as animações
     auto animator = new Animator(associated);
-    animator->AddAnimation("flowing", Animation(0, 2, 0.75f));
+    animator->AddAnimation("flowing", Animation(0, 3, (1.0/6)));
     associated.AddComponent(animator);
     animator->SetAnimation("flowing");
 
@@ -61,7 +61,7 @@ void BeatWave::Start()
 void BeatWave::Update(float dt)
 {
     // Ao morrer -------------------------------------------------------------------------------
-    if (associated.box.y < -120 || associated.box.y > 1400 || associated.box.x < -120) {
+    if (associated.box.y < -120 || associated.box.y > 1400 || associated.box.x < -240) {
          associated.RequestDelete();
     }
     

@@ -43,8 +43,8 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     animator->AddAnimation("prepgrav", Animation(11, 11, 2.0f));
     animator->AddAnimation("downgrav", Animation(8, 11, 0.4f));
     animator->AddAnimation("upgrav", Animation(4, 7, 0.4f));
-    animator->AddAnimation("recdowngrav", Animation(11, 11, 0.4f));
-    animator->AddAnimation("recupgrav", Animation(7, 7, 0.4f));
+    animator->AddAnimation("recdowngrav", Animation(10, 11, 0.5f));
+    animator->AddAnimation("recupgrav", Animation(6, 7, 0.4f));
     animator->AddAnimation("summon", Animation(12, 15, 0.4f));
     animator->AddAnimation("smnrecover", Animation(14, 14, 0.25f));
     animator->AddAnimation("disco", Animation(16, 19, 0.15f));
@@ -58,6 +58,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     // associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     specialInvuln.Restart();
+    waveCD.Restart();
     health = 1500;
     dead = false;
     ATK = -1;
@@ -101,7 +102,7 @@ void DiscoGhost::Update(float dt)
     if (dead)
     {
         // dispara animação e som apenas uma vez
-
+        Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
         associated.damage = -1;
         if (!deathAnimTriggered)
         {
@@ -109,7 +110,7 @@ void DiscoGhost::Update(float dt)
             // fallSound.Play(1);
 
             // seta animação "popping"
-            Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+            
             if (animator)
                 animator->SetAnimation("death");
             deathTimer.Restart();
@@ -131,8 +132,9 @@ void DiscoGhost::Update(float dt)
     AnimTimer.Update(dt);
     SmnTimer.Update(dt);
     DiscoTimer.Update(dt);
+    waveCD.Update(dt);
     if (GameData::finalfase) {
-        noteTime = 1;
+        noteTime = 1.2;
         atkTime = 3;
     }
     if (NoteTimer.Get() > noteTime)
@@ -164,8 +166,10 @@ void DiscoGhost::Update(float dt)
             }
         }
         else {
-            WaveATK(nextwave);
-            nextwave = (nextwave+1) % 2;
+            if (waveCD.Get() > 1.5) {
+                WaveATK(nextwave);
+                nextwave = (nextwave+1) % 2;
+            }
         }
     }
     else if (ATK == -1)
@@ -419,6 +423,7 @@ void DiscoGhost::Update(float dt)
         {
             WaveATK(0);
             WaveATK(1);
+            waveCD.Restart();
             attacked = true;
             animator->SetAnimation("smnrecover");
             AnimTimer.Restart();
@@ -451,14 +456,14 @@ void DiscoGhost::Update(float dt)
             }
         }
 
-        if (!attacked && !GameData::inverted && animator->GetCurrentFrame() == 7)
+        if (!attacked && !GameData::inverted && animator->GetCurrentFrame() == 6)
         {
             attacked = true;
             GameData::inverted = true;
             AnimTimer.Restart();
             animator->SetAnimation("recupgrav");
         }
-        if (!attacked && GameData::inverted && animator->GetCurrentFrame() == 11)
+        if (!attacked && GameData::inverted && animator->GetCurrentFrame() == 10)
         {
             attacked = true;
             GameData::inverted = false;
@@ -470,12 +475,12 @@ void DiscoGhost::Update(float dt)
     {
         if (!attacked && animator->GetCurrentFrame() == 15)
         {
-            int pos = rand() % 3;
+            int pos = rand() % 2;
             int startpos = pos;
             bool exit = false;
-            while (GameData::summonalive[pos] || GameData::summonalive[5 - pos])
+            while (GameData::summonalive[pos] || GameData::summonalive[3 - pos])
             {
-                pos = (pos + 1) % 3;
+                pos = (pos + 1) % 2;
                 if (pos == startpos)
                 {
                     exit = true;
@@ -485,7 +490,7 @@ void DiscoGhost::Update(float dt)
             if (!exit)
             {
                 GameData::summonalive[pos] = true;
-                GameData::summonalive[5 - pos] = true;
+                GameData::summonalive[3 - pos] = true;
                 SmnATK(0, pos);
                 SmnATK(1, pos);
                 attacked = true;
@@ -690,7 +695,7 @@ void DiscoGhost::NoteATK(int color)
     lastnote = notepos;
     noteGO->box.y = notepos + 120; // Centro do mapa
 
-    noteGO->AddComponent(new WavyNote(*noteGO, "recursos/img/homingProj.png", color)); // substitua pela imagem correta
+    noteGO->AddComponent(new WavyNote(*noteGO, "recursos/img/notamus.png", color)); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(noteGO);
 }
 
@@ -709,16 +714,16 @@ void DiscoGhost::SmnATK(int side, int pos)
     ghostGO->box.x = associated.box.x + associated.box.w; // Centro do mapa
     if (side == 0)
     {
-        ghostGO->box.y = pos * 100 + 60; // Centro do mapa
+        ghostGO->box.y = pos * 150 + 60; // Centro do mapa
     }
     else
     {
-        ghostGO->box.y = 520 - pos * 100; // Centro do mapa
+        ghostGO->box.y = 520 - pos * 150; // Centro do mapa
     }
     int position = pos;
     if (side > 0)
     {
-        position = 5 - pos;
+        position = 3 - pos;
     }
     ghostGO->AddComponent(new DanceGhost(*ghostGO, "recursos/img/minionghost.png", position)); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(ghostGO);
@@ -727,18 +732,18 @@ void DiscoGhost::SmnATK(int side, int pos)
 void DiscoGhost::NotifyCollision(GameObject &other)
 {
     Collider *collider = (Collider *)other.GetComponent("Collider");
-    if (collider && collider->tag == "bullet" && specialInvuln.Get() > 2.0)
+    if (collider && collider->tag == "bullet")
     {
         if (!dead){
-            Bullet *bul = (Bullet *)other.GetComponent("Bullet");
-            health -= bul->damage;
-            if (bul->bulletcolor == 0 || bul->bulletcolor == 3)
-            {
-                other.RequestDelete();
-            }
-            else
-            {
-                specialInvuln.Restart();
+            Bullet* bul = (Bullet *)other.GetComponent("Bullet");
+            if (specialInvuln.Get() > 2.0 || bul->bulletcolor == 0 || bul->bulletcolor == 3) {
+                health -= bul->damage;
+                if (bul->bulletcolor == 0 || bul->bulletcolor == 3) {
+                    other.RequestDelete();
+                }
+                else {
+                    specialInvuln.Restart();
+                }
             }
         }
     }

@@ -42,6 +42,7 @@ public:
     bool dead;
     Timer deathTimer;
     Timer specialInvuln;
+    Timer waveCD;
     bool deathAnimTriggered{false};
     int nextwave = 0;
     int finalfase = 0;

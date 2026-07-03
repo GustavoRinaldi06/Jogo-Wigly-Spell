@@ -10,6 +10,7 @@
 #include "GameData.h"
 #include "HallwayState.h"
 
+
 #include "Floor.h"
 
 #include <iostream>
@@ -71,18 +72,23 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     wasInverted = GameData::inverted; // Faz track da direção da gravidade
     Inversion = false;
 
-    // colorInventory.push_back(RED);
-    // colorInventory.push_back(BLUE);
+    colorInventory.push_back(BLUE);
+    colorInventory.push_back(BLUE);
     invTimer.Set(100);
     purpleTimer.Set(100);
 
     GameObject *bubbleGO = new GameObject();
-    bubbleGO->AddComponent(new Bubble(*bubbleGO, "recursos/img/bubble.png"));
+    bubbleGO->AddComponent(new Bubble(*bubbleGO, "recursos/img/Wigly_Bubble.png"));
     Game::GetInstance().GetCurrentState().AddObject(bubbleGO);
     bubble = bubbleGO;
 
-    SpriteRenderer *bubrenderer = (SpriteRenderer *)bubble->GetComponent("SpriteRenderer");
-    bubrenderer->SetFrame(0, SDL_FLIP_NONE);
+
+    GameObject *bubbleCDGO = new GameObject();
+    bubbleCDGO->AddComponent(new BubbleCD(*bubbleCDGO, "recursos/img/BubbleCD.png"));
+    Game::GetInstance().GetCurrentState().AddObject(bubbleCDGO);
+    bubbleCD = bubbleCDGO;
+
+
     deathAnimTriggered = false;
     deathTimer.Restart();
     initTimer.Restart();
@@ -186,18 +192,18 @@ void Character::Update(float dt)
     }
     GameData::playerHP = hp; // Atualiza variavel global
 
-    SpriteRenderer *bubrenderer = (SpriteRenderer *)bubble->GetComponent("SpriteRenderer");
+    Animator *bubanim = (Animator *)bubble->GetComponent("Animator");
     if (invTimer.Get() < 9)
     {
-        bubrenderer->SetFrame(2, SDL_FLIP_NONE);
+        bubanim->SetAnimation("blue2");
     }
     else if (shield > 0)
     {
-        bubrenderer->SetFrame(1, SDL_FLIP_NONE);
+        bubanim->SetAnimation("blue1");
     }
     else
     {
-        bubrenderer->SetFrame(0, SDL_FLIP_NONE);
+        bubanim->SetAnimation("none");
     }
 
     // Pega input de pulo ---------------------------------------------------------------------
@@ -712,11 +718,11 @@ void Character::Shoot1(Vec2 targetPos)
             spellGO->box.y = shooterCenter.y - 20;
             if (bulcolor == 3)
             {
-                spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/purpleshot.png", bulcolor));
+                spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, "recursos/img/Wigly_ataqueR.png", bulcolor,3));
             }
             else
             {
-                spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, targetsPlayer, "recursos/img/Bullet.png", bulcolor));
+                spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, "recursos/img/Wigly_ataques.png", bulcolor,0));
             }
 
             Game::GetInstance().GetCurrentState().AddObject(spellGO);
@@ -742,9 +748,16 @@ void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDista
         GameObject *spell2GO = new GameObject();
         spell2GO->box.x = shooterCenter.x;
         spell2GO->box.y = shooterCenter.y - 20; // Para ajustar a altura do tiro
+        int type = 0;
+        if (color > 0) {
+            type = 1;
+            if (damage > 100) {
+                type = 2;
+            }
+        }
 
         // Passa as variáveis  recebidas para o componente Bullet
-        spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, targetsPlayer, spritePath, color));
+        spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, spritePath, color,type));
         Game::GetInstance().GetCurrentState().AddObject(spell2GO);
 }
 
@@ -782,7 +795,7 @@ void Character::UseSpell(Vec2 targetPos)
         }
 
         // Variáveis dependendo da mistura de cores
-        std::string spritePath = "recursos/img/Bullet.png"; // Padrão
+        std::string spritePath = "recursos/img/Wigly_ataques.png"; // Padrão
         float speed = 200.0f;
         int damage = 50;
         float maxDistance = 1200.0f;
@@ -792,14 +805,14 @@ void Character::UseSpell(Vec2 targetPos)
         if (colorInventory.size() == 1)
         {
             Color unica = colorInventory[0];
-
+            
             if (unica == RED)
             {
                 spell_red_Sound.Play(1); // Som da magia vermelha
                 damage = 50;
                 speed = 400.0f;
-                spritePath = "recursos/img/redsmall.png";
                 shouldShoot = true;
+                col = 1;
             }
             else if (unica == BLUE)
             {
@@ -821,7 +834,7 @@ void Character::UseSpell(Vec2 targetPos)
                 spell_scarlet_Sound.Play(1);
                 damage = 150;
                 speed = 450.0f;
-                spritePath = "recursos/img/redbig.png";
+                
                 shouldShoot = true;
                 col = 1;
             }
@@ -832,6 +845,10 @@ void Character::UseSpell(Vec2 targetPos)
                 invTimer.Set(0);
                 colorInventory.clear();  // Apaga as cores
                 spellMixTimer.Restart(); // Reseta o cooldown
+                Animator *bubcdanim = (Animator *)bubbleCD->GetComponent("Animator");
+                bubcdanim->SetAnimation("countdown");
+                bubcdanim->SetCurrentFrame(0); 
+
             }
             else if ((c1 == RED && c2 == BLUE) || (c1 == BLUE && c2 == RED))
             {
