@@ -13,7 +13,7 @@ class Floor : public Component
 {
 public:
 
-    Floor(GameObject &associated, const std::string &spritePath, int frame, SDL_RendererFlip flip, float angle);
+    Floor(GameObject &associated, const std::string &spritePath, int frame, SDL_RendererFlip flip, float angle, int type = 0,int index = -1);
     ~Floor();
 
     void Start() override;
@@ -22,6 +22,9 @@ public:
     bool Is(const std::string &type) override;
     Vec2 speed = Vec2(0,0);
     int limit = -120;
+    int type;
+    int index = -1;
+    Timer changeTime;
     // Colisão
     GameObject *GetGameObject() { return &associated; }
 

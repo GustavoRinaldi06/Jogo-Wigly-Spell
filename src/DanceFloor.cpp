@@ -11,7 +11,7 @@ DanceFloor::DanceFloor(GameObject &associated, std::string spritePath, float til
 {
     grid.resize(rows, std::vector<int>(cols, 0));
     tileObjects.resize(rows, std::vector<GameObject *>(cols, nullptr));
-
+    associated.layer = 2.5;
     GameData::danceFloorPtr = this;
 }
 

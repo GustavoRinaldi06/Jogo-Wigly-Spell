@@ -37,4 +37,6 @@ private:
     Sound vinilSwipe;
     std::vector<std::string> playlist;
     std::string currentTrack;
+    float furthest_chara;
+    float base_chara = -600;
 };

@@ -16,7 +16,7 @@ Haze::Haze(GameObject &associated, const std::string &spritePath, SDL_RendererFl
     : Component(associated)
 {
     associated.layer = 6.1;
-    auto renderer = new SpriteRenderer(associated, spritePath, 2, 1);
+    auto renderer = new SpriteRenderer(associated, spritePath, 1, 2);
     renderer->SetScale(2,3);
     associated.angleDeg = rotation;
     renderer->SetFrame(0,flp);

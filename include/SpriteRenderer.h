@@ -20,6 +20,8 @@ public:
     // Define qual frame deve ser renderizado
     void SetFrame(int frame, SDL_RendererFlip frameFlip);
 
+    void SetFrame(int frame);
+
     // Atualiza o componente (por enquanto vazio)
     void Update(float dt) override;
 

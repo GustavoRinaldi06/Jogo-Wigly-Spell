@@ -20,7 +20,10 @@ bool GameData::finalfase = false;
 
 bool GameData::aimed = true;
 bool GameData::isMuted = false;
+bool GameData::discostart = false;
 
 bool GameData::summonalive[6] = {false,false,false,false,false,false};
+bool GameData::discopos[14] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+int GameData::inversedisco = 0;
 
 DanceFloor *GameData::danceFloorPtr = nullptr; //pista fase 3

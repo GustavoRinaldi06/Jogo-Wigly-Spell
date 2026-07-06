@@ -27,6 +27,7 @@ public:
 
     Timer NoteTimer;
     float noteTime = 2.0;
+    int last_color = -1;
     Timer AtkTimer;
     float atkTime = 7.0;
     Timer SmnTimer;

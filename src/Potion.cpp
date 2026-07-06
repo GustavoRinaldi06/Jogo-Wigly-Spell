@@ -40,6 +40,7 @@ void Potion::Update(float dt)
         renderer->SetFrame(0,SDL_FLIP_NONE);
 
     }
+    renderer->SetCameraFollower(1.0);
 }
 
 void Potion::Render() {}

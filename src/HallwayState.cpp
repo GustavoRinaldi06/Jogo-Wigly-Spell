@@ -55,7 +55,7 @@ void HallwayState::LoadAssets()
     AddObject(floorGO);
 
     GameObject *ceilGO = new GameObject();
-    ceilGO->AddComponent(new ScenaryGenerator(*ceilGO, Vec2(0.0, 0.0), Vec2(0, 0), Vec2(-120, 0), SDL_FLIP_VERTICAL, 0.0)); // substitua pela imagem correta
+    ceilGO->AddComponent(new ScenaryGenerator(*ceilGO, Vec2(0.0, 0.0), Vec2(0, -64), Vec2(-120, 0), SDL_FLIP_VERTICAL, 0.0)); // substitua pela imagem correta
     AddObject(ceilGO);
 
     GameObject *bgGO = new GameObject();

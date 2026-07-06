@@ -34,6 +34,9 @@ public:
     static bool isMuted;
     static bool summonalive[6];
     static bool finalfase;
+    static bool discostart;
+    static bool discopos[14];
+    static int inversedisco;
 
     static DanceFloor *danceFloorPtr;
 };

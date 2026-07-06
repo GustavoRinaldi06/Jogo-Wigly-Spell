@@ -38,6 +38,13 @@ void SpriteRenderer::SetFrame(int frame, SDL_RendererFlip frameFlip)
     sprite.SetFlip(frameFlip);
 }
 
+void SpriteRenderer::SetFrame(int frame)
+{
+    sprite.SetFrame(frame);
+}
+
+
+
 // Atualiza o componente (deixamos vazio por enquanto)
 void SpriteRenderer::Update(float dt) {}
 

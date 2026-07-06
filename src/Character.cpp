@@ -130,7 +130,7 @@ void Character::Update(float dt)
     }
     Collider *col = (Collider *)associated.GetComponent("Collider");
     if (GameData::gameMode == 1) {
-        col->SetScale(Vec2(0.4,0.9));
+        col->SetScale(Vec2(0.4,0.8));
         if (dashing) {
             col->SetScale(Vec2(0.5,0.5));
         }
@@ -636,7 +636,7 @@ void Character::NotifyCollision(GameObject &other)
             speed.x = 0;
         }
     }
-    else if (other.color > 0 && dashing)
+    if (other.color > 0 && dashing)
     {
         CollectColor(static_cast<Character::Color>(other.color));
         if (other.blockable >= 0)

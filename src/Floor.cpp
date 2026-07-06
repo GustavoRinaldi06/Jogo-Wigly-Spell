@@ -12,18 +12,36 @@
 
 #include <iostream>
 
-Floor::Floor(GameObject &associated, const std::string &spritePath, int frame,SDL_RendererFlip flp, float rotation)
+Floor::Floor(GameObject &associated, const std::string &spritePath, int frame,SDL_RendererFlip flp, float rotation, int tipo, int id)
     : Component(associated)
 {
+    type = tipo;
+    index= id;
     associated.layer = 3.0;
-    auto renderer = new SpriteRenderer(associated, spritePath, 2, 1);
-    renderer->SetScale(4,2);
+    SpriteRenderer *renderer;
+    if (tipo == 0){
+        renderer = new SpriteRenderer(associated, spritePath, 2, 1);
+        renderer->SetFrame(frame,flp);
+    }
+    else{
+         renderer = new SpriteRenderer(associated, spritePath, 2, 4);
+        if (tipo == 1)
+        {
+            renderer->SetFrame(frame,flp);
+        }
+        else {
+            renderer->SetFrame(frame,flp);
+        }
+    }
+    renderer->SetCameraFollower(0.0);
+    changeTime.Restart();
+    renderer->SetScale(1,1.0);
     associated.angleDeg = rotation;
-    renderer->SetFrame(frame,flp);
+    
     associated.AddComponent(renderer);
     
     // Cria as animações
-    if (frame % 2 == 0) {
+    if (frame != 1) {
         Collider *col = new Collider(associated,Vec2(1,2));
         // Ajustando collider para evitar de atravessar
         if (flp == SDL_FLIP_NONE) {
@@ -52,12 +70,56 @@ void Floor::Start()
 void Floor::Update(float dt)
 {
     
-    if (associated.box.x <= limit) {
+    if (associated.box.x  - Camera::GetInstance().GetPosition().x <= limit) {
         associated.RequestDelete();
     }
     Vec2 uspeed = GameData::universalspeed;
     associated.box.x += (speed.x + uspeed.x) * dt;
     associated.box.y += (speed.y + uspeed.y)* dt;
+    
+    if (type == 1) {
+        changeTime.Update(dt);
+        if (!GameData::discostart) {
+            return;
+        }
+        
+        SpriteRenderer *rend = (SpriteRenderer *)associated.GetComponent("SpriteRenderer");
+        if (GameData:: inversedisco > 0) {
+            if (GameData::inversedisco == 1){
+                changeTime.Restart();
+                float x_target = Character::PlayerBox().GetCenter().x;
+                int x_id = (int)(x_target / 128);
+                
+                if (!GameData::inverted) {
+                    x_id += 7;
+                }
+                if (x_id != index) {
+                    rend->SetFrame(3);
+                    associated.damage = -1;
+                }
+                else {
+                    rend->SetFrame(4);
+                    associated.damage = 1;
+                }
+            }
+            if (changeTime.Get() > 3.0) {
+                GameData::inversedisco = 0;
+            }
+        }
+        else {
+            associated.damage = -1;
+            if ((!GameData::inverted && index < 7) || (GameData::inverted && index >= 7))
+            {     
+                if (changeTime.Get() > 2.0) {
+                    rend->SetFrame(rand() % 4);
+                    changeTime.Restart();
+                }
+            }
+            else {
+                rend->SetFrame(5);
+            }
+        }
+    }
 }
 
 void Floor::Render() {}

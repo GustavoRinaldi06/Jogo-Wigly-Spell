@@ -5,7 +5,7 @@
 #include <cmath>
 
 #define INCLUDE_SDL
-#define DEBUG
+//#define DEBUG
 #include "SDL_include.h"
 
 Collider::Collider(GameObject &associated, Vec2 scale, Vec2 offset)

@@ -38,14 +38,18 @@ ScenaryGenerator::ScenaryGenerator(GameObject &associated, Vec2 spd, Vec2 start,
         range = 1;
         batchcount = 1;
     }
-    GenerateBatch(Vec2(0,start.y),0);
-    GenerateBatch(Vec2(reference->box.x+reference->box.w,start.y),1);
+    GenerateBatch(Vec2(start.x,start.y),0);
+    if (abs(GameData::universalspeed.x) > 0) {
+        GenerateBatch(Vec2(reference->box.x+reference->box.w,start.y),1);
+    }
+    
     int pat =  rand() % range;
     while (range > 1 && pat == lastpattern) {
         pat = rand() % range;
     }
-    GenerateBatch(Vec2(reference->box.x+reference->box.w,start.y),pat);
-    
+    if (abs(GameData::universalspeed.x) > 0) {
+        GenerateBatch(Vec2(reference->box.x+reference->box.w,start.y),pat);
+    }
     genTimer.Restart();
 }
 
@@ -86,6 +90,20 @@ void ScenaryGenerator::GenerateBatch(Vec2 Start, int pattern) {
             }
             else if (type == 3) {
                 BG = new Background(*go,"recursos/img/CorredorL3.png",0,flip,0,followrates[type]);
+            }
+
+            else if (type == 4) {
+                BG = new Background(*go,"recursos/img/Pub layer 1.png",0,flip,10,followrates[type]);
+            }
+            else if (type == 5) {
+                BG = new Background(*go,"recursos/img/Pub layer 2.png",0,flip,2,followrates[type]);
+            }
+            else if (type == 6) {
+                
+                BG = new Background(*go,"recursos/img/Pub layer 3.png",0,flip,1,followrates[type]);
+            }
+            else if (type == 7) {
+                BG = new Background(*go,"recursos/img/Pub layer 4.jpg",0,flip,0,followrates[type]);
             }
             go->AddComponent(BG);
             BG->speed = speed;

@@ -59,7 +59,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     deathTimer.Restart();
     specialInvuln.Restart();
     waveCD.Restart();
-    health = 1500;
+    health = 1250;
     dead = false;
     ATK = -1;
     SmnTimer.Set(9999);
@@ -79,7 +79,7 @@ void DiscoGhost::Start()
     GameObject *textGO = new GameObject();
     textGO->layer = 11;
     textGO->box.x = 300;
-    textGO->box.y = 40;
+    textGO->box.y = 70;
 
     // inicia com a string vazia
     discoInfoText = new Text(*textGO, "recursos/font/neodgm.ttf", 28, BLENDED, "", white);
@@ -125,6 +125,9 @@ void DiscoGhost::Update(float dt)
 
         return; // não executa mais lógica de movimento
     }
+    if (!GameData::discostart) {
+        return;
+    }
 
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
     NoteTimer.Update(dt);
@@ -141,7 +144,7 @@ void DiscoGhost::Update(float dt)
     {
         NoteTimer.Restart();
         if (!GameData::finalfase) {
-            if (health > 900) {
+            if (health > 750) {
                 noteTime = 8 + rand() % 5;;
             }
             else {
@@ -154,13 +157,30 @@ void DiscoGhost::Update(float dt)
             {
                 int colorchk = (rand() % 100);
                 int color = 0;
+                if (colorchk > 50) {
+                    if (last_color == 0) {
+                        colorchk -= 50;
+                    }
+                    else {
+                        last_color = 0;
+                        color = 0;
+                    }
+                }
                 if (colorchk < 25)
                 {
                     color = 1;
+                    if (last_color == 1) {
+                        color = 2;
+                        last_color = 2;
+                    }
                 }
                 else if (colorchk < 50)
                 {
                     color = 2;
+                    if (last_color == 2) {
+                        color = 1;
+                        last_color = 1;
+                    }
                 }
                 NoteATK(color);
             }
@@ -365,7 +385,7 @@ void DiscoGhost::Update(float dt)
         {
             AtkTimer.Restart();
             if (!GameData::finalfase) {
-                if (health > 900)
+                if (health > 750)
                 {
                     atkTime = 2 + rand() % 2;
                 }
@@ -381,6 +401,9 @@ void DiscoGhost::Update(float dt)
                     swapcount = 2 + (rand() % 2);
                     ATK = 2;
                     animator->SetAnimation("prepgrav");
+                    
+                    GameData::inversedisco = 1;
+                    
                     AnimTimer.Restart();
                     attacked = false;
                 }
@@ -444,6 +467,9 @@ void DiscoGhost::Update(float dt)
         }
         else if (!attacked && AnimTimer.Get() > 1.5)
         {
+            if (GameData::inversedisco > 0) {
+                GameData::inversedisco = 2;
+            }
             if (GameData::inverted)
             {
                 animator->SetAnimation("downgrav");
@@ -731,6 +757,9 @@ void DiscoGhost::SmnATK(int side, int pos)
 
 void DiscoGhost::NotifyCollision(GameObject &other)
 {
+    if (!GameData::discostart) {
+        return;
+    }
     Collider *collider = (Collider *)other.GetComponent("Collider");
     if (collider && collider->tag == "bullet")
     {

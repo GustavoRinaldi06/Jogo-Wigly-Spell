@@ -92,7 +92,7 @@ void WavyNote::Update(float dt)
         deathTimer.Update(dt);
 
         // só deleta após 0.5s
-        if (deathTimer.Get() > 0.5f)
+        if (deathTimer.Get() > 0.15f)
             associated.RequestDelete();
 
         return; // não executa mais lógica de movimento

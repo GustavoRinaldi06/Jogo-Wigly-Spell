@@ -9,6 +9,7 @@
 #include "../include/Collider.h"
 #include "../include/Collision.h"
 #include "../include/ScenaryGenerator.h"
+#include "../include/Floor.h"
 #include "../include/Dancefloor.h"
 #include "../include/Resources.h"
 
@@ -43,9 +44,37 @@ void DiscoState::LoadAssets()
 
     //bgObject->AddComponent(bgRenderer);
     //AddObject(bgObject);
-
+    GameData::discostart = false;
     // Mapa --------------------------------------------------------------------------------------------------------------------
-
+    auto flip = SDL_FLIP_NONE;
+    float ypos = 650;
+    for (int j = 0; j < 2; j ++) {
+        float prevx = -1280;
+        for (int i = 0; i < 20; i++)
+        {
+            GameObject *floorGO = new GameObject();
+            int tipo;
+            int frame = 6;
+            int id = -1;
+            if (i >= 10 && i < 17) {
+                tipo = 1;
+                frame = 5;
+                id = i - 10 + 7*j;
+            }
+            else {
+                tipo = 2;
+            }
+            
+            floorGO->AddComponent(new Floor(*floorGO, "recursos/img/Piso-pub-disco.png",frame,flip, 0,tipo,id)); // substitua pela imagem correta
+            floorGO->box.x = prevx;                                                                        // Centro do mapa
+            floorGO->box.y = ypos;                                                                    // Altura maior
+            AddObject(floorGO);
+            prevx = floorGO->box.x + floorGO->box.w;
+        }
+        flip = SDL_FLIP_VERTICAL;
+        ypos = -64;
+    }
+    /*
     GameObject *floorGO = new GameObject();
     floorGO->AddComponent(new ScenaryGenerator(*floorGO, Vec2(0.0,0.0),Vec2(0,650),Vec2(-120,0),SDL_FLIP_NONE,0.0)); // substitua pela imagem correta
     AddObject(floorGO);
@@ -53,16 +82,25 @@ void DiscoState::LoadAssets()
     GameObject *ceilGO = new GameObject();
     ceilGO->AddComponent(new ScenaryGenerator(*ceilGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-120,0),SDL_FLIP_VERTICAL,0.0)); // substitua pela imagem correta
     AddObject(ceilGO);
+    */
 
     GameObject *bgGO = new GameObject();
-    //bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,1)); // substitua pela imagem correta
+    //bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1280.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,4)); // substitua pela imagem correta
     //AddObject(bgGO);
     //bgGO = new GameObject();
-    //bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,2)); // substitua pela imagem correta
-    //AddObject(bgGO);
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0),Vec2(-1380.0,0.0),(-1380,0),SDL_FLIP_NONE,0.0,5)); // substitua pela imagem correta
+    AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,3)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1380.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,6)); // substitua pela imagem correta
+    AddObject(bgGO);
+
+    bgGO = new GameObject();
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1380.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,7)); // substitua pela imagem correta
+    AddObject(bgGO);
+
+    bgGO = new GameObject();
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(0.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,7)); // substitua pela imagem correta
     AddObject(bgGO);
 
     // Pista de danca ---------------------------------------------------------------------------------------------------------
@@ -84,14 +122,15 @@ void DiscoState::LoadAssets()
     
     // Personagem ----------------------------------------------------------------------------------------------------------------
     GameObject *playerGO = new GameObject();
-    playerGO->box.x = 500;  // Centro do mapa
+    playerGO->box.x = -1200;  // Centro do mapa
     playerGO->box.y = 300; // Altura maior
+    furthest_chara = base_chara;
 
     playerGO->AddComponent(new Character(*playerGO, "recursos/img/wigly.png")); // substitua pela imagem correta
     playerGO->AddComponent(new PlayerController(*playerGO));
 
     GameData::playerHP = 100; // Reseta vida do personagem
-    Camera::GetInstance().SetPosition(Vec2(0, 0)); // Puxa a câmera de volta pro (0,0)
+    Camera::GetInstance().SetPosition(Vec2(-1280, 0)); // Puxa a câmera de volta pro (0,0)
     
     //Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
 
@@ -214,7 +253,7 @@ void DiscoState::Update(float dt)
 
     Camera::GetInstance().Update(dt);
 
-    // Se o jogador pressionou ESC ou clicou no X ou esc
+    // Se o jogador pressionou ESC ou clicou no X ou esc.
     if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
     {
         quitRequested = true;
@@ -249,6 +288,27 @@ void DiscoState::Update(float dt)
             GameData::aimed = false;
         else
             GameData::aimed = true;
+    }
+    Rect player = Character::PlayerBox();
+
+    Vec2 camerapos = Camera::GetInstance().GetPosition();
+
+    if (camerapos.x < 0 && player.x > furthest_chara) {
+        if (camerapos.x < -400) {
+            camerapos.x = -1280 + (player.x-base_chara);
+            furthest_chara = player.x;
+        }
+        else if (camerapos.x < 0) {
+            camerapos.x = camerapos.x + 300 * dt;
+            furthest_chara = -1280;
+        }
+        if (camerapos.x >= 0) {
+            camerapos = 0;
+            GameData::discostart = true;
+        }
+        
+        
+        Camera::GetInstance().SetPosition(camerapos);
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
