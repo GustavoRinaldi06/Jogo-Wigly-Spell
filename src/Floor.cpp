@@ -24,7 +24,14 @@ Floor::Floor(GameObject &associated, const std::string &spritePath, int frame,SD
     
     // Cria as animações
     if (frame % 2 == 0) {
-        Collider *col = new Collider(associated,Vec2(1,1));
+        Collider *col = new Collider(associated,Vec2(1,2));
+        // Ajustando collider para evitar de atravessar
+        if (flp == SDL_FLIP_NONE) {
+            col->SetOffset(Vec2(0,associated.box.h/2));
+        }
+        else {
+            col->SetOffset(Vec2(0,-associated.box.h/2));
+        }
         col->tag = "solid";
         associated.AddComponent(col);
 

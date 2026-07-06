@@ -5,6 +5,7 @@
 #include <cmath>
 
 #define INCLUDE_SDL
+#define DEBUG
 #include "SDL_include.h"
 
 Collider::Collider(GameObject &associated, Vec2 scale, Vec2 offset)
@@ -38,6 +39,13 @@ int Collider::ColDir(Collider *other)
     Vec2 centerdist = other->box.GetCenter() - box.GetCenter();
     Vec2 overlaplimit =  Vec2((other->box.w + box.w),(other->box.h + box.h));
     Vec2 distance = overlaplimit - Vec2(abs(centerdist.x),abs(centerdist.y));
+    if (distance.x < 0) {
+        distance.x = 9999;
+    }
+    if (distance.y < 0) {
+        distance.y = 9999;
+    }
+    distance = Vec2(distance.x/overlaplimit.x,distance.y/overlaplimit.y);
     if (distance.y <= distance.x) {
         if (centerdist.y >= 0) {
             return 0;   // Baixo

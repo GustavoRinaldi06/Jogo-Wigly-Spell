@@ -53,7 +53,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     associated.AddComponent(animator);
     animator->SetAnimation("idle");
 
-    Collider *col = new Collider(associated, Vec2(Vec2(0.6, 0.8)));
+    Collider *col = new Collider(associated, Vec2(Vec2(0.4, 0.8)));
     associated.AddComponent(col);
     // associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();

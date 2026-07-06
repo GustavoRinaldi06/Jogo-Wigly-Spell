@@ -9,6 +9,8 @@
 // Inicializa a variável estática 'instance' como nullptr
 Game *Game::instance = nullptr;
 
+
+
 Game &Game::GetInstance()
 {
     if (instance == nullptr)

@@ -45,8 +45,15 @@ void BubbleCD::Update(float dt)
     associated.box.x = Character::PlayerBox().x;
     associated.box.y = Character::PlayerBox().y + (Character::PlayerBox().h - associated.box.h)/2.0 - 32;
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+    SpriteRenderer *rend = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
     if (animator->GetCurrentFrame() == 6) {
         animator->SetAnimation("none");
+    }
+    if (GameData::inverted) {
+        rend->SetFrame(animator->GetCurrentFrame(),SDL_FLIP_VERTICAL);
+    }
+    else {
+        rend->SetFrame(animator->GetCurrentFrame(),SDL_FLIP_NONE);
     }
 }
 

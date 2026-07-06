@@ -33,7 +33,7 @@ void PlayerController::Update(float dt)
 
     if (direction.Magnitude() > 0.1f)
     {
-        Vec2 target = associated.box.GetCenter() + direction.Normalize() * 100;
+        Vec2 target = direction;
         character->Issue(Character::Command(Character::CommandType::MOVE, target.x, target.y));
     }
     if (!character->IsDashing()) {

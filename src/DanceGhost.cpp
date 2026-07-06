@@ -117,7 +117,7 @@ void DanceGhost::Update(float dt)
         collider->SetScale(Vec2(0.8,0.6));
         if (associated.box.x < 100) {
             rushing = false;
-            collider->SetScale(Vec2(0.8,0.8));
+            collider->SetScale(Vec2(0.6,0.8));
             animator->SetAnimation("idle");
         }
     }

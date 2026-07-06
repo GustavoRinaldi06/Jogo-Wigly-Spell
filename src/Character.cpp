@@ -26,7 +26,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
         player = this;
     }
 
-    auto renderer = new SpriteRenderer(associated, spritePath, 4, 12);
+    auto renderer = new SpriteRenderer(associated, spritePath, 8, 8);
     renderer->SetCameraFollower(false);
     associated.AddComponent(renderer);
 
@@ -48,21 +48,23 @@ Character::Character(GameObject &associated, const std::string &spritePath)
 
     // Cria as animações
     auto animator = new Animator(associated);
-    animator->AddAnimation("idle", Animation(22, 25, 0.5f));
-    animator->AddAnimation("walking_X", Animation(26, 29, 0.2f));
-    animator->AddAnimation("dashstart", Animation(0, 2 + 1, 0.15f));
-    animator->AddAnimation("dashend", Animation(4, 5 + 1, 0.15f)); //+1 serve para detecção quando a animação deveria trocar
-    animator->AddAnimation("dashing", Animation(3, 3, 10.0f));
-    animator->AddAnimation("jumping", Animation(16, 17, 0.25f));
-    animator->AddAnimation("idleair", Animation(18, 19, 0.25f));
-    animator->AddAnimation("walking_wall", Animation(44, 47, 0.25f));
-    animator->AddAnimation("idlewall", Animation(32, 43, 0.1));
-    animator->AddAnimation("dead", Animation(6, 15, 0.2f));
+    animator->AddAnimation("idle", Animation(0, 7, (1.0/6)));
+    animator->AddAnimation("walking_X", Animation(50, 57, (1.0/12)));
+    animator->AddAnimation("dashstart", Animation(18, 21, (1.0/24)));
+    animator->AddAnimation("dashend", Animation(27, 30, (1.0/24))); //+1 serve para detecção quando a animação deveria trocar
+    animator->AddAnimation("dashing", Animation(23, 26, (1.0/12)));
+    animator->AddAnimation("jump", Animation(42, 43, (1.0/12)));
+    animator->AddAnimation("jumping", Animation(44, 45, (1.0,12)));
+    animator->AddAnimation("idleair", Animation(46, 47, (1.0/12)));
+    animator->AddAnimation("walking_wall", Animation(10, 17, (1.0/12)));
+    animator->AddAnimation("idlewall", Animation(10, 11, (1.0/12)));
+    animator->AddAnimation("dead", Animation(30, 37, (1.0/12)));
+    animator->AddAnimation("gone", Animation(37, 37, 10));
     associated.AddComponent(animator);
 
     Collider *col = new Collider(associated);
 
-    col->SetScale(Vec2(0.65, 1.0));
+    col->SetScale(Vec2(0.4, 0.9));
     // col->SetOffset(Vec2(associated.box.w*(1-0.65)/2,0));
 
     associated.AddComponent(col);
@@ -72,8 +74,8 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     wasInverted = GameData::inverted; // Faz track da direção da gravidade
     Inversion = false;
 
-    colorInventory.push_back(BLUE);
-    colorInventory.push_back(BLUE);
+    //colorInventory.push_back(BLUE);
+    //colorInventory.push_back(BLUE);
     invTimer.Set(100);
     purpleTimer.Set(100);
 
@@ -87,6 +89,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     bubbleCDGO->AddComponent(new BubbleCD(*bubbleCDGO, "recursos/img/BubbleCD.png"));
     Game::GetInstance().GetCurrentState().AddObject(bubbleCDGO);
     bubbleCD = bubbleCDGO;
+    damageCooldown.Restart();
 
 
     deathAnimTriggered = false;
@@ -94,7 +97,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     initTimer.Restart();
     hp = 100;
 
-    wasGameMode = GameData::gameMode;
+    wasGameMode = 1;
 }
 
 Character::~Character()
@@ -114,6 +117,7 @@ void Character::Update(float dt)
     initTimer.Update(dt);
     if (initTimer.Get() < 1.0)
     {
+        wasGameMode = GameData::gameMode;
         return;
     }
 
@@ -122,7 +126,22 @@ void Character::Update(float dt)
     {
         damageCooldown.Restart();      
         wasGameMode = GameData::gameMode;
+        //dashing = false;
+    }
+    Collider *col = (Collider *)associated.GetComponent("Collider");
+    if (GameData::gameMode == 1) {
+        col->SetScale(Vec2(0.4,0.9));
+        if (dashing) {
+            col->SetScale(Vec2(0.5,0.5));
+        }
+    }
+    else {
         dashing = false;
+        jumping = false;
+        col->SetScale(Vec2(0.4,0.4)); 
+    }
+    if (!dashing && isOnGround) {
+        dashed = false;
     }
 
     // Ao morrer -------------------------------------------------------------------------------
@@ -151,10 +170,15 @@ void Character::Update(float dt)
         // avança timer de morte
         deathTimer.Update(dt);
 
+        if (animator->GetAnimation() == "dead" && animator->wrapped) {
+            animator->SetAnimation("gone");
+        }
+
         // só deleta após 6s
-        if (deathTimer.Get() > 6.0f || animator->GetCurrentFrame() == 15)
+        if (deathTimer.Get() > 4.0f)
         {
             bubble->RequestDelete();
+            bubbleCD->RequestDelete();
             associated.RequestDelete();
         }
 
@@ -168,14 +192,10 @@ void Character::Update(float dt)
     shieldTimer.Update(dt);
     if (damageCooldown.Get() < 2.0)
     {
-        if ((int)((damageCooldown.Get() * 10)) % 4 == 0)
-        {
-            transparent = !transparent;
-        }
-        else
-        {
-            transparent = false;
-        }
+        transparent = true;
+    }
+    else {
+        transparent = false;
     }
     if (shieldTimer.Get() > 10)
     {
@@ -232,7 +252,7 @@ void Character::Update(float dt)
             else
             {
                 speed.x = facingDir * 500.0f;
-                if (animator->GetCurrentFrame() == 3 && animator->GetAnimation() == "dashstart")
+                if (animator->wrapped && animator->GetAnimation() == "dashstart")
                 {
                     animator->SetAnimation("dashing");
                 }
@@ -279,7 +299,7 @@ void Character::Update(float dt)
             isOnGround = false; // se está no chão
             jumped = true;      // se pulou
             jumping = true;
-            animator->SetAnimation("jumping");
+            animator->SetAnimation("jump");
         }
         else if (!dashing && input.KeyPress(SDLK_SPACE) && jumped && (!Djumped) && GameData::Djump == true)
         {
@@ -290,7 +310,7 @@ void Character::Update(float dt)
 
             Djumped = true; // se pulou duas vezes
             jumping = true;
-            animator->SetAnimation("jumping");
+            animator->SetAnimation("jump");
         }
     }
 
@@ -344,8 +364,15 @@ void Character::Update(float dt)
         // MOVE ------------------------------------------------------------------------
         if (!dashing && current.type == CommandType::MOVE)
         {
-            Vec2 dir = (current.pos - associated.box.GetCenter()).Normalize();
+            Vec2 dir = (current.pos).Normalize();
             speed.x = dir.x * linearSpeed;
+
+            if (dir.x > 0) {
+                facingDir = 1;
+            }
+            else {
+                facingDir  =-1;
+            }
 
             if (GameData::gameMode == 0)
             {
@@ -400,8 +427,14 @@ void Character::Update(float dt)
                 animator->SetAnimation("idleair");
             }
         }
+        else if (animator->GetAnimation() == "jump" && GameData::gameMode == 1){
+            if (animator->wrapped) {
+                animator->SetAnimation("jumping");
+            }
+        }
         else if (animator->GetAnimation() == "jumping" && GameData::gameMode == 1)
         {
+            
             if (!jumping)
             {
                 if (GameData::inverted && speed.y < 50)
@@ -444,11 +477,12 @@ void Character::Update(float dt)
     }
 
     // Decide a direção que vai ficar horizontalmente
-    if (speed.x < -0.1f)
+    /*
+    if (speed.x < -0.5f)
         facingDir = -1;
-    else if (speed.x > 0.1f)
+    else if (speed.x > 0.5f)
         facingDir = 1;
-
+    */
     // Angulação da sprite na parede -----------------------------------------------------------------------------------
     if (GameData::gameMode == 0)
     {
@@ -536,6 +570,7 @@ void Character::NotifyCollision(GameObject &other)
     // Se colidir com chão
     Collider *collider = (Collider *)other.GetComponent("Collider");
     Collider *col = (Collider *)associated.GetComponent("Collider");
+    Vec2 scale = col->GetScale();
     int dir = col->ColDir(collider);
     if (collider && collider->tag == "solid")
     {
@@ -545,7 +580,7 @@ void Character::NotifyCollision(GameObject &other)
         // Ajusta posição
         if (dir == 0)
         {
-            associated.box.y = other.box.y - associated.box.h;
+            associated.box.y = other.box.y - associated.box.h*(0.5+ scale.y/2);
             speed.y = 0;
             if (!GameData::inverted)
             {
@@ -569,7 +604,7 @@ void Character::NotifyCollision(GameObject &other)
         }
         else if (dir == 1)
         {
-            associated.box.y = other.box.y + other.box.h;
+            associated.box.y = other.box.y + other.box.h - associated.box.h*((1-scale.y)/2.0);
             speed.y = 0;
             if (GameData::inverted)
             {
@@ -592,12 +627,12 @@ void Character::NotifyCollision(GameObject &other)
         }
         else if (dir == 2)
         {
-            associated.box.x = other.box.x - associated.box.w;
+            associated.box.x = other.box.x - associated.box.w*(0.5+ scale.x/2);
             speed.x = 0;
         }
         else if (dir == 3)
         {
-            associated.box.x = other.box.x + other.box.w;
+            associated.box.x = other.box.x + other.box.w - associated.box.w*((1-scale.x)/2);
             speed.x = 0;
         }
     }
@@ -715,7 +750,7 @@ void Character::Shoot1(Vec2 targetPos)
 
             GameObject *spellGO = new GameObject();
             spellGO->box.x = shooterCenter.x;
-            spellGO->box.y = shooterCenter.y - 20;
+            spellGO->box.y = shooterCenter.y - 40;
             if (bulcolor == 3)
             {
                 spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, "recursos/img/Wigly_ataqueR.png", bulcolor,3));
@@ -747,7 +782,7 @@ void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDista
 
         GameObject *spell2GO = new GameObject();
         spell2GO->box.x = shooterCenter.x;
-        spell2GO->box.y = shooterCenter.y - 20; // Para ajustar a altura do tiro
+        spell2GO->box.y = shooterCenter.y - 40; // Para ajustar a altura do tiro
         int type = 0;
         if (color > 0) {
             type = 1;
