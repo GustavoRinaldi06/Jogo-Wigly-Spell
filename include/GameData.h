@@ -38,6 +38,12 @@ public:
     static bool discopos[14];
     static int inversedisco;
 
+    // controle de ataque do disco
+    static int targetDiscoColor;
+    static bool discoAttackActive;
+    static bool discoBlackout;
+    static bool discoError;
+
     static DanceFloor *danceFloorPtr;
 };
 

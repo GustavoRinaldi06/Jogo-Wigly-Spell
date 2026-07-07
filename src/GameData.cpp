@@ -26,4 +26,10 @@ bool GameData::summonalive[6] = {false,false,false,false,false,false};
 bool GameData::discopos[14] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false};
 int GameData::inversedisco = 0;
 
+// No seu GameData.cpp
+int GameData::targetDiscoColor = 0;
+bool GameData::discoAttackActive = false;
+bool GameData::discoBlackout = false;
+bool GameData::discoError = false;
+
 DanceFloor *GameData::danceFloorPtr = nullptr; //pista fase 3

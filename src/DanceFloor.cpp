@@ -36,7 +36,7 @@ void DanceFloor::Update(float dt)
     // Cria as tiles se não existirem
     if (!tilesCreated)
     {
-        float spacing = 50.0f;
+        float spacing = 40.0f;
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < cols; c++)
@@ -101,7 +101,8 @@ void DanceFloor::ActivateDisco()
     }
 }
 
-void DanceFloor::Error(){
+void DanceFloor::Error()
+{
     for (int r = 0; r < rows; r++)
     {
         for (int c = 0; c < cols; c++)
@@ -123,7 +124,7 @@ int DanceFloor::GetColorAtPosition(float x, float y)
             if (tile != nullptr)
             {
                 // Verifica se as coordenadas estão dentro desta tile
-                if (x >= tile->box.x && x <= (tile->box.x + tile->box.w) &&  y >= tile->box.y && y <= (tile->box.y + tile->box.h))
+                if (x >= tile->box.x && x <= (tile->box.x + tile->box.w) && y >= tile->box.y && y <= (tile->box.y + tile->box.h))
                 {
                     return grid[r][c];
                 }

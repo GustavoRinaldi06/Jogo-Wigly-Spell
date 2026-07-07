@@ -12,6 +12,7 @@
 #include "../include/Floor.h"
 #include "../include/Dancefloor.h"
 #include "../include/Resources.h"
+#include "../include/Light.h"
 
 #include "Text.h"
 
@@ -28,27 +29,27 @@ DiscoState::~DiscoState()
     objectArray.clear(); // Limpa os GameObjects automaticamente graças ao unique_ptr
 }
 
-
 void DiscoState::LoadAssets()
 {
     std::cout << "\n Carregando fase 3 WiglySpell:" << "\n"; // Alertar LoadAssets
-    GameData::universalspeed = Vec2(0,0); 
+    GameData::universalspeed = Vec2(0, 0);
     // Fundo -------------------------------------------------------------------------------------------------------------------
-    //GameObject *bgObject = new GameObject();
-    //SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
-    //bgRenderer->Open("recursos/img/FundoTest.png");
-    //bgRenderer->SetCameraFollower(false);
+    // GameObject *bgObject = new GameObject();
+    // SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
+    // bgRenderer->Open("recursos/img/FundoTest.png");
+    // bgRenderer->SetCameraFollower(false);
 
-    //bgObject->box.x = 0;
-    //bgObject->box.y = 0;
+    // bgObject->box.x = 0;
+    // bgObject->box.y = 0;
 
-    //bgObject->AddComponent(bgRenderer);
-    //AddObject(bgObject);
+    // bgObject->AddComponent(bgRenderer);
+    // AddObject(bgObject);
     GameData::discostart = false;
     // Mapa --------------------------------------------------------------------------------------------------------------------
     auto flip = SDL_FLIP_NONE;
     float ypos = 650;
-    for (int j = 0; j < 2; j ++) {
+    for (int j = 0; j < 2; j++)
+    {
         float prevx = -1280;
         for (int i = 0; i < 20; i++)
         {
@@ -56,18 +57,20 @@ void DiscoState::LoadAssets()
             int tipo;
             int frame = 6;
             int id = -1;
-            if (i >= 10 && i < 17) {
+            if (i >= 10 && i < 16)
+            {
                 tipo = 1;
                 frame = 5;
-                id = i - 10 + 7*j;
+                id = i - 10 + 7 * j;
             }
-            else {
+            else
+            {
                 tipo = 2;
             }
-            
-            floorGO->AddComponent(new Floor(*floorGO, "recursos/img/Piso-pub-disco.png",frame,flip, 0,tipo,id)); // substitua pela imagem correta
-            floorGO->box.x = prevx;                                                                        // Centro do mapa
-            floorGO->box.y = ypos;                                                                    // Altura maior
+
+            floorGO->AddComponent(new Floor(*floorGO, "recursos/img/Piso-pub-disco.png", frame, flip, 0, tipo, id)); // substitua pela imagem correta
+            floorGO->box.x = prevx;                                                                                  // Centro do mapa
+            floorGO->box.y = ypos;                                                                                   // Altura maior
             AddObject(floorGO);
             prevx = floorGO->box.x + floorGO->box.w;
         }
@@ -85,54 +88,54 @@ void DiscoState::LoadAssets()
     */
 
     GameObject *bgGO = new GameObject();
-    //bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1280.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,4)); // substitua pela imagem correta
-    //AddObject(bgGO);
-    //bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0),Vec2(-1380.0,0.0),(-1380,0),SDL_FLIP_NONE,0.0,5)); // substitua pela imagem correta
+    // bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1280.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,4)); // substitua pela imagem correta
+    // AddObject(bgGO);
+    // bgGO = new GameObject();
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1380.0, 0.0), (-1380, 0), SDL_FLIP_NONE, 0.0, 5)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1380.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,6)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1380.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 6)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1380.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,7)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1380.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 7)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(0.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,7)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(0.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 7)); // substitua pela imagem correta
     AddObject(bgGO);
 
     // Pista de danca ---------------------------------------------------------------------------------------------------------
     GameObject *danceFloorGO = new GameObject();
 
     // centro da tela
-    danceFloorGO->box.x = 20.0f;
-    danceFloorGO->box.y = 100.0f; 
+    danceFloorGO->box.x = 0.0f;
+    danceFloorGO->box.y = 100.0f;
     danceFloorGO->layer = 2;
 
-    float danceTileSize = 80.0f;
-    danceFloorGO->box.w = 9 * danceTileSize;
+    float danceTileSize = 88.0f;
+    danceFloorGO->box.w = 6 * danceTileSize;
     danceFloorGO->box.h = 4 * danceTileSize;
 
     DanceFloor *dancefloor = new DanceFloor(*danceFloorGO, "recursos/img/Dancefloor.png", danceTileSize);
     danceFloorGO->AddComponent(dancefloor);
 
     AddObject(danceFloorGO);
-    
+
     // Personagem ----------------------------------------------------------------------------------------------------------------
     GameObject *playerGO = new GameObject();
-    playerGO->box.x = -1200;  // Centro do mapa
-    playerGO->box.y = 300; // Altura maior
+    playerGO->box.x = -1200; // Centro do mapa
+    playerGO->box.y = 300;   // Altura maior
     furthest_chara = base_chara;
 
     playerGO->AddComponent(new Character(*playerGO, "recursos/img/wigly.png")); // substitua pela imagem correta
     playerGO->AddComponent(new PlayerController(*playerGO));
 
-    GameData::playerHP = 100; // Reseta vida do personagem
+    GameData::playerHP = 100;                          // Reseta vida do personagem
     Camera::GetInstance().SetPosition(Vec2(-1280, 0)); // Puxa a câmera de volta pro (0,0)
-    
-    //Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
+
+    // Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
 
     AddObject(playerGO);
     GameData::inverted = false;
@@ -151,33 +154,40 @@ void DiscoState::LoadAssets()
     missileGO->AddComponent(new Missile(*missileGO, "recursos/img/homingProj.png")); // substitua pela imagem correta
     AddObject(missileGO);
     */
-    //float prevy = 0;
-    GameObject *discoGO = new GameObject();
-    discoGO->box.x = 850;  // Centro do mapa
-    discoGO->box.y = 150; // Altura maior
+    // float prevy = 0;
 
+    // Posição boss --------------------------------------------------------------------------------------------------------------
+    GameObject *discoGO = new GameObject();
+    discoGO->box.x = 830; // Centro do mapa
+    discoGO->box.y = 150; // Altura maior
     discoGO->AddComponent(new DiscoGhost(*discoGO, "recursos/img/discoGhost.png")); // substitua pela imagem correta
     AddObject(discoGO);
 
+    // Holofote
+    GameObject *lightGO = new GameObject();
+    lightGO->box.x = 695;
+    lightGO->box.y = -85;
+    lightGO->layer = 2.5;
+    lightGO->AddComponent(new Light(*lightGO, "recursos/img/Holofote.png"));
+    AddObject(lightGO);
 
     // Música --------------------------------------------------------------------------------------------------------------------
     if (!GameData::isMuted)
     {
-    backgroundMusic.Open("recursos/audio/Fundo.mp3");
-    backgroundMusic.Play(-1);
-    currentTrack = "recursos/audio/Fundo.mp3";
+        backgroundMusic.Open("recursos/audio/Fundo.mp3");
+        backgroundMusic.Play(-1);
+        currentTrack = "recursos/audio/Fundo.mp3";
 
-    vinilSwipe = Sound("recursos/audio/vinilswipe.mp3");
-    // Playlist DJ
-    playlist.push_back("recursos/audio/playlist/FP.mp3");
-    playlist.push_back("recursos/audio/playlist/IWS.mp3");
-    playlist.push_back("recursos/audio/playlist/BW.mp3");
-    //playlist.push_back("recursos/audio/playlist/DM.mp3");
+        vinilSwipe = Sound("recursos/audio/vinilswipe.mp3");
+        // Playlist DJ
+        playlist.push_back("recursos/audio/playlist/IWS.mp3");
+        playlist.push_back("recursos/audio/playlist/BW.mp3");
+        // playlist.push_back("recursos/audio/playlist/DM.mp3");
 
-    for (const auto &musicaPath : playlist)
-    {
-        Resources::GetMusic(musicaPath);
-    }
+        for (const auto &musicaPath : playlist)
+        {
+            Resources::GetMusic(musicaPath);
+        }
     }
 
     // Texto da vida do personagem------------------------------------------------------------------------------------------------
@@ -212,9 +222,9 @@ void DiscoState::LoadAssets()
     AddObject(textGO1);
 
     */
-    
+
     GameObject *cauldGO1 = new GameObject();
-    cauldGO1->AddComponent(new Potion(*cauldGO1, "recursos/img/potions.png",0));
+    cauldGO1->AddComponent(new Potion(*cauldGO1, "recursos/img/potions.png", 0));
     cauldGO1->layer = 10;
 
     // Posição do texto
@@ -223,15 +233,14 @@ void DiscoState::LoadAssets()
 
     AddObject(cauldGO1);
 
-    GameObject *cauldGO2= new GameObject();
-    cauldGO2->AddComponent(new Potion(*cauldGO2, "recursos/img/potions.png",1));
+    GameObject *cauldGO2 = new GameObject();
+    cauldGO2->AddComponent(new Potion(*cauldGO2, "recursos/img/potions.png", 1));
     cauldGO2->layer = 10;
 
     // Posição do texto
     cauldGO2->box.x = 250;
     cauldGO2->box.y = 650;
     AddObject(cauldGO2);
-
 
     GameObject *textGO2 = new GameObject();
     std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
@@ -264,8 +273,8 @@ void DiscoState::Update(float dt)
     if (input.KeyPress(SDLK_m))
     {
         std::cout << "Troca de modos acionada!" << std::endl;
-        if (GameData::gameMode==0)
-            GameData::gameMode = 1; //trocca para plataforma
+        if (GameData::gameMode == 0)
+            GameData::gameMode = 1; // trocca para plataforma
         else
             GameData::gameMode = 0; // troca para menu
     }
@@ -293,21 +302,24 @@ void DiscoState::Update(float dt)
 
     Vec2 camerapos = Camera::GetInstance().GetPosition();
 
-    if (camerapos.x < 0 && player.x > furthest_chara) {
-        if (camerapos.x < -400) {
-            camerapos.x = -1280 + (player.x-base_chara);
+    if (camerapos.x < 0 && player.x > furthest_chara)
+    {
+        if (camerapos.x < -400)
+        {
+            camerapos.x = -1280 + (player.x - base_chara);
             furthest_chara = player.x;
         }
-        else if (camerapos.x < 0) {
+        else if (camerapos.x < 0)
+        {
             camerapos.x = camerapos.x + 300 * dt;
             furthest_chara = -1280;
         }
-        if (camerapos.x >= 0) {
+        if (camerapos.x >= 0)
+        {
             camerapos = 0;
             GameData::discostart = true;
         }
-        
-        
+
         Camera::GetInstance().SetPosition(camerapos);
     }
 
@@ -320,11 +332,10 @@ void DiscoState::Update(float dt)
     for (auto &obj : objectArray)
     {
         Collider *collider = (Collider *)obj->GetComponent("Collider");
-        if (collider) {
+        if (collider)
+        {
             collider->Update(0); // forçando update
-
         }
-            
     }
 
     // Verifica colisões dos GameObjects
@@ -375,19 +386,23 @@ void DiscoState::Update(float dt)
         }
     }
 
-    //CAixa de texto de vida
-    if (hpText && Character::player != nullptr){
+    // CAixa de texto de vida
+    if (hpText && Character::player != nullptr)
+    {
         std::string hpString = "HP: " + std::to_string(Character::player->GetHP());
         hpText->SetText(hpString);
     }
-    if (bosshpText){
+    if (bosshpText)
+    {
         std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
         bosshpText->SetText(bhpString);
     }
 
-    //Caixa do cooldown do disparo
-    if (spellText && Character::player != nullptr){
-        if(GameData::spell == true){
+    // Caixa do cooldown do disparo
+    if (spellText && Character::player != nullptr)
+    {
+        if (GameData::spell == true)
+        {
             if (Character::player->GetCool() < 5)
             {
                 std::string spellCooldown = "Acumulando magia novamente... " + std::to_string(5 - Character::player->GetCool());
@@ -421,15 +436,13 @@ void DiscoState::Render()
     SDL_RenderClear(renderer);
 
     // Desenha todos os game objects
-    std::sort(objectArray.begin(), objectArray.end(),[](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b) {
-        return a->layer < b->layer;
-    });
+    std::sort(objectArray.begin(), objectArray.end(), [](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b)
+              { return a->layer < b->layer; });
     RenderArray();
 
     // Apresenta o frame
     SDL_RenderPresent(renderer);
 }
-
 
 void DiscoState::Start()
 {
@@ -443,21 +456,23 @@ void DiscoState::Start()
 
 void DiscoState::Pause()
 {
-   // Não sei ainda
+    // Não sei ainda
 }
 
 void DiscoState::Resume()
 {
-  // Não sei ainda
+    // Não sei ainda
 }
 
-DanceFloor* DiscoState::getDancefloor(){
+DanceFloor *DiscoState::getDancefloor()
+{
     return dancefloor;
 }
 
 void DiscoState::DontStopTheMusic()
 {
-    if (!GameData::isMuted){
+    if (!GameData::isMuted)
+    {
         // Para a música atual e toca o efeito sonoro de transição
         Mix_HaltMusic();
         vinilSwipe.Play(1);
@@ -474,7 +489,7 @@ void DiscoState::DontStopTheMusic()
                 randomIndex = (randomIndex + 1) % playlist.size();
             }
 
-            // Atualiza a faixa atual 
+            // Atualiza a faixa atual
             currentTrack = playlist[randomIndex];
 
             // Carrega a nova música e bota para rodar

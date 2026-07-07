@@ -66,56 +66,83 @@ Floor::~Floor()
 void Floor::Start()
 {}
 
-
 void Floor::Update(float dt)
 {
-    
-    if (associated.box.x  - Camera::GetInstance().GetPosition().x <= limit) {
+    if (associated.box.x - Camera::GetInstance().GetPosition().x <= limit)
+    {
         associated.RequestDelete();
     }
     Vec2 uspeed = GameData::universalspeed;
     associated.box.x += (speed.x + uspeed.x) * dt;
-    associated.box.y += (speed.y + uspeed.y)* dt;
-    
-    if (type == 1) {
+    associated.box.y += (speed.y + uspeed.y) * dt;
+
+    if (type == 1)
+    {
         changeTime.Update(dt);
-        if (!GameData::discostart) {
+        if (!GameData::discostart)
+        {
             return;
         }
-        
+
         SpriteRenderer *rend = (SpriteRenderer *)associated.GetComponent("SpriteRenderer");
-        if (GameData:: inversedisco > 0) {
-            if (GameData::inversedisco == 1){
+        if (GameData::inversedisco > 0)
+        {
+            if (GameData::inversedisco == 1)
+            {
                 changeTime.Restart();
                 float x_target = Character::PlayerBox().GetCenter().x;
                 int x_id = (int)(x_target / 128);
-                
-                if (!GameData::inverted) {
+
+                if (!GameData::inverted)
+                {
                     x_id += 7;
                 }
-                if (x_id != index) {
+                if (x_id != index)
+                {
                     rend->SetFrame(3);
                     associated.damage = -1;
                 }
-                else {
+                else
+                {
                     rend->SetFrame(4);
                     associated.damage = 1;
                 }
             }
-            if (changeTime.Get() > 3.0) {
+            if (changeTime.Get() > 3.0)
+            {
                 GameData::inversedisco = 0;
             }
         }
-        else {
+        else
+        {
             associated.damage = -1;
-            if ((!GameData::inverted && index < 7) || (GameData::inverted && index >= 7))
-            {     
-                if (changeTime.Get() > 2.0) {
+
+
+            if (GameData::discoAttackActive)
+            {
+                if (GameData::discoError)
+                {
+                    rend->SetFrame(4);
+                }
+                else if (GameData::discoBlackout) // Se não há erro mas o blackout está ativo (transição)
+                {
+                    rend->SetFrame(5); 
+                }
+                else // Caso contrário, mostra a cor normal do round
+                {
+                    rend->SetFrame(GameData::targetDiscoColor); // Acende na cor do Boss
+                }
+            }
+            else if ((!GameData::inverted && index < 7) || (GameData::inverted && index >= 7))
+            {
+                if (changeTime.Get() > 2.0)
+                {
                     rend->SetFrame(rand() % 4);
                     changeTime.Restart();
                 }
             }
-            else {
+            else
+            {
                 rend->SetFrame(5);
             }
         }

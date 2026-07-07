@@ -21,7 +21,7 @@ public:
 private:
     // para gerenciar tamanho da pista
     const int rows = 4;
-    const int cols = 9;
+    const int cols = 6;
     float tileSize;
 
     std::string spritePath;
