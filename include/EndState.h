@@ -1,13 +1,10 @@
-#ifndef ENDSTATE_H
-#define ENDSTATE_H
+#ifndef END_STATE_H
+#define END_STATE_H
 
 #include "State.h"
+#include "GameObject.h"
+#include "Text.h"
 #include "Music.h"
-#include "GameData.h"
-#include "InputManager.h"
-#include "Game.h"
-#include "TitleState.h"
-#include <memory>
 
 class EndState : public State
 {
@@ -25,6 +22,11 @@ public:
 
 private:
     Music backgroundMusic;
+    bool IsButtonClicked(GameObject *buttonGO);
+
+    GameObject *btnRetry;
+    GameObject *btnMenu;
+    GameObject *btnExit;
 };
 
-#endif // ENDSTATE_H
+#endif
