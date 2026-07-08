@@ -16,45 +16,15 @@ void EndState::LoadAssets()
     auto *bgRenderer = new SpriteRenderer(*bgObject);
 
     // Musica e imagem de derrrota depende de qual fase está
-    if (GameData::currentState == 1){
-        if (GameData::playerVictory_1) // Se o jogador ganhou
-        {
-            bgRenderer->Open("recursos/img/Win.png");
-            backgroundMusic.Open("recursos/audio/endStateWin.ogg");
-        }
-        else // Se o jogador morreu
-        {
-            bgRenderer->Open("recursos/img/GAME_OVER.jpg");
-            backgroundMusic.Open("recursos/audio/teen_titans.mp3");
-        }
-    }
-
-    if (GameData::currentState == 2)
+    if (GameData::playerVictory_3) // Se o jogador ganhou
     {
-        if (GameData::playerVictory_2) // Se o jogador ganhou
-        {
-            bgRenderer->Open("recursos/img/Win.png");
-            backgroundMusic.Open("recursos/audio/endStateWin.ogg");
-        }
-        else // Se o jogador morreu
-        {
-            bgRenderer->Open("recursos/img/GAME_OVER.jpg");
-            backgroundMusic.Open("recursos/audio/teen_titans.mp3");
-        }
+        bgRenderer->Open("recursos/img/Win.png");
+        backgroundMusic.Open("recursos/audio/endStateWin.ogg");
     }
-
-    if (GameData::currentState == 3)
+    else // Se o jogador morreu
     {
-        if (GameData::playerVictory_3) // Se o jogador ganhou
-        {
-            bgRenderer->Open("recursos/img/Win.png");
-            backgroundMusic.Open("recursos/audio/endStateWin.ogg");
-        }
-        else // Se o jogador morreu
-        {
-            bgRenderer->Open("recursos/img/GAME_OVER.jpg");
-            backgroundMusic.Open("recursos/audio/teen_titans.mp3");
-        }
+        bgRenderer->Open("recursos/img/GAME_OVER.jpg");
+        backgroundMusic.Open("recursos/audio/teen_titans.mp3");
     }
 
     bgRenderer->SetCameraFollower(true);

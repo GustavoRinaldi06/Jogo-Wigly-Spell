@@ -16,6 +16,7 @@
 #include "../include/Collider.h"
 #include "../include/Collision.h"
 #include "../include/ScenaryGenerator.h"
+#include "../include/LoadingState.h"
 
 #include "Text.h"
 
@@ -337,11 +338,29 @@ void HallwayState::Update(float dt)
     {
         victoryTimer.Update(dt);
 
-        float delay = 3.0f; // Tempo em segundos (ex: 2 segundos de delay)
+        float delay = 3.0f; // Tempo em segundos
         if (victoryTimer.Get() >= delay)
         {
-            popRequested = true;
-            Game::GetInstance().Push(new DiscoState());
+            popRequested = true; 
+            // Mapeia todos os arquivos do DiscoState
+            std::vector<ResourceItem> discoResources = {
+                {"recursos/font/neodgm.ttf", TYPE_FONT, 24},
+                {"recursos/img/Piso-pub-disco.png", TYPE_IMAGE},
+                {"recursos/img/Dancefloor.png", TYPE_IMAGE},
+                {"recursos/img/wigly.png", TYPE_IMAGE},
+                {"recursos/img/discoGhost.png", TYPE_IMAGE},
+                {"recursos/img/Holofote.png", TYPE_IMAGE},
+                {"recursos/img/potions.png", TYPE_IMAGE},
+                {"recursos/audio/Fundo.mp3", TYPE_MUSIC},
+                {"recursos/audio/vinilswipe.mp3", TYPE_SOUND},
+                {"recursos/audio/playlist/IWS.mp3", TYPE_MUSIC},
+                {"recursos/audio/playlist/BW.mp3", TYPE_MUSIC},
+                {"recursos/audio/Erro.mp3", TYPE_SOUND},
+                {"recursos/audio/Right_Place.mp3", TYPE_SOUND}};
+
+            // Cria o DiscoState, mas joga ele envelopado
+            DiscoState *proximaFase = new DiscoState();
+            Game::GetInstance().Push(new LoadingState(proximaFase, discoResources, true));
             return;
         }
     }

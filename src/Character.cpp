@@ -188,7 +188,7 @@ void Character::Update(float dt)
     // Enquanto vivo --------------------------------------------------------------------------
     damageCooldown.Update(dt);
     invTimer.Update(dt);
-    purpleTimer.Update(dt);
+    if (GameData::gameMode == 1) purpleTimer.Update(dt);
     shieldTimer.Update(dt);
     if (damageCooldown.Get() < 2.0)
     {
@@ -476,13 +476,6 @@ void Character::Update(float dt)
         }
     }
 
-    // Decide a direção que vai ficar horizontalmente
-    /*
-    if (speed.x < -0.5f)
-        facingDir = -1;
-    else if (speed.x > 0.5f)
-        facingDir = 1;
-    */
     // Angulação da sprite na parede -----------------------------------------------------------------------------------
     if (GameData::gameMode == 0)
     {

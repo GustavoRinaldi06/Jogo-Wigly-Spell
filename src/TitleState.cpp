@@ -6,6 +6,7 @@
 #include "SpriteRenderer.h"
 #include "GameObject.h"
 #include "GameData.h"
+#include "LoadingState.h"
 
 #include <fstream> // Incluído para leitura do save.txt
 
@@ -95,7 +96,7 @@ void TitleState::LoadAssets()
     backgroundMusic.Open("recursos/audio/Abertura.mp3");
     if (!GameData::isMuted)
     {
-        backgroundMusic.Play();
+        backgroundMusic.Play(-1);
     }
 }
 
@@ -140,7 +141,26 @@ void TitleState::Update(float dt)
                 }
                 else if (faseSalva == "Fase_3")
                 {
-                    Game::GetInstance().Push(new DiscoState());
+                    // Mapeia todos os arquivos do DiscoState
+                    std::vector<ResourceItem> discoResources = {
+                        {"recursos/font/neodgm.ttf", TYPE_FONT, 24},
+                        {"recursos/img/Piso-pub-disco.png", TYPE_IMAGE},
+                        {"recursos/img/Dancefloor.png", TYPE_IMAGE},
+                        {"recursos/img/wigly.png", TYPE_IMAGE},
+                        {"recursos/img/discoGhost.png", TYPE_IMAGE},
+                        {"recursos/img/Holofote.png", TYPE_IMAGE},
+                        {"recursos/img/potions.png", TYPE_IMAGE},
+                        {"recursos/audio/Fundo.mp3", TYPE_MUSIC},
+                        {"recursos/audio/vinilswipe.mp3", TYPE_SOUND},
+                        {"recursos/audio/playlist/IWS.mp3", TYPE_MUSIC},
+                        {"recursos/audio/playlist/BW.mp3", TYPE_MUSIC},
+                        {"recursos/audio/Erro.mp3", TYPE_SOUND},
+                        {"recursos/audio/Right_Place.mp3", TYPE_SOUND}};
+
+                    // Cria o DiscoState, mas joga ele envelopado
+                    DiscoState *proximaFase = new DiscoState();
+                    Game::GetInstance().Push(new LoadingState(proximaFase, discoResources, false));
+                    return;
                 }
                 else
                 {
@@ -156,7 +176,25 @@ void TitleState::Update(float dt)
         // Botão 2: Novo Jogo (Empilha HallwayState)
         if (IsButtonClicked(btnNewGame))
         {
-            Game::GetInstance().Push(new DiscoState());
+            // Mapeia todos os arquivos do DiscoState
+            std::vector<ResourceItem> discoResources = {
+                {"recursos/font/neodgm.ttf", TYPE_FONT, 24},
+                {"recursos/img/Piso-pub-disco.png", TYPE_IMAGE},
+                {"recursos/img/Dancefloor.png", TYPE_IMAGE},
+                {"recursos/img/wigly.png", TYPE_IMAGE},
+                {"recursos/img/discoGhost.png", TYPE_IMAGE},
+                {"recursos/img/Holofote.png", TYPE_IMAGE},
+                {"recursos/img/potions.png", TYPE_IMAGE},
+                {"recursos/audio/Fundo.mp3", TYPE_MUSIC},
+                {"recursos/audio/vinilswipe.mp3", TYPE_SOUND},
+                {"recursos/audio/playlist/IWS.mp3", TYPE_MUSIC},
+                {"recursos/audio/playlist/BW.mp3", TYPE_MUSIC},
+                {"recursos/audio/Erro.mp3", TYPE_SOUND},
+                {"recursos/audio/Right_Place.mp3", TYPE_SOUND}};
+
+            // Cria o DiscoState, mas joga ele envelopado
+            DiscoState *proximaFase = new DiscoState();
+            Game::GetInstance().Push(new LoadingState(proximaFase, discoResources, false));
             return;
         }
 
