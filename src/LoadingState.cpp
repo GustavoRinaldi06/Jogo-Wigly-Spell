@@ -32,14 +32,14 @@ LoadingState::LoadingState(State *nextState, std::vector<ResourceItem> resources
     textGO->box.x = 580;
     textGO->box.y = 600;
 
-    percentageText = new Text(*textGO, "recursos/font/neodgm.ttf", 36, BLENDED, "0%", white);
+    percentageText = new Text(*textGO, "recursos/font/heavy heap.otf", 36, BLENDED, "0%", white);
     textGO->AddComponent(percentageText);
     objectArray.emplace_back(textGO);
 
     // Texto aleatorio
     guessingTextGO = new GameObject();
     guessingTextGO->layer = 10;
-    //guessingTextGO->box.x = 400;
+    // guessingTextGO->box.x = 400;
     guessingTextGO->box.y = 440;
 
     std::vector<std::string> magicPhrases = {
@@ -51,7 +51,7 @@ LoadingState::LoadingState(State *nextState, std::vector<ResourceItem> resources
     int randomIndex = rand() % magicPhrases.size();
     std::string chosenPhrase = magicPhrases[randomIndex];
 
-    guessingText = new Text(*guessingTextGO, "recursos/font/neodgm.ttf", 25, BLENDED, chosenPhrase, white);
+    guessingText = new Text(*guessingTextGO, "recursos/font/heavy heap.otf", 25, BLENDED, chosenPhrase, white);
     guessingTextGO->AddComponent(guessingText);
     guessingTextGO->box.x = 620.0f - (guessingTextGO->box.w / 2.0f); // para centralizar os textos
 
@@ -84,6 +84,12 @@ void LoadingState::Update(float dt)
             Resources::ClearImages();
             Resources::ClearMusics();
             Resources::ClearSounds();
+
+            SpriteRenderer *spriteRend = (SpriteRenderer *)caldeiraoGO->GetComponent("SpriteRenderer"); // Ajuste o nome se for diferente no seu motor
+            if (spriteRend)
+            {
+                spriteRend->Open("recursos/img/Caldeirao.png");
+            }
         }
         clearedPrevious = true;
         return;

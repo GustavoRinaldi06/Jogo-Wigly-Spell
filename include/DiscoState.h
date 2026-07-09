@@ -4,6 +4,8 @@
 #include "EndState.h"
 #include "DanceFloor.h"
 #include "Sound.h"
+#include "Transition.h"
+#include "Timer.h"
 #include <vector>
 #include <string>
 
@@ -39,4 +41,10 @@ private:
     std::string currentTrack;
     float furthest_chara;
     float base_chara = -600;
+
+    Timer victoryTimer;
+    bool bossDefeated = false;
+
+    Transition *transitionEffect = nullptr;
+    bool gameOverTriggered = false;
 };

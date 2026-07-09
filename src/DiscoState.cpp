@@ -230,7 +230,7 @@ void DiscoState::LoadAssets()
     /*
     GameObject *textGO1 = new GameObject();
     std::string spellCooldown = "Magia acumulada com sucesso!";
-    spellText = new Text(*textGO1, "recursos/font/neodgm.ttf", 24, BLENDED, spellCooldown, white);
+    spellText = new Text(*textGO1, "recursos/font/heavy heap.otf", 24, BLENDED, spellCooldown, white);
     textGO1->AddComponent(spellText);
     textGO1->layer = 10;
 
@@ -273,7 +273,7 @@ void DiscoState::LoadAssets()
 
     GameObject *textGO2 = new GameObject();
     std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
-    bosshpText = new Text(*textGO2, "recursos/font/neodgm.ttf", 24, BLENDED, bhpString, white);
+    bosshpText = new Text(*textGO2, "recursos/font/heavy heap.otf", 34, BLENDED, bhpString, white);
     textGO2->AddComponent(bosshpText);
     textGO2->layer = 10;
 
@@ -295,6 +295,23 @@ void DiscoState::Update(float dt)
     if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
     {
         quitRequested = true;
+        return;
+    }
+
+    if (gameOverTriggered)
+    {
+        if (transitionEffect)
+        {
+            transitionEffect->Update(dt);
+
+            if (transitionEffect->IsFinished())
+            {
+                popRequested = true;
+                Game::GetInstance().Push(new EndState());
+                return;
+            }
+        }
+        RenderArray();
         return;
     }
 
@@ -427,32 +444,40 @@ void DiscoState::Update(float dt)
         bosshpText->SetText(bhpString);
     }
 
-    // Caixa do cooldown do disparo
-    if (spellText && Character::player != nullptr)
+    if (!bossDefeated && GameData::bossHP <= 0)
     {
-        if (GameData::spell == true)
+        bossDefeated = true; 
+        victoryTimer.Restart(); 
+        GameData::playerVictory_3 = true;
+    }
+
+    if (bossDefeated)
+    {
+        victoryTimer.Update(dt);
+
+        float delay = 3.0f;
+        if (victoryTimer.Get() >= delay && transitionEffect && !transitionEffect->IsFinished())
         {
-            if (Character::player->GetCool() < 5)
-            {
-                std::string spellCooldown = "Acumulando magia novamente... " + std::to_string(5 - Character::player->GetCool());
-                spellText->SetText(spellCooldown);
-            }
-            else
-            {
-                std::string spellCooldown = "Magia acumulada com sucesso!";
-                spellText->SetText(spellCooldown);
-            }
+            transitionEffect->StartOutro();
         }
-        else
-            spellText->SetText("");
+
+        if (transitionEffect && transitionEffect->IsFinished())
+        {
+            popRequested = true;
+            Game::GetInstance().Push(new EndState());
+            return;
+        }
     }
 
     // Checagem de fim Derrota
-    if (Character::player == nullptr || Character::player->GetGameObject()->IsDead()) // Se o player tiver morrido
+    if (Character::player == nullptr || Character::player->GetGameObject()->IsDead())
     {
-        GameData::playerVictory_3 = false;
-        popRequested = true;
-        Game::GetInstance().Push(new EndState());
+        GameData::playerVictory_2 = false;
+        gameOverTriggered = true;
+        if (transitionEffect)
+        {
+            transitionEffect->StartOutro(); // Inicia a vinheta
+        }
         return;
     }
 }
@@ -476,11 +501,19 @@ void DiscoState::Render()
 void DiscoState::Start()
 {
     LoadAssets();
+
+    // vinheta
+    GameObject *transitionGO = new GameObject();
+    transitionGO->layer = 99;
+    transitionEffect = new Transition(*transitionGO);
+    transitionGO->AddComponent(transitionEffect);
+    AddObject(transitionGO);
+
     StartArray(); // Agora a classe state é responsável
     started = true;
     GameData::currentState = 3; // Essa sendo a tercceira fase
     GameData::gameMode = 1;
-    GameData::playerVictory_1 = false; // Reinicia a fase e apaga save de vitória anterior
+    GameData::playerVictory_2 = false; // Reinicia a fase e apaga save de vitória anterior
 }
 
 void DiscoState::Pause()

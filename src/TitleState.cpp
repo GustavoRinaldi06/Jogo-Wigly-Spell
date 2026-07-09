@@ -29,7 +29,7 @@ void TitleState::LoadAssets()
 
     // Configurações comuns de texto
     SDL_Color black = {0, 0, 0, 255};
-    std::string fontPath = "recursos/font/neodgm.ttf";
+    std::string fontPath = "recursos/font/heavy heap.otf";
     int fontSize = 24;
     int startY = 400; // Posição Y inicial para o primeiro botão
     int spacing = 60; // Espaçamento vertical entre os botões
@@ -139,7 +139,7 @@ void TitleState::Update(float dt)
                 {
                     // Recursos do HallwayState
                     std::vector<ResourceItem> hallwayResources = {
-                        {"recursos/font/neodgm.ttf", TYPE_FONT, 24},
+                        {"recursos/font/heavy heap.otf", TYPE_FONT, 24},
                         {"recursos/img/wigly.png", TYPE_IMAGE},
                         {"recursos/img/purplehaze.png", TYPE_IMAGE},
                         {"recursos/img/Bouncer_SpriteSheet.png", TYPE_IMAGE},
@@ -153,7 +153,7 @@ void TitleState::Update(float dt)
                 {
                     // Recursos do DiscoState
                     std::vector<ResourceItem> discoResources = {
-                        {"recursos/font/neodgm.ttf", TYPE_FONT, 24},
+                        {"recursos/font/heavy heap.otf", TYPE_FONT, 24},
                         {"recursos/img/Piso-pub-disco.png", TYPE_IMAGE},
                         {"recursos/img/Dancefloor.png", TYPE_IMAGE},
                         {"recursos/img/wigly.png", TYPE_IMAGE},

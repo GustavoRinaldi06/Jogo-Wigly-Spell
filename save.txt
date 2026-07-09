@@ -1,1 +1,1 @@
-Fase_Atual=Fase_1
+Fase_Atual=Jogo_Concluido

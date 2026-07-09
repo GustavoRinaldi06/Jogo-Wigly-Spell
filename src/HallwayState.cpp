@@ -149,7 +149,7 @@ void HallwayState::LoadAssets()
 
     GameObject *textGO2 = new GameObject();
     std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
-    bosshpText = new Text(*textGO2, "recursos/font/neodgm.ttf", 24, BLENDED, bhpString, white);
+    bosshpText = new Text(*textGO2, "recursos/font/heavy heap.otf", 34, BLENDED, bhpString, white);
     textGO2->AddComponent(bosshpText);
     textGO2->layer = 10;
 
@@ -171,6 +171,23 @@ void HallwayState::Update(float dt)
     if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
     {
         quitRequested = true;
+        return;
+    }
+
+    if (gameOverTriggered)
+    {
+        if (transitionEffect)
+        {
+            transitionEffect->Update(dt);
+
+            if (transitionEffect->IsFinished())
+            {
+                popRequested = true;
+                Game::GetInstance().Push(new EndState());
+                return;
+            }
+        }
+        RenderArray();
         return;
     }
 
@@ -289,26 +306,6 @@ void HallwayState::Update(float dt)
         bosshpText->SetText(bhpString);
     }
 
-    // Caixa do cooldown do disparo
-    if (spellText && Character::player != nullptr)
-    {
-        if (GameData::spell == true)
-        {
-            if (Character::player->GetCool() < 5)
-            {
-                std::string spellCooldown = "Acumulando magia novamente... " + std::to_string(5 - Character::player->GetCool());
-                spellText->SetText(spellCooldown);
-            }
-            else
-            {
-                std::string spellCooldown = "Magia acumulada com sucesso!";
-                spellText->SetText(spellCooldown);
-            }
-        }
-        else
-            spellText->SetText("");
-    }
-
     // Checagem de vitoria
     if (!bossDefeated && (bossComponent == nullptr || bossComponent->health <= 0))
     {
@@ -323,12 +320,17 @@ void HallwayState::Update(float dt)
         victoryTimer.Update(dt);
 
         float delay = 3.0f; // Tempo em segundos
-        if (victoryTimer.Get() >= delay)
+        if (victoryTimer.Get() >= delay && transitionEffect && !transitionEffect->IsFinished())
+        {
+            transitionEffect->StartOutro();
+        }
+
+        if (transitionEffect && transitionEffect->IsFinished())
         {
             popRequested = true; 
             // Mapeia todos os arquivos do DiscoState
             std::vector<ResourceItem> discoResources = {
-                {"recursos/font/neodgm.ttf", TYPE_FONT, 24},
+                {"recursos/font/heavy heap.otf", TYPE_FONT, 24},
                 {"recursos/img/Piso-pub-disco.png", TYPE_IMAGE},
                 {"recursos/img/Dancefloor.png", TYPE_IMAGE},
                 {"recursos/img/wigly.png", TYPE_IMAGE},
@@ -350,11 +352,14 @@ void HallwayState::Update(float dt)
     }
 
     // Checagem de fim Derrota
-    if (Character::player == nullptr || Character::player->GetGameObject()->IsDead()) // Se o player tiver morrido
+    if (Character::player == nullptr || Character::player->GetGameObject()->IsDead())
     {
         GameData::playerVictory_2 = false;
-        popRequested = true;
-        Game::GetInstance().Push(new EndState());
+        gameOverTriggered = true;
+        if (transitionEffect)
+        {
+            transitionEffect->StartOutro(); // Inicia a vinheta
+        }
         return;
     }
 }
@@ -378,8 +383,17 @@ void HallwayState::Render()
 void HallwayState::Start()
 {
     LoadAssets();
+
+    // vinheta
+    GameObject *transitionGO = new GameObject();
+    transitionGO->layer = 99;
+    transitionEffect = new Transition(*transitionGO);
+    transitionGO->AddComponent(transitionEffect);
+    AddObject(transitionGO);
+
     StartArray(); // Agora a classe state é responsável
     started = true;
+
     GameData::currentState = 2; // Essa sendo a seg fase
     GameData::gameMode = 1;
     GameData::playerVictory_1 = false; // Reinicia a fase e apaga save de vitória anterior

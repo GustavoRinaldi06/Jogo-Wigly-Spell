@@ -2,6 +2,7 @@
 #include "Music.h"
 #include "DiscoState.h"
 #include "Timer.h"
+#include "Transition.h"
 
 class CorridorGhost;
 
@@ -33,4 +34,7 @@ private:
 
     Timer victoryTimer;
     bool bossDefeated = false;
+
+    Transition* transitionEffect = nullptr;
+    bool gameOverTriggered = false;
 };
