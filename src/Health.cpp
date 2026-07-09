@@ -16,8 +16,8 @@ Health::Health(GameObject &associated, const std::string &spritePath,int id)
     : Component(associated)
 {
     basey = associated.box.y;
-    auto renderer = new SpriteRenderer(associated, spritePath, 4, 2);
-    renderer->SetFrame(4);
+    auto renderer = new SpriteRenderer(associated, spritePath, 10, 1);
+    renderer->SetFrame(6);
     renderer->SetCameraFollower(1.0);
     renderer->SetScale(0.8,0.8);
     

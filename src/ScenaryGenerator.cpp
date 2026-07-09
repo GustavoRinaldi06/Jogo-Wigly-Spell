@@ -11,7 +11,7 @@
 
 const int ScenaryGenerator::pattern[6][10] = {{0,0,0,0,0,0,0,0,0,0},{0,0,1,1,0,0,0,0,1,0},{0,1,0,0,0,0,1,1,0,0},{1,1,0,0,0,0,0,0,1,1},{0,0,1,0,0,0,0,1,0,0},{0,1,0,1,0,0,1,0,1,0}};
 const int ranges[5] = {6,1,2,1,1};
-const float followrates[5] = {1,0.8,0.5,0.2};
+const float followrates[11] = {1,0.8,0.5,0.2,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 const float widths[5] = {120,1380,1380,1380,1380};
 
 ScenaryGenerator::ScenaryGenerator(GameObject &associated, Vec2 spd, Vec2 start, Vec2 end,SDL_RendererFlip flp, float rot, int typ)
@@ -80,30 +80,39 @@ void ScenaryGenerator::GenerateBatch(Vec2 Start, int pattern) {
         else {
             Background *BG;
             if (type == 1 ) {
-                BG = new Background(*go,"recursos/img/CorredorL1.png",0,flip,2,followrates[type]);
+                BG = new Background(*go,"recursos/img/Layer 1 - corredor.png",0,flip,2,followrates[type]);
             }
             else if (type == 2 && pattern == 0) {
-                BG = new Background(*go,"recursos/img/CorredorL2.png",0,flip,1,followrates[type]);
+                BG = new Background(*go,"recursos/img/Layer 2 v1 - corredor.png",0,flip,1,followrates[type]);
             }
             else if (type == 2 && pattern == 1) {
-                BG = new Background(*go,"recursos/img/Corredor2L2.png",0,flip,1,followrates[type]);
+                BG = new Background(*go,"recursos/img/Layer 2 v2 - corredor.png",0,flip,1,followrates[type]);
             }
             else if (type == 3) {
-                BG = new Background(*go,"recursos/img/CorredorL3.png",0,flip,0,followrates[type]);
+                BG = new Background(*go,"recursos/img/Layer 3 - corredor.png",0,flip,0,followrates[type]);
             }
 
             else if (type == 4) {
-                BG = new Background(*go,"recursos/img/Pub layer 1.png",0,flip,10,followrates[type]);
+                BG = new Background(*go,"recursos/img/Layer 1 - discopub.png",0,flip,1.0,followrates[type]);
             }
             else if (type == 5) {
-                BG = new Background(*go,"recursos/img/Pub layer 2.png",0,flip,2,followrates[type]);
+                BG = new Background(*go,"recursos/img/Layer 2 - discopub.png",0,flip,0.9,followrates[type]);
             }
             else if (type == 6) {
                 
-                BG = new Background(*go,"recursos/img/Pub layer 3.png",0,flip,1,followrates[type]);
+                BG = new Background(*go,"recursos/img/Layer 3 - discopub.png",0,flip,0.8,followrates[type]);
             }
             else if (type == 7) {
-                BG = new Background(*go,"recursos/img/Pub layer 4.jpg",0,flip,0,followrates[type]);
+                BG = new Background(*go,"recursos/img/Layer 4 - discopub.png",0,flip,0.7,followrates[type]);
+            }
+            else if (type == 8) {
+                BG = new Background(*go,"recursos/img/Layer 5 - discopub.png",0,flip,0.6,followrates[type]);
+            }
+            else if (type == 9) {
+                BG = new Background(*go,"recursos/img/Layer 6 - discopub.png",0,flip,0.5,followrates[type]);
+            }
+            else if (type == 10) {
+                BG = new Background(*go,"recursos/img/Layer 7 - discopub.png",0,flip,0.4,followrates[type]);
             }
             go->AddComponent(BG);
             BG->speed = speed;

@@ -40,7 +40,7 @@ private:
     std::vector<std::string> playlist;
     std::string currentTrack;
     float furthest_chara;
-    float base_chara = -600;
+    float base_chara = -880;
 
     Timer victoryTimer;
     bool bossDefeated = false;

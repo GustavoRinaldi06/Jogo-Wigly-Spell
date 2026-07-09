@@ -73,6 +73,8 @@ public:
 
     void SetSpeedY(float speedY);
     void ApplyDamage(int damage);
+    Timer purpleTimer;
+    Timer damageCooldown;
 
 private:
     std::queue<Command> taskQueue;
@@ -94,7 +96,7 @@ private:
     bool longdash = false;
     Timer dashTimer;
     Timer jumpTimer;
-    Timer purpleTimer;
+    
     Timer initTimer;
 
     // Config basica
@@ -104,7 +106,7 @@ private:
 
     // Death e hit
     Sound hitSound, fallSound, deathSound;
-    Timer damageCooldown;
+    
 
     Timer deathTimer;
     bool deathAnimTriggered{false};

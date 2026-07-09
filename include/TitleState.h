@@ -21,6 +21,9 @@ public:
     void Pause() override {}
     void Resume() override {}
 
+    void Load_Hallway();
+    void Load_Pub();
+
     //Text *pressStart = nullptr; // (DEBUG) para poder acessar e alterar com maior facilidade
 private:
     Music backgroundMusic;

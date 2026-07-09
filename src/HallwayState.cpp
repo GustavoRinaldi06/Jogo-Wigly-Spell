@@ -147,6 +147,34 @@ void HallwayState::LoadAssets()
         AddObject(HPGO);
     }
 
+    GameObject *cauldGO1 = new GameObject();
+    cauldGO1->AddComponent(new Potion(*cauldGO1, "recursos/img/hud.png", 0));
+    cauldGO1->layer = 10;
+
+    // Posição do texto
+    cauldGO1->box.x = 240;
+    cauldGO1->box.y = 630;
+
+    AddObject(cauldGO1);
+
+    GameObject *cauldGO2 = new GameObject();
+    cauldGO2->AddComponent(new Potion(*cauldGO2, "recursos/img/hud.png", 1));
+    cauldGO2->layer = 10;
+
+    // Posição do texto
+    cauldGO2->box.x = 305;
+    cauldGO2->box.y = 630;
+    AddObject(cauldGO2);
+
+    GameObject *cauldGO3 = new GameObject();
+    cauldGO3->AddComponent(new Potion(*cauldGO3, "recursos/img/hud.png", 2));
+    cauldGO3->layer = 10;
+
+    // Posição do texto
+    cauldGO3->box.x = 360;
+    cauldGO3->box.y = 630;
+    AddObject(cauldGO3);
+
     GameObject *textGO2 = new GameObject();
     std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
     bosshpText = new Text(*textGO2, "recursos/font/heavy heap.otf", 34, BLENDED, bhpString, white);

@@ -40,8 +40,10 @@ void Background::Update(float dt)
         //associated.RequestDelete();
     }
     Vec2 uspeed = GameData::universalspeed;
+
     associated.box.x += (frate*uspeed.x) * dt;
     associated.box.y += (frate*uspeed.y)* dt;
+    
 }
 
 void Background::Render() {}

@@ -83,7 +83,7 @@ void Missile::Update(float dt)
         deathTimer.Update(dt);
 
         // só deleta após 0.5s
-        if (deathTimer.Get() > 0.3f)
+        if (animator->GetAnimation() == "dissipating" && animator->wrapped)
             associated.RequestDelete();
 
         return; // não executa mais lógica de movimento

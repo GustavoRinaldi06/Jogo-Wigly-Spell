@@ -188,6 +188,18 @@ void CorridorGhost::Update(float dt)
                 color = 2;
                 colorsmnd = true;
             }
+            if (last_color == color) {
+                if (color == 1) {
+                    color = 2;
+                }
+                else {
+                    color = 1;
+                }
+            }
+            if (color > 0) {
+                last_color = color;
+            }
+            
             MissileATK(misstotal*40,color);
             misscount -=1;
             misstotal +=1;

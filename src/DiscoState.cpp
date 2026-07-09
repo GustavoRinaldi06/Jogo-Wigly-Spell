@@ -51,18 +51,18 @@ void DiscoState::LoadAssets()
     float ypos = 650;
     for (int j = 0; j < 2; j++)
     {
-        float prevx = -1280;
-        for (int i = 0; i < 20; i++)
+        float prevx = -1536;
+        for (int i = 0; i < 22; i++)
         {
             GameObject *floorGO = new GameObject();
             int tipo;
             int frame = 6;
             int id = -1;
-            if (i >= 10 && i < 16)
+            if (i >= 12 && i < 18)
             {
                 tipo = 1;
                 frame = 5;
-                id = i - 10 + 7 * j;
+                id = i - 12 + 7 * j;
             }
             else
             {
@@ -88,23 +88,31 @@ void DiscoState::LoadAssets()
     AddObject(ceilGO);
     */
 
-    GameObject *bgGO = new GameObject();
-    // bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1280.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,4)); // substitua pela imagem correta
-    // AddObject(bgGO);
-    // bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1380.0, 0.0), (-1380, 0), SDL_FLIP_NONE, 0.0, 5)); // substitua pela imagem correta
+     GameObject *bgGO = new GameObject();
+     bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1536.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,4)); // substitua pela imagem correta
+     AddObject(bgGO);
+
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), (-1380, 0), SDL_FLIP_NONE, 0.0, 5)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1380.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 6)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 6)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1380.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 7)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 7)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(0.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 7)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 8)); // substitua pela imagem correta
+    AddObject(bgGO);
+
+    bgGO = new GameObject();
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 9)); // substitua pela imagem correta
+    AddObject(bgGO);
+
+    bgGO = new GameObject();
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 10)); // substitua pela imagem correta
     AddObject(bgGO);
 
     // Pista de danca ---------------------------------------------------------------------------------------------------------
@@ -126,7 +134,7 @@ void DiscoState::LoadAssets()
 
     // Personagem ----------------------------------------------------------------------------------------------------------------
     GameObject *playerGO = new GameObject();
-    playerGO->box.x = -1200; // Centro do mapa
+    playerGO->box.x = -1450; // Centro do mapa
     playerGO->box.y = 300;   // Altura maior
     furthest_chara = base_chara;
 
@@ -134,7 +142,7 @@ void DiscoState::LoadAssets()
     playerGO->AddComponent(new PlayerController(*playerGO));
 
     GameData::playerHP = 100;                          // Reseta vida do personagem
-    Camera::GetInstance().SetPosition(Vec2(-1280, 0)); // Puxa a câmera de volta pro (0,0)
+    Camera::GetInstance().SetPosition(Vec2(-1450, 0)); // Puxa a câmera de volta pro (0,0)
 
     // Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
 
@@ -352,7 +360,7 @@ void DiscoState::Update(float dt)
     {
         if (camerapos.x < -400)
         {
-            camerapos.x = -1280 + (player.x - base_chara);
+            camerapos.x = -1450 + (player.x - base_chara);
             furthest_chara = player.x;
         }
         else if (camerapos.x < 0)

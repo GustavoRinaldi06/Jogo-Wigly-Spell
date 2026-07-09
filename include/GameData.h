@@ -43,6 +43,7 @@ public:
     static bool discoAttackActive;
     static bool discoBlackout;
     static bool discoError;
+    static bool shotFired;
 
     static DanceFloor *danceFloorPtr;
 };

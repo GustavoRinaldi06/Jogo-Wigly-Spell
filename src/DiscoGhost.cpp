@@ -63,7 +63,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     deathTimer.Restart();
     specialInvuln.Restart();
     waveCD.Restart();
-    health = 10;
+    health = 1250;
     dead = false;
     ATK = -1;
     SmnTimer.Set(9999);
@@ -155,7 +155,7 @@ void DiscoGhost::Update(float dt)
         if (!GameData::finalfase)
         {
             if (!GameData::discostart) {
-                noteTime = 2;
+                noteTime = 4;
             }
             else if (health > 750)
             {
@@ -578,7 +578,14 @@ void DiscoGhost::Update(float dt)
             }
             else
             {
-                ATK = 2; // Transforma em mudança de gravidade
+                swapcount = 2 + (rand() % 2);
+                ATK = 2;
+                animator->SetAnimation("prepgrav");
+
+                GameData::inversedisco = 1;
+
+                AnimTimer.Restart();
+                attacked = false;
             }
         }
         else if (attacked && AnimTimer.Get() > 0.25)

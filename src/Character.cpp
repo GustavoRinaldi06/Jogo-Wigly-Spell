@@ -187,6 +187,7 @@ void Character::Update(float dt)
         {
             bubble->RequestDelete();
             bubbleCD->RequestDelete();
+            cauldron->RequestDelete();
             associated.RequestDelete();
         }
 
@@ -558,6 +559,20 @@ void Character::Update(float dt)
     {
         associated.box.x = campos.x + 1200 - associated.box.w - 5;
     }
+    if (GameData::gameMode == 0) {
+        if (associated.box.x + associated.box.w > campos.x + 5*150 + 70)
+        {
+            associated.box.x = campos.x + 5*150 + 70 - associated.box.w - 5;
+        }
+        if (associated.box.y + associated.box.h > campos.y + 650)
+        {
+            associated.box.y = campos.y + 650  - associated.box.h - 5;
+        }
+        if (associated.box.y < campos.y + 75)
+        {
+            associated.box.y = campos.y + 75;
+        }
+    }
 }
 
 void Character::Render() {}
@@ -770,6 +785,7 @@ void Character::Shoot1(Vec2 targetPos)
             GameObject *spellGO = new GameObject();
             spellGO->box.x = shooterCenter.x;
             spellGO->box.y = shooterCenter.y - 40;
+            GameData::shotFired = true;
             if (bulcolor == 3)
             {
                 spellGO->AddComponent(new Bullet(*spellGO, angle, speed, damage, maxDistance, "recursos/img/Wigly_ataqueR.png", bulcolor,3));
@@ -811,6 +827,7 @@ void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDista
         }
 
         // Passa as variáveis  recebidas para o componente Bullet
+        GameData::shotFired = true;
         spell2GO->AddComponent(new Bullet(*spell2GO, angle, speed, damage, maxDistance, spritePath, color,type));
         Game::GetInstance().GetCurrentState().AddObject(spell2GO);
 }

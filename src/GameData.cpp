@@ -31,5 +31,6 @@ int GameData::targetDiscoColor = 0;
 bool GameData::discoAttackActive = false;
 bool GameData::discoBlackout = false;
 bool GameData::discoError = false;
+bool GameData::shotFired = false;
 
 DanceFloor *GameData::danceFloorPtr = nullptr; //pista fase 3

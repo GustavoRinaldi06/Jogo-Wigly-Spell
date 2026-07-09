@@ -25,6 +25,7 @@ public:
     GameObject *GetGameObject() { return &associated; }
     Animator *Playeranim;
     float distance = 0;
+    Timer shotTime;
 
 };
 

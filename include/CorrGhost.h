@@ -33,6 +33,7 @@ public:
     bool attacked = false;
     bool colorsmnd = false;
     bool dead;
+    int last_color = -1;
     Timer deathTimer;
     Timer specialInvuln;
     Timer animTimer;

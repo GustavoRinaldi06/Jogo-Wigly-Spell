@@ -80,7 +80,7 @@ void DanceGhost::Update(float dt)
     { 
         // dispara animação e som apenas uma vez
         associated.damage = -1;
-        if (pos > 0) {
+        if (pos >= 0) {
             GameData::summonalive[pos] = false;
         }
         if (!deathAnimTriggered)
