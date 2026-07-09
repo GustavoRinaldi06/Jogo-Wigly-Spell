@@ -4,6 +4,7 @@
 #include "Collider.h"
 #include "Animation.h"
 #include "Animator.h"
+#include "Smoke.h"
 #include <cmath>
 
 Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, float maxDistance,  const std::string &spritePath, int color, int bultype)
@@ -60,6 +61,10 @@ Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, flo
     bulletcolor = color;
 }
 
+Bullet::~Bullet() {
+    
+}
+
 void Bullet::Update(float dt)
 {
     Vec2 displacement = velocity * dt;
@@ -105,6 +110,7 @@ void Bullet::NotifyCollision(GameObject &other)
     if (!other.GetComponent("Bullet") && !associated.IsDead() && collider)
     {
         if (collider->tag == "solid" && bulletcolor == 0){
+            associated.StandardSmoke();
             associated.RequestDelete();
         }
     }

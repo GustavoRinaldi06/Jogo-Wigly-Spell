@@ -10,7 +10,6 @@
 #include "GameData.h"
 #include "HallwayState.h"
 
-
 #include "Floor.h"
 
 #include <iostream>
@@ -60,6 +59,8 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     animator->AddAnimation("idlewall", Animation(10, 11, (1.0/12)));
     animator->AddAnimation("dead", Animation(30, 37, (1.0/12)));
     animator->AddAnimation("gone", Animation(37, 37, 10));
+    animator->AddAnimation("damage", Animation(38, 41, (1.0/6)));
+    animator->AddAnimation("damageWall", Animation(8, 9, (1.0/2)));
     associated.AddComponent(animator);
 
     Collider *col = new Collider(associated);
@@ -156,7 +157,7 @@ void Character::Update(float dt)
             fallSound.Play(1);
 
             // seta animação "dead"
-            Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+    
             if (animator)
                 animator->SetAnimation("dead");
 
@@ -200,6 +201,14 @@ void Character::Update(float dt)
     if (shieldTimer.Get() > 10)
     {
         shield = 0;
+    }
+    if ((animator->GetAnimation() == "damage" || (animator->GetAnimation() == "damageWall")) && animator->wrapped) {
+        if (isOnGround) {
+            animator->SetAnimation("idle");
+        }
+        else {
+            animator->SetAnimation("idleair");
+        }
     }
     SpriteRenderer *rend = (SpriteRenderer *)associated.GetComponent("SpriteRenderer");
     if (transparent)
@@ -435,7 +444,7 @@ void Character::Update(float dt)
         else if (animator->GetAnimation() == "jumping" && GameData::gameMode == 1)
         {
             
-            if (!jumping)
+            if (!jumping && (animator->GetAnimation() != "damage"))
             {
                 if (GameData::inverted && speed.y < 50)
                 {
@@ -455,20 +464,21 @@ void Character::Update(float dt)
                 isOnGround = true;
                 jumped = false;
                 Djumped = false;
-                if (speed.Magnitude() > 4.0)
+                if (speed.Magnitude() > 4.0 && animator->GetAnimation() != "damageWall")
                     animator->SetAnimation("walking_wall");
-                else
+                else if (animator->GetAnimation() != "damageWall"){
                     animator->SetAnimation("idlewall");
+                }
             }
             else{
-                if (fabs(speed.x) > 1.0f && isOnGround && GameData::gameMode > 0){
+                if (fabs(speed.x) > 1.0f && isOnGround && GameData::gameMode > 0 && (animator->GetAnimation() != "damage")){
                     animator->SetAnimation("walking_X");
                 }
-                else if (isOnGround)
+                else if (isOnGround && (animator->GetAnimation() != "damage")) 
                 {
                     animator->SetAnimation("idle");
                 }
-                else
+                else if (animator->GetAnimation() != "damage")
                 {
                     animator->SetAnimation("idleair");
                 }
@@ -651,6 +661,13 @@ void Character::NotifyCollision(GameObject &other)
             else
             {
                 hp -= other.damage * 20;
+                Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+                if (GameData::gameMode == 0) {
+                    animator->SetAnimation("damageWall");
+                }
+                else {
+                    animator->SetAnimation("damage");
+                }
             }
         }
     }

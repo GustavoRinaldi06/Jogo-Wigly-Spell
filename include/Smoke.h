@@ -1,5 +1,5 @@
-#ifndef POTION_H
-#define POTION_H
+#ifndef SMOKE_H
+#define SMOKE_H
 
 #include "Component.h"
 #include "Rect_Vec2.h"
@@ -9,20 +9,21 @@
 #include <queue>
 #include <memory>
 
-class Potion : public Component
+class Smoke : public Component
 {
 public:
 
-    Potion(GameObject &associated, const std::string &spritePath, int num);
-    ~Potion();
+    Smoke(GameObject &associated, const std::string &spritePath, Vec2 pos, Vec2 scale, int type = 0);
+    ~Smoke();
 
     void Start() override;
     void Update(float dt) override;
     void Render() override;
     bool Is(const std::string &type) override;
+    static void CreateSmoke(Vec2 pos, Vec2 scale, int type = 0);
     // Colisão
     GameObject *GetGameObject() { return &associated; }
-    int number;
+
 };
 
 #endif

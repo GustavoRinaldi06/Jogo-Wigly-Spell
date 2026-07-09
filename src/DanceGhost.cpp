@@ -12,6 +12,7 @@
 #include "WavyNote.h"
 #include "BeatWave.h"
 #include "Bullet.h"
+#include "Smoke.h"
 
 #include <iostream>
 
@@ -186,6 +187,7 @@ void DanceGhost::NotifyCollision(GameObject &other)
             
             health -= bul->damage;
             if (bul->bulletcolor == 0 || bul->bulletcolor == 3) {
+                other.StandardSmoke();
                 other.RequestDelete();
             }
             else {

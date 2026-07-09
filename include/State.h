@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include "GameObject.h"
-
+#include "GameData.h"
 class State
 {
 public:

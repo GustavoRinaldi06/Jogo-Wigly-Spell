@@ -18,6 +18,7 @@
 #include "../include/ScenaryGenerator.h"
 #include "../include/LoadingState.h"
 
+
 #include "Text.h"
 
 #define INCLUDE_SDL

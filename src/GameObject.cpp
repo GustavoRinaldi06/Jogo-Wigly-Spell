@@ -1,5 +1,7 @@
 #include "GameObject.h"
 #include <iostream>
+#include "Smoke.h"
+
 
 GameObject::GameObject() : started(false), angleDeg(0), isDead(false) {}
 
@@ -35,6 +37,18 @@ bool GameObject::IsDead() const
 void GameObject::RequestDelete()
 {
     isDead = true;
+}
+
+void GameObject::StandardSmoke()
+{
+    Vec2 scale = Vec2(1,1);
+    Vec2 pos = Vec2(this->box.x + this->box.w/2.0-25*scale.x,this->box.y+ this->box.h/2.0-25*scale.y);
+    float cosangle = (cos((this->angleDeg-90)*M_PI/180));
+    float sinangle = (sin((this->angleDeg-90)*M_PI/180));
+    printf("%f\n",angleDeg-90);
+    pos.x +=  cosangle*this->box.h/3.0;
+    pos.y +=  sinangle*this->box.h/3.0; 
+    Smoke::CreateSmoke(pos,Vec2(1,1),0);
 }
 
 void GameObject::AddComponent(Component *cpt)

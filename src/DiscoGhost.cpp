@@ -13,6 +13,8 @@
 #include "WavyNote.h"
 #include "BeatWave.h"
 #include "DanceGhost.h"
+#include "Smoke.h"
+
 #include "Bullet.h"
 #include "Character.h"
 #include "Text.h"
@@ -31,6 +33,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     associated.AddComponent(renderer);
 
     renderer->SetScale(1.0, 1.0);
+    renderer->SetCameraFollower(0.0);
 
     // Novos sons
     // hitSound = Sound();
@@ -163,7 +166,7 @@ void DiscoGhost::Update(float dt)
             {
                 int colorchk = (rand() % 100);
                 int color = 0;
-                if (colorchk > 50)
+                if (colorchk >= 50)
                 {
                     if (last_color == 0)
                     {
@@ -183,6 +186,10 @@ void DiscoGhost::Update(float dt)
                         color = 2;
                         last_color = 2;
                     }
+                    else {
+                        color = 1;
+                        last_color = 1;
+                    }
                 }
                 else if (colorchk < 50)
                 {
@@ -191,6 +198,10 @@ void DiscoGhost::Update(float dt)
                     {
                         color = 1;
                         last_color = 1;
+                    }
+                    else {
+                        color = 2;
+                        last_color = 2;
                     }
                 }
                 NoteATK(color);
@@ -376,6 +387,9 @@ void DiscoGhost::Update(float dt)
                     // Retorna as configurações padrões do jogo
                     GameData::gameMode = 1;
                     GameData::inverted = false;
+                    GameData::discoAttackActive = false;
+                    GameData::discoBlackout = false;
+                    
 
                     // Reseta estados do Boss
                     ATK = 0;
@@ -670,7 +684,7 @@ void DiscoGhost::Update(float dt)
                         if (playerColor != targetColor)
                         {
                             Error.Play();
-                            Character::player->ApplyDamage(10); // Dá 10 de dano
+                            Character::player->ApplyDamage(20); // Dá 10 de dano
                             GameData::danceFloorPtr->Error();   // Pista fica inteira vermelha
                             GameData::discoError = true;
                             GameData::discoBlackout = false;
@@ -679,7 +693,7 @@ void DiscoGhost::Update(float dt)
                             {
                                 discoInfoText->SetText("ERROU! TENTE NOVAMENTE NA PROXIMA DANCA!");
                             }
-                            std::cout << "[Boss Disco] Player errou a cor! Levou 10 de dano.\n";
+                            std::cout << "[Boss Disco] Player errou a cor! Levou 1 de dano.\n";
                         }
                         // Se o jogador estiver na cor certa
                         else
@@ -801,7 +815,9 @@ void DiscoGhost::NotifyCollision(GameObject &other)
                 health -= bul->damage;
                 if (bul->bulletcolor == 0 || bul->bulletcolor == 3)
                 {
+                    other.StandardSmoke();
                     other.RequestDelete();
+                    
                 }
                 else
                 {

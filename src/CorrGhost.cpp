@@ -311,6 +311,7 @@ void CorridorGhost::NotifyCollision(GameObject &other)
             
             health -= bul->damage;
             if (bul->bulletcolor == 0 || bul->bulletcolor == 3) {
+                other.StandardSmoke();
                 other.RequestDelete();
             }
             else {

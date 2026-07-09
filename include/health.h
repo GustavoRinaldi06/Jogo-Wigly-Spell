@@ -1,5 +1,5 @@
-#ifndef POTION_H
-#define POTION_H
+#ifndef HEALTH_H
+#define HEALTH_H
 
 #include "Component.h"
 #include "Rect_Vec2.h"
@@ -9,12 +9,12 @@
 #include <queue>
 #include <memory>
 
-class Potion : public Component
+class Health : public Component
 {
 public:
 
-    Potion(GameObject &associated, const std::string &spritePath, int num);
-    ~Potion();
+    Health(GameObject &associated, const std::string &spritePath, int id);
+    ~Health();
 
     void Start() override;
     void Update(float dt) override;
@@ -23,6 +23,7 @@ public:
     // Colisão
     GameObject *GetGameObject() { return &associated; }
     int number;
+    float basey;
 };
 
 #endif
