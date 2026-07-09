@@ -28,7 +28,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     associated.layer = 4.5;
     associated.damage = 1;
 
-    auto renderer = new SpriteRenderer(associated, spritePath, 4, 9);
+    auto renderer = new SpriteRenderer(associated, spritePath, 10, 7);
 
     associated.AddComponent(renderer);
 
@@ -43,17 +43,17 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     // Cria as animações
 
     auto animator = new Animator(associated);
-    animator->AddAnimation("idle", Animation(0, 3, 0.15f));
-    animator->AddAnimation("prepgrav", Animation(11, 11, 2.0f));
-    animator->AddAnimation("downgrav", Animation(8, 11, 0.4f));
-    animator->AddAnimation("upgrav", Animation(4, 7, 0.4f));
-    animator->AddAnimation("recdowngrav", Animation(10, 11, 0.5f));
-    animator->AddAnimation("recupgrav", Animation(6, 7, 0.4f));
-    animator->AddAnimation("summon", Animation(12, 15, 0.4f));
-    animator->AddAnimation("smnrecover", Animation(14, 14, 0.25f));
-    animator->AddAnimation("disco", Animation(16, 19, 0.15f));
-    animator->AddAnimation("discorecover", Animation(19, 19, 0.15f));
-    animator->AddAnimation("death", Animation(20, 33, 0.1f));
+    animator->AddAnimation("idle", Animation(0, 19, (1.0/24)));
+    animator->AddAnimation("prepgrav", Animation(29, 35, (1.0/24)));
+    animator->AddAnimation("downgrav", Animation(36, 39, (1.0/24)));
+    animator->AddAnimation("upgrav", Animation(42, 45, (1.0/24)));
+    animator->AddAnimation("recdowngrav", Animation(40, 41,(1.0/24)));
+    animator->AddAnimation("recupgrav", Animation(46, 47, (1.0/24)));
+    animator->AddAnimation("summon", Animation(20, 28, (1.0/24)));
+    animator->AddAnimation("smnrecover", Animation(25, 28, (1.0/24)));
+    animator->AddAnimation("disco", Animation(52, 59, (1.0/24)));
+    animator->AddAnimation("discorecover", Animation(59, 60, (1.0/24)));
+    animator->AddAnimation("death", Animation(61, 68, (1.0/24)));
     associated.AddComponent(animator);
     animator->SetAnimation("idle");
 
@@ -63,7 +63,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     deathTimer.Restart();
     specialInvuln.Restart();
     waveCD.Restart();
-    health = 1250;
+    health = 10;
     dead = false;
     ATK = -1;
     SmnTimer.Set(9999);
@@ -117,6 +117,7 @@ void DiscoGhost::Update(float dt)
 
             if (animator)
                 animator->SetAnimation("death");
+                animcounter = 10;
             deathTimer.Restart();
         }
 
@@ -124,15 +125,17 @@ void DiscoGhost::Update(float dt)
         deathTimer.Update(dt);
 
         // só deleta após 0.5s
-        if (deathTimer.Get() > 1.0f)
-            associated.RequestDelete();
-
+        if (animator->GetAnimation() == "death" && animator->wrapped){
+            animcounter--;
+            animator->wrapped = false;
+            if (animcounter <= 0) {
+                associated.RequestDelete();
+            }
+            
+        }
         return; // não executa mais lógica de movimento
     }
-    if (!GameData::discostart)
-    {
-        return;
-    }
+    
 
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
     NoteTimer.Update(dt);
@@ -151,14 +154,17 @@ void DiscoGhost::Update(float dt)
         NoteTimer.Restart();
         if (!GameData::finalfase)
         {
-            if (health > 750)
+            if (!GameData::discostart) {
+                noteTime = 2;
+            }
+            else if (health > 750)
             {
-                noteTime = 8 + rand() % 5;
+                noteTime = 6 + rand() % 5;
                 ;
             }
             else
             {
-                noteTime = 6 + rand() % 3;
+                noteTime = 4 + rand() % 3;
             }
 
             int count = 1;
@@ -204,6 +210,10 @@ void DiscoGhost::Update(float dt)
                         last_color = 2;
                     }
                 }
+                if (!GameData::discostart) {
+                    color = 0;
+                    last_color = 0;
+                }
                 NoteATK(color);
             }
         }
@@ -216,7 +226,12 @@ void DiscoGhost::Update(float dt)
             }
         }
     }
-    else if (ATK == -1)
+    if (!GameData::discostart)
+    {
+        return;
+    }
+
+    if (ATK == -1)
     {
         // Inicialização do Ataque de Disco (tutorial)
         if (!attacked)
@@ -470,24 +485,32 @@ void DiscoGhost::Update(float dt)
     else if (ATK == 1)
     {
 
-        if (!attacked && animator->GetCurrentFrame() == 15)
+        if (!attacked && animator->GetCurrentFrame() == 25)
         {
             WaveATK(0);
             WaveATK(1);
             waveCD.Restart();
             attacked = true;
             animator->SetAnimation("smnrecover");
+            animcounter = 5;
             AnimTimer.Restart();
         }
-        else if (attacked && AnimTimer.Get() > 0.25)
+        else if (attacked && animator->GetAnimation() == "smnrecover" && animator->wrapped)
         {
-            ATK = 0;
-            animator->SetAnimation("idle");
+            animcounter--;
+            if (animcounter <= 0)  {
+                ATK = 0;
+                animator->SetAnimation("idle");
+            }
+            else {
+                animator->wrapped = false;
+            }
+            
         }
     }
     else if (ATK == 2)
     {
-        if (attacked && AnimTimer.Get() > 1.0)
+        if (attacked && (animator->GetAnimation() == "recupgrav" || animator->GetAnimation() == "recdowngrav") && animator->wrapped)
         {
             ATK = 0;
             AnimTimer.Restart();
@@ -511,14 +534,14 @@ void DiscoGhost::Update(float dt)
             }
         }
 
-        if (!attacked && !GameData::inverted && animator->GetCurrentFrame() == 6)
+        if (!attacked && !GameData::inverted && animator->GetCurrentFrame() == 45 && animator->wrapped) 
         {
             attacked = true;
-            GameData::inverted = true;
+            GameData::inverted = true; 
             AnimTimer.Restart();
             animator->SetAnimation("recupgrav");
         }
-        if (!attacked && GameData::inverted && animator->GetCurrentFrame() == 10)
+        if (!attacked && GameData::inverted && animator->GetCurrentFrame() == 39 && animator->wrapped)
         {
             attacked = true;
             GameData::inverted = false;
@@ -528,7 +551,7 @@ void DiscoGhost::Update(float dt)
     }
     else if (ATK == 3)
     {
-        if (!attacked && animator->GetCurrentFrame() == 15)
+        if (!attacked && animator->GetCurrentFrame() == 25)
         {
             int pos = rand() % 2;
             int startpos = pos;
@@ -550,6 +573,7 @@ void DiscoGhost::Update(float dt)
                 SmnATK(1, pos);
                 attacked = true;
                 animator->SetAnimation("smnrecover");
+                animcounter = 5;
                 AnimTimer.Restart();
             }
             else
@@ -685,6 +709,7 @@ void DiscoGhost::Update(float dt)
                         {
                             Error.Play();
                             Character::player->ApplyDamage(20); // Dá 10 de dano
+                            
                             GameData::danceFloorPtr->Error();   // Pista fica inteira vermelha
                             GameData::discoError = true;
                             GameData::discoBlackout = false;
@@ -756,6 +781,10 @@ void DiscoGhost::NoteATK(int color)
 {
     GameObject *noteGO = new GameObject();
     noteGO->box.x = associated.box.x + associated.box.w;
+    if (!GameData::discostart) {
+        //
+        noteGO->box.x = Camera::GetInstance().GetPosition().x + 1200;
+    }
     int notepos = (rand() % 8) * 60;
     while (notepos == lastnote)
     {

@@ -134,6 +134,7 @@ private:
     bool Inversion;
     GameObject *bubble;
     GameObject *bubbleCD;
+    GameObject *cauldron;
 
     // auxilio para troca de modos
     int wasGameMode;

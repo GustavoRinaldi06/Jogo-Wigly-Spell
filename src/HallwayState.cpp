@@ -10,6 +10,8 @@
 #include "../include/Missile.h"
 #include "../include/CorrGhost.h"
 #include "../include/Potion.h"
+
+#include "../include/Health.h"
 #include "../include/Floor.h"
 #include "../include/Haze.h"
 #include "../include/PlayerController.h"
@@ -115,54 +117,35 @@ void HallwayState::LoadAssets()
     // Texto da vida do personagem------------------------------------------------------------------------------------------------
 
     SDL_Color white = {255, 255, 255, 255};
-    GameObject *textGO = new GameObject();
-    std::string hpString = "HP: " + std::to_string(Character::player->GetHP());
-    hpText = new Text(*textGO, "recursos/font/neodgm.ttf", 24, BLENDED, hpString, white);
-    textGO->AddComponent(hpText);
-    textGO->layer = 10;
-
-    hpText->SetCameraFollower(true);
-    // Posição do texto
-    textGO->box.x = 60;
-    textGO->box.y = 650;
-
-    AddObject(textGO);
-
-    // TExto de cooldown da magia --------------------------------------------------------------------------------------------
-    /*
-    GameObject *textGO1 = new GameObject();
-    std::string spellCooldown = "Magia acumulada com sucesso!";
-    spellText = new Text(*textGO1, "recursos/font/neodgm.ttf", 24, BLENDED, spellCooldown, white);
-    textGO1->AddComponent(spellText);
-    textGO1->layer = 10;
-
-    spellText->SetCameraFollower(true);
-    // Posição do texto
-    textGO1->box.x = 200;
-    textGO1->box.y = 650;
-
-    AddObject(textGO1);
-
-    */
-
-    GameObject *cauldGO1 = new GameObject();
-    cauldGO1->AddComponent(new Potion(*cauldGO1, "recursos/img/potions.png", 0));
-    cauldGO1->layer = 10;
+    GameObject *hpBGGO = new GameObject();
+    SpriteRenderer *hprend = new SpriteRenderer(*hpBGGO, "recursos/img/health.png",1,1);
+    hprend->SetScale(1.0,0.8);
+    hpBGGO->AddComponent(hprend);
+    hprend->SetTransparency(180);
+    hpBGGO->layer = 10;
 
     // Posição do texto
-    cauldGO1->box.x = 200;
-    cauldGO1->box.y = 650;
+    hpBGGO->box.x = 10;
+    hpBGGO->box.y = 650;
+    hprend->SetCameraFollower(1.0);
 
-    AddObject(cauldGO1);
+    AddObject(hpBGGO);
 
-    GameObject *cauldGO2 = new GameObject();
-    cauldGO2->AddComponent(new Potion(*cauldGO2, "recursos/img/potions.png", 1));
-    cauldGO2->layer = 10;
+    GameObject *HPGO;
+    for (int i = 0; i < 5; i++) {
+        HPGO = new GameObject();
+        
+        HPGO->box.y = 645;
+        HPGO->AddComponent(new Health(*HPGO, "recursos/img/hud.png", i));
+        HPGO->layer = 11;
+        HPGO->box.x = 70+i*30;
+        
 
-    // Posição do texto
-    cauldGO2->box.x = 250;
-    cauldGO2->box.y = 650;
-    AddObject(cauldGO2);
+        // Posição do texto
+        
+
+        AddObject(HPGO);
+    }
 
     GameObject *textGO2 = new GameObject();
     std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);

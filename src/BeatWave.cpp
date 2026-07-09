@@ -99,7 +99,7 @@ void BeatWave::Update(float dt)
     if (playerdot.x > associated.box.x && playerdot.x < associated.box.x + associated.box.w && playerdot.y > associated.box.y && playerdot.y < associated.box.y + associated.box.h) {
         float playerx = (playerdot.x - associated.box.x);
         float playery = associated.box.h - (playerdot.y - associated.box.y);
-        float leeway =1;
+        float leeway =0.85;
         float ileeway = 1 - leeway;
         if (playery < leeway*associated.box.h*sin((M_PI/(leeway*associated.box.w))*(playerx-ileeway*associated.box.w))) { 
             // Trata como uma função seno para determinar se ativa a colisão

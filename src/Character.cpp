@@ -9,6 +9,7 @@
 #include "InputManager.h"
 #include "GameData.h"
 #include "HallwayState.h"
+#include "Cauldron.h"
 
 #include "Floor.h"
 
@@ -90,6 +91,12 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     bubbleCDGO->AddComponent(new BubbleCD(*bubbleCDGO, "recursos/img/BubbleCD.png"));
     Game::GetInstance().GetCurrentState().AddObject(bubbleCDGO);
     bubbleCD = bubbleCDGO;
+    damageCooldown.Restart();
+
+    GameObject *cauldCDGO = new GameObject();
+    cauldCDGO->AddComponent(new Cauldron(*cauldCDGO, "recursos/img/Caldeirao.png",animator));
+    Game::GetInstance().GetCurrentState().AddObject(cauldCDGO);
+    cauldron = cauldCDGO;
     damageCooldown.Restart();
 
 
@@ -575,8 +582,10 @@ void Character::NotifyCollision(GameObject &other)
     Collider *col = (Collider *)associated.GetComponent("Collider");
     Vec2 scale = col->GetScale();
     int dir = col->ColDir(collider);
+    bool solidcol = false;
     if (collider && collider->tag == "solid")
     {
+        solidcol = true;
         surfaceTimer.Restart();
         Floor *floor = (Floor *)other.GetComponent("Floor");
         surfacespeed = floor->speed;
@@ -651,7 +660,7 @@ void Character::NotifyCollision(GameObject &other)
     else if (other.damage >= 0 && damageCooldown.Get() > 2.0 && invTimer.Get() > 10)
     {
         float dist = associated.box.y - other.box.y;
-        if (abs(dist) < other.box.h / 2 + 0.8 * (associated.box.h / 2))
+        if (solidcol || abs(dist) < other.box.h / 2 + 0.8 * (associated.box.h / 2))
         { // Diminuindo hitbox vertical contra dano
             damageCooldown.Restart();
             if (shield > 0)
@@ -731,7 +740,7 @@ void Character::Shoot1(Vec2 targetPos)
         {
             spellSound.Play(1);
 
-            Vec2 shooterCenter = associated.box.GetCenter();
+            Vec2 shooterCenter = cauldron->box.GetCenter();
             Vec2 delta = targetPos - shooterCenter;
 
             if (delta.Magnitude() < 0.01f)
@@ -778,7 +787,7 @@ void Character::Shoot1(Vec2 targetPos)
 
 void Character::ShootMix(Vec2 targetPos, float speed, int damage, float maxDistance, std::string spritePath, int color)
 {
-        Vec2 shooterCenter = associated.box.GetCenter();
+        Vec2 shooterCenter = cauldron->box.GetCenter();
         Vec2 delta = targetPos - shooterCenter;
 
         if (delta.Magnitude() < 0.01f)

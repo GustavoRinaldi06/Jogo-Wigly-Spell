@@ -17,7 +17,7 @@ WavyNote::WavyNote(GameObject &associated, const std::string &spritePath, int co
     associated.layer = 5.1;
     associated.blockable = 3;
     associated.damage = 1;
-    auto renderer = new SpriteRenderer(associated, spritePath, 4, 3);
+    auto renderer = new SpriteRenderer(associated, spritePath, 8, 3);
     associated.AddComponent(renderer);
     renderer->SetScale(1.5,1.5);
     
@@ -31,12 +31,12 @@ WavyNote::WavyNote(GameObject &associated, const std::string &spritePath, int co
     auto animator = new Animator(associated);
     int base = 0;
     if (color == 1) {
-        base = 8;
+        base = 16;
     }
     else if (color == 2) {
-        base = 4;
+        base = 8;
     }
-    animator->AddAnimation("floating", Animation(base,base + 3, 0.25f));
+    animator->AddAnimation("floating", Animation(base,base + 7, (1.0/6)));
     associated.AddComponent(animator);
     animator->SetAnimation("floating");
 
@@ -60,7 +60,7 @@ void WavyNote::Start()
 void WavyNote::Update(float dt)
 {
     // Ao morrer -------------------------------------------------------------------------------
-    if (associated.box.y < -120 || associated.box.y > 1400 || associated.box.x < -120) {
+    if (associated.box.y < -120 || associated.box.y > 1400 || associated.box.x < -2000) {
          associated.RequestDelete();
     }
 

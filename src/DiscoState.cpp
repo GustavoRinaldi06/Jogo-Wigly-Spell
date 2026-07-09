@@ -161,7 +161,7 @@ void DiscoState::LoadAssets()
     GameObject *discoGO = new GameObject();
     discoGO->box.x = 830; // Centro do mapa
     discoGO->box.y = 150; // Altura maior
-    discoGO->AddComponent(new DiscoGhost(*discoGO, "recursos/img/discoGhost.png")); // substitua pela imagem correta
+    discoGO->AddComponent(new DiscoGhost(*discoGO, "recursos/img/DiscoKing.png")); // substitua pela imagem correta
     AddObject(discoGO);
 
     // Holofote

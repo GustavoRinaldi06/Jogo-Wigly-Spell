@@ -59,6 +59,7 @@ private:
     Text *discoInfoText = nullptr; // TEXTO boss
     bool feedbackActive = false;   // Tempo de feedback
     bool acertou = false;          // Acertou no tutorial
+    int animcounter = 0;
     Sound Error, Right_Place;
 };
 
