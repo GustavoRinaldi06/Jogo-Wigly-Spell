@@ -183,15 +183,14 @@ void DiscoState::LoadAssets()
     // Música --------------------------------------------------------------------------------------------------------------------
     if (!GameData::isMuted)
     {
-        backgroundMusic.Open("recursos/audio/Fundo.mp3");
+        backgroundMusic.Open("recursos/audio/pubsound.mp3");
         backgroundMusic.Play(-1);
-        currentTrack = "recursos/audio/Fundo.mp3";
+        currentTrack = "recursos/audio/pubsound.mp3";
 
         vinilSwipe = Sound("recursos/audio/vinilswipe.mp3");
         // Playlist DJ
+        playlist.push_back("recursos/audio/playlist/DiscoKing.mp3");
         playlist.push_back("recursos/audio/playlist/IWS.mp3");
-        playlist.push_back("recursos/audio/playlist/BW.mp3");
-        // playlist.push_back("recursos/audio/playlist/DM.mp3");
 
         for (const auto &musicaPath : playlist)
         {
@@ -287,7 +286,7 @@ void DiscoState::LoadAssets()
 
     bosshpText->SetCameraFollower(true);
     // Posição do texto
-    textGO2->box.x = 700;
+    textGO2->box.x = 900;
     textGO2->box.y = 650;
 
     AddObject(textGO2);
@@ -550,21 +549,30 @@ void DiscoState::DontStopTheMusic()
         // Garante que há músicas na playlist
         if (!playlist.empty())
         {
-            // Sorteia um índice inicial
-            int randomIndex = rand() % playlist.size();
-            // Se a música sorteada for igual à atual
-            if (playlist[randomIndex] == currentTrack && playlist.size() > 1)
+            if (currentTrack == "recursos/audio/pubsound.mp3")
             {
-                // Avança para o próximo índice de forma circular
-                randomIndex = (randomIndex + 1) % playlist.size();
+                backgroundMusic.Open("recursos/audio/playlist/IWS.mp3");
+                backgroundMusic.Play(-1);
+                currentTrack = "recursos/audio/playlist/IWS.mp3";
             }
+            else
+            {
+                // Sorteia um índice inicial
+                int randomIndex = rand() % playlist.size();
+                // Se a música sorteada for igual à atual
+                if (playlist[randomIndex] == currentTrack && playlist.size() > 1)
+                {
+                    // Avança para o próximo índice de forma circular
+                    randomIndex = (randomIndex + 1) % playlist.size();
+                }
 
-            // Atualiza a faixa atual
-            currentTrack = playlist[randomIndex];
+                // Atualiza a faixa atual
+                currentTrack = playlist[randomIndex];
 
-            // Carrega a nova música e bota para rodar
-            backgroundMusic.Open(currentTrack);
-            backgroundMusic.Play(-1);
+                // Carrega a nova música e bota para rodar
+                backgroundMusic.Open(currentTrack);
+                backgroundMusic.Play(-1);
+            }
         }
     }
 }

@@ -11,6 +11,9 @@ Light::Light(GameObject &associated, const std::string &spritePath)
 
     // começa desligado
     spriteRenderer->SetFrame(5);
+    int currentFrame = 5;
+
+    turnOn = Sound("recursos/audio/light.wav");
 }
 
 Light::~Light() {}
@@ -19,19 +22,30 @@ void Light::Start() {}
 
 void Light::Update(float dt)
 {
+
+    int nextFrame = 5;
+
     if (GameData::discoAttackActive)
     {
         if (GameData::discoError)
         {
-            spriteRenderer->SetFrame(4); // Holofote Vermelho de Erro
+            nextFrame = 4; // Holofote Vermelho de Erro
         }
         else if (GameData::discoBlackout)
         {
-            spriteRenderer->SetFrame(5); // Holofote Apagado
+            nextFrame = 5; // Holofote Apagado
         }
         else
         {
-            spriteRenderer->SetFrame(GameData::targetDiscoColor); // Cor do Boss
+            nextFrame = GameData::targetDiscoColor; // Cor do Boss
+        }
+
+        spriteRenderer->SetFrame(nextFrame);
+
+        if (nextFrame != currentFrame && nextFrame != 5)
+        {
+            turnOn.Play(1);
+            currentFrame = nextFrame;
         }
     }
     else

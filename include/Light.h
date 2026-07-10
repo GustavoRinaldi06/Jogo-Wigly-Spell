@@ -2,6 +2,7 @@
 #define LIGHT_H
 
 #include "Component.h"
+#include "Sound.h"
 #include <string>
 
 class GameObject;
@@ -20,6 +21,8 @@ public:
 
 private:
     SpriteRenderer *spriteRenderer;
+    Sound turnOn;
+    int currentFrame;
 };
 
 #endif

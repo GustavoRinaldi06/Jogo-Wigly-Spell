@@ -24,8 +24,8 @@ void EndState::LoadAssets()
 
     if (GameData::playerVictory_3)
     {
-        bgRenderer->Open("recursos/img/Win.png");
-        backgroundMusic.Open("recursos/audio/endStateWin.ogg");
+        bgRenderer->Open("recursos/img/win.png");
+        backgroundMusic.Open("recursos/audio/teen_titans.mp3");
     }
     else
     {
@@ -42,8 +42,8 @@ void EndState::LoadAssets()
     backgroundMusic.Play();
 
     // Botões-----------------------------------------
-    std::string fontPath = "recursos/font/neodgm.ttf";
-    int fontSize = 24;
+    std::string fontPath = "recursos/font/heavy heap.otf";
+    int fontSize = 34;
     int posY = 620;
 
     if (!GameData::playerVictory_3) // layout de derrot
@@ -54,7 +54,7 @@ void EndState::LoadAssets()
         Text *txtRetry = new Text(*btnRetry, fontPath, fontSize, BLENDED, "TENTAR NOVAMENTE", white);
         btnRetry->AddComponent(txtRetry);
         txtRetry->SetCameraFollower(true);
-        btnRetry->box.x = 250;
+        btnRetry->box.x = 200;
         btnRetry->box.y = posY;
         AddObject(btnRetry);
 
@@ -81,10 +81,10 @@ void EndState::LoadAssets()
         // Texto grande de Game Over
         GameObject *gameOverTextGO = new GameObject();
         gameOverTextGO->layer = 15.0;
-        gameOverTextGO->box.x = 120;
-        gameOverTextGO->box.y = 100;
+        gameOverTextGO->box.x = 20;
+        gameOverTextGO->box.y = 30;
 
-        Text *txtGameOver = new Text(*gameOverTextGO, "recursos/font/neodgm.ttf", 72, BLENDED, "GAME OVER", white);
+        Text *txtGameOver = new Text(*gameOverTextGO, "recursos/font/heavy heap.otf", 162, BLENDED, "GAME OVER", white);
         gameOverTextGO->AddComponent(txtGameOver);
         txtGameOver->SetCameraFollower(true);
 
@@ -99,8 +99,8 @@ void EndState::LoadAssets()
         Text *txtMenu = new Text(*btnMenu, fontPath, fontSize, BLENDED, "VOLTAR AO MENU", white);
         btnMenu->AddComponent(txtMenu);
         txtMenu->SetCameraFollower(true);
-        btnMenu->box.x = 400;
-        btnMenu->box.y = posY;
+        btnMenu->box.x = 880;
+        btnMenu->box.y = posY - 260;
         AddObject(btnMenu);
 
         // Botão: Sair do Jogo
@@ -109,8 +109,8 @@ void EndState::LoadAssets()
         Text *txtExit = new Text(*btnExit, fontPath, fontSize, BLENDED, "SAIR DO JOGO", white);
         btnExit->AddComponent(txtExit);
         txtExit->SetCameraFollower(true);
-        btnExit->box.x = 720;
-        btnExit->box.y = posY;
+        btnExit->box.x = 900;
+        btnExit->box.y = posY - 180;
         AddObject(btnExit);
 
         // Retry nulo 

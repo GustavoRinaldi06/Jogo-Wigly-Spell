@@ -5,6 +5,7 @@
 #include "Text.h"
 #include "Animator.h"
 #include "Timer.h"
+#include "Music.h"
 #include <vector>
 #include <string>
 #include <memory>
@@ -54,6 +55,8 @@ private:
     GameObject *caldeiraoGO;
     GameObject *textGO;
     GameObject *guessingTextGO;
+
+    Music loadMusic;
 };
 
 #endif

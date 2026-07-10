@@ -33,17 +33,21 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     speed = Vec2(0, 0);
 
     // Novos sons
-    // hitSound = Sound();
-    // deathSound = Sound();
-    // fallSound = Sound();
+    hitSound = Sound("recursos/audio/hit.wav");
+    //deathSound = Sound("recursos/audio/purple.mp3"); Achar som de explosão magica
+    // Ficou muito chato
+    //jumpSound = Sound("recursos/audio/jump.wav");
+    //DjumpSound = Sound("recursos/audio/Djump.wav");
+    dashSound = Sound("recursos/audio/dash.wav");
+
     walkSound = Sound("recursos/audio/AndandoGrama.mp3");
     wallWalkSound = Sound("recursos/audio/wallWalk.mp3");
-    spellSound = Sound("recursos/audio/Spell.mp3");
+    spellSound = Sound("recursos/audio/potion.wav");
     spell_red_Sound = Sound("recursos/audio/Spell2.mp3");
     spell_scarlet_Sound = Sound("recursos/audio/Spell2.mp3");
-    spell_blue_Sound = Sound("recursos/audio/Spell2.mp3");
-    spell_darkBlue_Sound = Sound("recursos/audio/Spell2.mp3");
-    spell_purple_Sound = Sound("recursos/audio/Spell2.mp3");
+    spell_blue_Sound = Sound("recursos/audio/shield.wav");
+    spell_darkBlue_Sound = Sound("recursos/audio/shield.wav");
+    spell_purple_Sound = Sound("recursos/audio/purple.mp3");
     noSpell = Sound("recursos/audio/NoSpell.mp3");
 
     // Cria as animações
@@ -277,6 +281,7 @@ void Character::Update(float dt)
         }
         if (input.KeyPress(SDLK_LSHIFT) && !dashed)
         {
+            dashSound.Play();
             speed.x = facingDir * 500.0f; // ajustar a força de pulo na grvidade invertida
             speed.y = 0;
             dashed = true; // se pulou
@@ -313,6 +318,7 @@ void Character::Update(float dt)
                 speed.y = 700.0f; // ajustar a força de pulo na grvidade invertida
 
             // Pulou
+            jumpSound.Play();
             isOnGround = false; // se está no chão
             jumped = true;      // se pulou
             jumping = true;
@@ -325,6 +331,7 @@ void Character::Update(float dt)
             else if (GameData::inverted == true)
                 speed.y = 600.0f; // ajustar a força de pulo na grvidade invertida
 
+            DjumpSound.Play();
             Djumped = true; // se pulou duas vezes
             jumping = true;
             animator->SetAnimation("jump");
@@ -684,6 +691,7 @@ void Character::NotifyCollision(GameObject &other)
             }
             else
             {
+                hitSound.Play(1);
                 hp -= other.damage * 20;
                 Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
                 if (GameData::gameMode == 0) {
@@ -888,6 +896,7 @@ void Character::UseSpell(Vec2 targetPos)
             else if (unica == BLUE)
             {
                 // fazer a imortalidade
+                spell_blue_Sound.Play();
                 shouldShoot = false;
                 shield = 1;
                 shieldTimer.Restart();
@@ -912,6 +921,7 @@ void Character::UseSpell(Vec2 targetPos)
             else if (c1 == BLUE && c2 == BLUE)
             {
                 // O azul duplo por enquanto fica vazio
+                spell_darkBlue_Sound.Play();
                 shouldShoot = false;
                 invTimer.Set(0);
                 colorInventory.clear();  // Apaga as cores
@@ -959,5 +969,33 @@ void Character::SetSpeedY(float speedY)
 
 void Character::ApplyDamage(int damage)
 {
-    hp -= damage;
+    if (damageCooldown.Get() > 2.0 && invTimer.Get() > 10)
+    {
+        damageCooldown.Restart();
+
+        if (shield > 0)
+        {
+            shield -= 1;
+        }
+        else
+        {
+            hp -= damage;
+
+            // Toca o som de dano
+            hitSound.Play(1);
+
+            Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
+            if (animator)
+            {
+                if (GameData::gameMode == 0)
+                {
+                    animator->SetAnimation("damageWall");
+                }
+                else
+                {
+                    animator->SetAnimation("damage"); 
+                }
+            }
+        }
+    }
 }

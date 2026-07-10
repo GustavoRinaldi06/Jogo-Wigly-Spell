@@ -1,6 +1,7 @@
 #include "../include/Game.h"
 #include "../include/HallwayState.h"
 #include "../include/TitleState.h"
+#include "../include/EndState.h"
 
 #define INCLUDE_SDL
 #include "SDL_include.h"

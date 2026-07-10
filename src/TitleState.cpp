@@ -22,16 +22,18 @@ void TitleState::LoadAssets()
     // 1. Carregar imagem de fundo --------------------------------------------------------------------
     GameObject *titleGO = new GameObject();
     SpriteRenderer *spriter = new SpriteRenderer(*titleGO);
-    spriter->Open("recursos/img/Abertura.png");
+    spriter->Open("recursos/img/menu.png");
     spriter->SetCameraFollower(true);
     titleGO->AddComponent(spriter);
+    titleGO->box.x = -100;
     AddObject(titleGO);
 
     // Configurações comuns de texto
     SDL_Color black = {0, 0, 0, 255};
+    SDL_Color white = {255, 255, 255, 255};
     std::string fontPath = "recursos/font/heavy heap.otf";
-    int fontSize = 24;
-    int startY = 400; // Posição Y inicial para o primeiro botão
+    int fontSize = 36;
+    int startY = 550; // Posição Y inicial para o primeiro botão
     int spacing = 60; // Espaçamento vertical entre os botões
     int posX = 480;   // Posição X dos botões
 
@@ -53,7 +55,7 @@ void TitleState::LoadAssets()
     }
 
     // se não houver save ou o jogo já foi concluído, deixa o botão cinza
-    SDL_Color continueColor = (faseSalva.empty() || faseSalva == "Jogo_Concluido") ? SDL_Color{128, 128, 128, 100} : black;
+    SDL_Color continueColor = (faseSalva.empty() || faseSalva == "Jogo_Concluido") ? SDL_Color{128, 128, 128, 100} : white;
 
     // Botão: Continuar Jogo -----------------------------------------------------------------------
     btnContinue = new GameObject();
@@ -66,10 +68,10 @@ void TitleState::LoadAssets()
 
     // Botão: Novo Jogo ----------------------------------------------------------------------------
     btnNewGame = new GameObject();
-    Text *txtNewGame = new Text(*btnNewGame, fontPath, fontSize, BLENDED, "NOVO JOGO", black);
+    Text *txtNewGame = new Text(*btnNewGame, fontPath, fontSize, BLENDED, "NOVO JOGO", white);
     btnNewGame->AddComponent(txtNewGame);
     txtNewGame->SetCameraFollower(true);
-    btnNewGame->box.x = posX;
+    btnNewGame->box.x = posX + 35;
     btnNewGame->box.y = startY + spacing;
     AddObject(btnNewGame);
 
@@ -79,8 +81,8 @@ void TitleState::LoadAssets()
     muteTextPtr = new Text(*btnMute, fontPath, fontSize, BLENDED, muteStr, black);
     btnMute->AddComponent(muteTextPtr);
     muteTextPtr->SetCameraFollower(true);
-    btnMute->box.x = posX;
-    btnMute->box.y = startY + (spacing * 2);
+    btnMute->box.x = 30;
+    btnMute->box.y = 30;
     AddObject(btnMute);
 
     // Botão: Sair ---------------------------------------------------------------------------------
@@ -88,8 +90,8 @@ void TitleState::LoadAssets()
     Text *txtExit = new Text(*btnExit, fontPath, fontSize, BLENDED, "SAIR", black);
     btnExit->AddComponent(txtExit);
     txtExit->SetCameraFollower(true);
-    btnExit->box.x = posX;
-    btnExit->box.y = startY + (spacing * 3);
+    btnExit->box.x = 30;
+    btnExit->box.y = 30 + (spacing);
     AddObject(btnExit);
 
     // Carregar música -----------------------------------------------------------------------------

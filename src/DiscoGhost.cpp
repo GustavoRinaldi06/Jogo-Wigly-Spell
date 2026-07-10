@@ -86,7 +86,7 @@ void DiscoGhost::Start()
     textGO->box.y = 70;
 
     // inicia com a string vazia
-    discoInfoText = new Text(*textGO, "recursos/font/neodgm.ttf", 28, BLENDED, "", white);
+    discoInfoText = new Text(*textGO, "recursos/font/heavy heap.otf", 28, BLENDED, "", white);
     textGO->AddComponent(discoInfoText);
     discoInfoText->SetCameraFollower(true);
 
@@ -397,6 +397,13 @@ void DiscoGhost::Update(float dt)
                     if (discoInfoText != nullptr)
                     {
                         discoInfoText->SetText("");
+                    }
+
+                    // função dj
+                    DiscoState *currentState = dynamic_cast<DiscoState *>(&Game::GetInstance().GetCurrentState());
+                    if (currentState != nullptr)
+                    {
+                        currentState->DontStopTheMusic();
                     }
 
                     // Retorna as configurações padrões do jogo
@@ -715,7 +722,7 @@ void DiscoGhost::Update(float dt)
                         if (playerColor != targetColor)
                         {
                             Error.Play();
-                            Character::player->ApplyDamage(20); // Dá 10 de dano
+                            Character::player->ApplyDamage(20); // Dá 20 de dano
                             
                             GameData::danceFloorPtr->Error();   // Pista fica inteira vermelha
                             GameData::discoError = true;
@@ -725,7 +732,7 @@ void DiscoGhost::Update(float dt)
                             {
                                 discoInfoText->SetText("ERROU! TENTE NOVAMENTE NA PROXIMA DANCA!");
                             }
-                            std::cout << "[Boss Disco] Player errou a cor! Levou 1 de dano.\n";
+                            std::cout << "Player errou a cor! Levou dano.\n";
                         }
                         // Se o jogador estiver na cor certa
                         else
@@ -765,6 +772,13 @@ void DiscoGhost::Update(float dt)
                     // Retorna as configurações padrões do jogo
                     GameData::gameMode = 1;
                     GameData::inverted = false;
+
+                    // função dj
+                    DiscoState *currentState = dynamic_cast<DiscoState *>(&Game::GetInstance().GetCurrentState());
+                    if (currentState != nullptr)
+                    {
+                        currentState->DontStopTheMusic();
+                    }
 
                     // Reseta estados do Boss
                     ATK = 0;

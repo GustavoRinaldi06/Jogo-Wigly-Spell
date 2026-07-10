@@ -58,6 +58,14 @@ LoadingState::LoadingState(State *nextState, std::vector<ResourceItem> resources
     objectArray.emplace_back(guessingTextGO);
 
     minimumDisplayTimer.Restart(); // para dar uma pausa
+
+    /*
+    loadMusic.Open("");
+    if (!GameData::isMuted)
+    {
+        loadMusic.Play(-1);
+    }
+    */
 }
 
 LoadingState::~LoadingState()
