@@ -96,7 +96,7 @@ void TitleState::LoadAssets()
     AddObject(btnExit);
 
     // Carregar música -----------------------------------------------------------------------------
-    backgroundMusic.Open("recursos/audio/Abertura.mp3");
+    backgroundMusic.Open("recursos/audio/Menu.ogg");
     if (!GameData::isMuted)
     {
         backgroundMusic.Play(-1);

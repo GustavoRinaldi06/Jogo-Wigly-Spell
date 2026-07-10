@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Game.h"
 #include "GameData.h"
+#include "TitleState.h"
 #include "HallwayState.h"
 #include "DiscoState.h"
 #include "LoadingState.h"
@@ -25,12 +26,12 @@ void EndState::LoadAssets()
     if (GameData::playerVictory_3)
     {
         bgRenderer->Open("recursos/img/win.png");
-        backgroundMusic.Open("recursos/audio/teen_titans.mp3");
+        backgroundMusic.Open("recursos/audio/BoB.mp3");
     }
     else
     {
         bgRenderer->Open("recursos/img/GAME_OVER.jpg");
-        backgroundMusic.Open("recursos/audio/teen_titans.mp3");
+        backgroundMusic.Open("recursos/audio/GameOver.mp3");
     }
 
     bgRenderer->SetCameraFollower(true);
@@ -200,6 +201,11 @@ void EndState::Update(float dt)
         if (IsButtonClicked(btnMenu))
         {
             popRequested = true;
+            std::vector<ResourceItem> titleResources = {
+                {"recursos/font/heavy heap.otf", TYPE_FONT, 36},
+                {"recursos/img/menu.png", TYPE_IMAGE},
+                {"recursos/audio/Menu.ogg", TYPE_MUSIC}};
+            Game::GetInstance().Push(new LoadingState(new TitleState(), titleResources, false));
             return;
         }
 

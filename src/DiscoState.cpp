@@ -190,7 +190,7 @@ void DiscoState::LoadAssets()
         vinilSwipe = Sound("recursos/audio/vinilswipe.mp3");
         // Playlist DJ
         playlist.push_back("recursos/audio/playlist/DiscoKing.mp3");
-        playlist.push_back("recursos/audio/playlist/IWS (cut).mp3");
+        playlist.push_back("recursos/audio/playlist/BW.mp3");
 
         for (const auto &musicaPath : playlist)
         {
@@ -323,6 +323,7 @@ void DiscoState::Update(float dt)
     }
 
     // DEBUG DE TESTE  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
     if (input.KeyPress(SDLK_m))
     {
         std::cout << "Troca de modos acionada!" << std::endl;
@@ -351,6 +352,7 @@ void DiscoState::Update(float dt)
         else
             GameData::aimed = true;
     }
+    */
     Rect player = Character::PlayerBox();
 
     Vec2 camerapos = Camera::GetInstance().GetPosition();
@@ -551,9 +553,9 @@ void DiscoState::DontStopTheMusic()
         {
             if (currentTrack == "recursos/audio/pubsound.mp3")
             {
-                backgroundMusic.Open("recursos/audio/playlist/IWS (cut).mp3");
+                backgroundMusic.Open("recursos/audio/playlist/BW.mp3");
                 backgroundMusic.Play(-1);
-                currentTrack = "recursos/audio/playlist/IWS (cut).mp3";
+                currentTrack = "recursos/audio/playlist/BW.mp3";
             }
             else
             {

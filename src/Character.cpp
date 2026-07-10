@@ -40,7 +40,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     DjumpSound = Sound("recursos/audio/dash.wav");
     dashSound = Sound("recursos/audio/dash.wav");
 
-    walkSound = Sound("recursos/audio/AndandoGrama.mp3");
+    walkSound = Sound("recursos/audio/step.wav");
     wallWalkSound = Sound("recursos/audio/wallWalk.mp3");
     spellSound = Sound("recursos/audio/potion.wav");
     spell_red_Sound = Sound("recursos/audio/Spell2.mp3");
@@ -726,11 +726,11 @@ void Character::walkSoundCall(float dt)
     // Fazer as passadas do wigly e seu som ao andar  (Pataformer)
     if (GameData::gameMode == 1)
     {
-        if (fabs(speed.x) > 1.0f && isOnGround == true) // está andando
+        if (fabs(speed.x) > 0.3f && isOnGround == true) // está andando
         {
             walkSoundTimer.Update(dt);
 
-            if (walkSoundTimer.Get() >= 0.3f) // intervalo entre passos
+            if (walkSoundTimer.Get() >= 0.2f) // intervalo entre passos
             {
                 walkSound.Play(1);
                 walkSoundTimer.Restart();

@@ -108,7 +108,7 @@ void HallwayState::LoadAssets()
     AddObject(corridorGO);
 
     // Música --------------------------------------------------------------------------------------------------------------------
-    backgroundMusic.Open("recursos/audio/Fundo.mp3");
+    backgroundMusic.Open("recursos/audio/Corredor.ogg");
     if (!GameData::isMuted)
     {
         backgroundMusic.Play(-1);
@@ -220,6 +220,7 @@ void HallwayState::Update(float dt)
     }
 
     // DEBUG DE TESTE  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
     if (input.KeyPress(SDLK_m))
     {
         std::cout << "Troca de modos acionada!" << std::endl;
@@ -248,7 +249,7 @@ void HallwayState::Update(float dt)
         else
             GameData::aimed = true;
     }
-
+    */
     // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Atualiza todos os GameObjects
