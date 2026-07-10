@@ -5,7 +5,7 @@ int GameData::bossHP = 1000;
 int GameData::gameMode = 0; // sempre inicializa no menu
 int GameData::currentState = 0;
 bool GameData::inverted = false;
-Vec2 GameData::universalspeed = Vec2(0,0);
+Vec2 GameData::universalspeed = Vec2(0, 0);
 
 bool GameData::playerVictory_1 = false; // Jogador ainda não ganhou
 
@@ -22,8 +22,8 @@ bool GameData::aimed = true;
 bool GameData::isMuted = false;
 bool GameData::discostart = false;
 
-bool GameData::summonalive[6] = {false,false,false,false,false,false};
-bool GameData::discopos[14] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+bool GameData::summonalive[6] = {false, false, false, false, false, false};
+bool GameData::discopos[14] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 int GameData::inversedisco = 0;
 
 // No seu GameData.cpp
@@ -33,4 +33,4 @@ bool GameData::discoBlackout = false;
 bool GameData::discoError = false;
 bool GameData::shotFired = false;
 
-DanceFloor *GameData::danceFloorPtr = nullptr; //pista fase 3
+DanceFloor *GameData::danceFloorPtr = nullptr; // pista fase 3

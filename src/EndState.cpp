@@ -26,7 +26,7 @@ void EndState::LoadAssets()
     if (GameData::playerVictory_3)
     {
         bgRenderer->Open("recursos/img/win.png");
-        backgroundMusic.Open("recursos/audio/BoB.mp3");
+        backgroundMusic.Open("recursos/audio/Winner.mp3");
     }
     else
     {

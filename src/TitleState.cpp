@@ -103,9 +103,6 @@ void TitleState::LoadAssets()
     }
 }
 
-
-
-
 void TitleState::Update(float dt)
 {
     InputManager &input = InputManager::GetInstance();
@@ -199,7 +196,8 @@ void TitleState::Update(float dt)
     }
 }
 
-void TitleState::Load_Lab() {
+void TitleState::Load_Lab()
+{
     std::vector<ResourceItem> labResources = {
         {"recursos/font/heavy heap.otf", TYPE_FONT, 24},
         {"recursos/img/wigly.png", TYPE_IMAGE},
@@ -209,7 +207,8 @@ void TitleState::Load_Lab() {
     Game::GetInstance().Push(new LoadingState(new LabState(), labResources, false));
 }
 
-void TitleState::Load_Hallway() {
+void TitleState::Load_Hallway()
+{
     std::vector<ResourceItem> hallwayResources = {
         {"recursos/font/heavy heap.otf", TYPE_FONT, 24},
         {"recursos/img/wigly.png", TYPE_IMAGE},
@@ -222,7 +221,8 @@ void TitleState::Load_Hallway() {
     return;
 }
 
-void TitleState::Load_Pub() {
+void TitleState::Load_Pub()
+{
     std::vector<ResourceItem> discoResources = {
         {"recursos/font/neodgm.ttf", TYPE_FONT, 24},
         {"recursos/img/Piso-pub-disco.png", TYPE_IMAGE},
@@ -233,7 +233,6 @@ void TitleState::Load_Pub() {
         {"recursos/img/potions.png", TYPE_IMAGE},
         {"recursos/audio/Fundo.mp3", TYPE_MUSIC},
         {"recursos/audio/vinilswipe.mp3", TYPE_SOUND},
-        {"recursos/audio/playlist/IWS.mp3", TYPE_MUSIC},
         {"recursos/audio/playlist/BW.mp3", TYPE_MUSIC},
         {"recursos/audio/Erro.mp3", TYPE_SOUND},
         {"recursos/audio/Right_Place.mp3", TYPE_SOUND}};
@@ -257,7 +256,6 @@ bool TitleState::IsButtonClicked(GameObject *buttonGO)
     return (mouseX >= buttonGO->box.x && mouseX <= buttonGO->box.x + buttonGO->box.w &&
             mouseY >= buttonGO->box.y && mouseY <= buttonGO->box.y + buttonGO->box.h);
 }
-
 
 void TitleState::Render()
 {
