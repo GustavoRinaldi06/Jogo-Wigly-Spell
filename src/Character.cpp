@@ -34,8 +34,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
 
     // Novos sons
     hitSound = Sound("recursos/audio/hit.wav");
-    //deathSound = Sound("recursos/audio/purple.mp3"); Achar som de explosão magica
-    // Ficou muito chato
+    deathSound = Sound("recursos/audio/puff.mp3");
     jumpSound = Sound("recursos/audio/dash.wav");
     DjumpSound = Sound("recursos/audio/dash.wav");
     dashSound = Sound("recursos/audio/dash.wav");
