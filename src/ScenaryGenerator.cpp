@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-const int ScenaryGenerator::pattern[6][10] = {{0,0,0,0,0,0,0,0,0,0},{0,0,1,1,0,0,0,0,1,0},{0,1,0,0,0,0,1,1,0,0},{1,1,0,0,0,0,0,0,1,1},{0,0,1,0,0,0,0,1,0,0},{0,1,0,1,0,0,1,0,1,0}};
+const int ScenaryGenerator::pattern[7][10] = {{0,0,0,0,0,0,0,0,0,0},{0,0,1,1,0,0,0,0,1,0},{0,1,0,0,0,0,1,1,0,0},{1,1,0,0,0,0,0,0,1,1},{0,0,1,0,0,0,0,1,0,0},{0,1,0,1,0,0,1,0,1,0},{0,0,0,1,1,1,0,0,0,0}};
 const int ranges[5] = {6,1,2,1,1};
 const float followrates[11] = {1,0.8,0.5,0.2,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 const float widths[5] = {120,1380,1380,1380,1380};
@@ -38,7 +38,13 @@ ScenaryGenerator::ScenaryGenerator(GameObject &associated, Vec2 spd, Vec2 start,
         range = 1;
         batchcount = 1;
     }
-    GenerateBatch(Vec2(start.x,start.y),0);
+    if (type == 0 && flip == SDL_FLIP_VERTICAL) {
+        GenerateBatch(Vec2(start.x,start.y),6);
+    }
+    else {
+        GenerateBatch(Vec2(start.x,start.y),0);
+    }
+    
     if (abs(GameData::universalspeed.x) > 0) {
         GenerateBatch(Vec2(reference->box.x+reference->box.w,start.y),1);
     }

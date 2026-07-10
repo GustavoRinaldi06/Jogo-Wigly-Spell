@@ -44,6 +44,8 @@ public:
     static bool discoBlackout;
     static bool discoError;
     static bool shotFired;
+    static bool expert;
+    static bool easy;
 
     static DanceFloor *danceFloorPtr;
 };

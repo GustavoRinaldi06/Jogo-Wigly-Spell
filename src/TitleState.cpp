@@ -115,6 +115,19 @@ void TitleState::Update(float dt)
     }
 
     // Verifica cliques nos botões
+    if (input.KeyPress(SDLK_9)) {
+        GameData::expert = true;
+        GameData::easy = false;
+    }
+    if (input.KeyPress(SDLK_8)) {
+        GameData::expert = false;
+        GameData::easy = false;
+    }
+    if ((input.KeyPress(SDLK_7))) {
+        GameData::expert = false;
+        GameData::easy = true;
+    }
+
     if (input.MousePress(LEFT_MOUSE_BUTTON))
     {
         // Botão 1: Continuar Jogo

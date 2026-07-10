@@ -20,6 +20,7 @@ public:
     void MissileATK(int offset, int color);
     void NotifyCollision(GameObject &other) override;
     float health = 100;
+    float halfhealth;
 
     Timer BounceTimer;
     float bouncetime = 0.0;

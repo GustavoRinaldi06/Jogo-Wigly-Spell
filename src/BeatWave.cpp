@@ -42,7 +42,13 @@ BeatWave::BeatWave(GameObject &associated, const std::string &spritePath, int ar
     associated.damage = -1;
     if (argside > 0) {
         renderer->SetFrame(0,SDL_FLIP_VERTICAL);
-        associated.box.y = -10;
+        if (GameData::easy) {
+            associated.box.y = -50;
+        }
+        else {
+            associated.box.y = -10;
+        }
+        
     }
     else {
         renderer->SetFrame(0,SDL_FLIP_NONE);

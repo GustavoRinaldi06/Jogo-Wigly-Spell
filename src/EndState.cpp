@@ -153,6 +153,19 @@ void EndState::Update(float dt)
     }
     */
 
+   if (input.KeyPress(SDLK_9)) {
+        GameData::expert = true;
+        GameData::easy = false;
+    }
+    if (input.KeyPress(SDLK_8)) {
+        GameData::expert = false;
+        GameData::easy = false;
+    }
+    if ((input.KeyPress(SDLK_7))) {
+        GameData::expert = false;
+        GameData::easy = true;
+    }
+
     if (input.MousePress(LEFT_MOUSE_BUTTON))
     {
         // TENTAR NOVAMENTE

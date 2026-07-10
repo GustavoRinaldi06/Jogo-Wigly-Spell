@@ -33,4 +33,7 @@ bool GameData::discoBlackout = false;
 bool GameData::discoError = false;
 bool GameData::shotFired = false;
 
+bool GameData::expert = false;
+bool GameData::easy = false;
+
 DanceFloor *GameData::danceFloorPtr = nullptr; // pista fase 3

@@ -13,7 +13,7 @@ class Missile : public Component
 {
 public:
 
-    Missile(GameObject &associated, const std::string &spritePath, int color = 0);
+    Missile(GameObject &associated, const std::string &spritePath, int color = 0, int index = 0);
     ~Missile();
 
     void Start() override;
@@ -44,6 +44,7 @@ private:
     Timer LockinTimer;
     bool launched = false;
     float linearSpeed = 600;
+    bool inverted = false;
     
     
 };

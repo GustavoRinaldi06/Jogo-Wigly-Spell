@@ -63,7 +63,16 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     deathTimer.Restart();
     specialInvuln.Restart();
     waveCD.Restart();
-    health = 1250;
+    if (GameData::expert) {
+        health = 1800;
+    }
+    else if (GameData::easy) {
+        health = 1000;
+    }
+    else {
+        health = 1250;
+    }
+    
     dead = false;
     ATK = -1;
     SmnTimer.Set(9999);
@@ -424,7 +433,7 @@ void DiscoGhost::Update(float dt)
     }
     if (ATK == 0)
     {
-        if (health <= 300)
+        if (health <= 300 && !GameData::easy)
         {
             GameData::finalfase = true;
         }
@@ -442,6 +451,9 @@ void DiscoGhost::Update(float dt)
                 {
                     atkTime = 1.5 + (rand() % 2) / 2;
                 }
+                if (GameData::easy) {
+                    atkTime += 2;
+                }
 
                 swapcount -= 1;
 
@@ -451,7 +463,10 @@ void DiscoGhost::Update(float dt)
                     ATK = 2;
                     animator->SetAnimation("prepgrav");
 
-                    GameData::inversedisco = 1;
+                    if (!GameData::easy) {
+                        GameData::inversedisco = 1;
+                    }
+                    
 
                     AnimTimer.Restart();
                     attacked = false;
@@ -465,7 +480,7 @@ void DiscoGhost::Update(float dt)
                         animator->SetAnimation("disco");
                         attacked = false;
                     }
-                    else if (SmnTimer.Get() > smnTime && choice < 75 && choice >= 25)
+                    else if (!GameData::easy && SmnTimer.Get() > smnTime && choice < 75 && choice >= 25)
                     {
                         ATK = 3;
                         animator->SetAnimation("summon");
@@ -822,7 +837,13 @@ void DiscoGhost::WaveATK(int side)
 {
     GameObject *waveGO = new GameObject();
     waveGO->box.x = associated.box.x + associated.box.w;                            // Centro do mapa
-    waveGO->box.y = +530;                                                         // Centro do mapa
+    if (GameData::easy) {
+        waveGO->box.y = +570; 
+    }
+    else {
+        waveGO->box.y = +530; 
+    }
+                                                            // Centro do mapa
     waveGO->AddComponent(new BeatWave(*waveGO, "recursos/img/BeatWave.png", side)); // substitua pela imagem correta
     SpriteRenderer *waveSprite = (SpriteRenderer *)waveGO->GetComponent("SpriteRenderer");
     if (waveSprite != nullptr)

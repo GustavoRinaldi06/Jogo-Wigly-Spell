@@ -20,7 +20,7 @@ public:
     Vec2 basestart;
     Vec2 baseend;
     Timer genTimer;
-    static const int pattern[6][10];
+    static const int pattern[7][10];
     SDL_RendererFlip flip;
     float angle;
     GameObject* reference;

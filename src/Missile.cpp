@@ -11,11 +11,17 @@
 
 #include <iostream>
 
-Missile::Missile(GameObject &associated, const std::string &spritePath, int color)
+Missile::Missile(GameObject &associated, const std::string &spritePath, int color,int index)
     : Component(associated)
 {
-    associated.layer = 5.1;
-    associated.blockable = 3;
+    associated.layer = 5.1 + index / 10.0;
+    if (GameData::expert) {
+        associated.blockable = 6;
+    }
+    else {
+        associated.blockable = 3;
+    }
+    
     associated.damage = 1;
     
     auto renderer = new SpriteRenderer(associated, spritePath, 4, 9);
@@ -57,7 +63,8 @@ void Missile::Update(float dt)
 {
     // Ao morrer -------------------------------------------------------------------------------
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
-    if (associated.box.x < -120) {
+    SpriteRenderer *rend = static_cast<SpriteRenderer *>(associated.GetComponent("SpriteRenderer"));
+    if (associated.box.x < -300) {
         associated.RequestDelete();
     }
     if (associated.color < 0) {
@@ -88,13 +95,29 @@ void Missile::Update(float dt)
 
         return; // não executa mais lógica de movimento
     }
+
+    if (GameData::expert && associated.box.x <= -100 && !inverted) {
+        associated.box.x = 0;
+        launched = false;
+        lifespan.Restart();
+        inverted = true;
+        LockinTimer.Set(2.5);
+        
+        animator->SetAnimation("hoaming");
+    }
+    
     
     if (launched) {
         lifespan.Update(dt);
         if (lifespan.Get() > 15.0f) { 
             destroyed = true;
         }
-        speed.x = -linearSpeed;
+        if (!inverted) {
+            speed.x = -linearSpeed;
+        }
+        else {
+            speed.x = linearSpeed;
+        }
         speed.y = 0;
     }
     else {
@@ -127,6 +150,9 @@ void Missile::Update(float dt)
     }
     associated.box.y += speed.y * dt;
     associated.box.x += speed.x * dt;
+    if (inverted) {
+        rend->SetFrame(animator->GetCurrentFrame(),SDL_FLIP_VERTICAL);
+    }
 }
 
 void Missile::Render() {}

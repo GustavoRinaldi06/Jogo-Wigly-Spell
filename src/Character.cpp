@@ -127,7 +127,7 @@ void Character::Update(float dt)
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
 
     initTimer.Update(dt);
-    if (initTimer.Get() < 0.2)
+    if (initTimer.Get() < 0.5)
     {
         wasGameMode = GameData::gameMode;
         return;
@@ -156,8 +156,19 @@ void Character::Update(float dt)
         dashed = false;
     }
 
+    if (associated.box.y > 750 || associated.box.y < -50) {
+        associated.box.y = 400;
+        speed.y = 0;
+        speed.x = 0;
+        dashed = false;
+        jumped = false;
+        isOnGround = true;
+        ApplyDamage(1);
+        hover = true;
+    }
+
     // Ao morrer -------------------------------------------------------------------------------
-    if (associated.box.y > 750 || associated.box.y < -50 || hp <= 0)
+    if (hp <= 0)
     {
         // dispara animação e som apenas uma vez
         if (!deathAnimTriggered)
@@ -385,12 +396,16 @@ void Character::Update(float dt)
         }
 
         // Aplica a gravidade --------------------------------------------------------------------
-        if (!dashing)
+        if (!dashing && !hover)
         {
             if (GameData::inverted == false)
                 speed.y += gravity * dt;
             else
                 speed.y -= gravity * dt; // gravidade invertida, puxa pro teto
+        }
+        if (hover && (speed.Magnitude() != 0 || damageCooldown.Get() > 2.0)) {
+            hover = false;
+            isOnGround = false;
         }
     }
 
@@ -700,30 +715,7 @@ void Character::NotifyCollision(GameObject &other)
         float dist = associated.box.y - other.box.y;
         if (solidcol || abs(dist) < other.box.h / 2 + 0.6 * (associated.box.h / 2))
         { // Diminuindo hitbox vertical contra dano
-            damageCooldown.Restart();
-            if (invTimer.Get() <= 10)
-            {
-                blockedSound.Play(1);
-            }
-            else if (shield > 0)
-            {
-                shield -= 1;
-                blockedSound.Play(1);
-            }
-            else
-            {
-                hitSound.Play(1);
-                if (GameData::bossHP > 0) {
-                    hp -= other.damage * 20;
-                }
-                Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
-                if (GameData::gameMode == 0) {
-                    animator->SetAnimation("damageWall");
-                }
-                else {
-                    animator->SetAnimation("damage");
-                }
-            }
+            ApplyDamage(other.damage);
         }
     }
 }
@@ -912,7 +904,7 @@ void Character::UseSpell(Vec2 targetPos)
             {
                 spell_red_Sound.Play(1); // Som da magia vermelha
                 damage = 50;
-                speed = 400.0f;
+                speed = 300.0f;
                 shouldShoot = true;
                 col = 1;
             }
@@ -995,29 +987,27 @@ void Character::ApplyDamage(int damage)
     if (damageCooldown.Get() > 2.0 && invTimer.Get() > 10)
     {
         damageCooldown.Restart();
-
-        if (shield > 0)
+        if (invTimer.Get() <= 10)
+        {
+            blockedSound.Play(1);
+        }
+        else if (shield > 0)
         {
             shield -= 1;
+            blockedSound.Play(1);
         }
         else
         {
-            hp -= damage;
-
-            // Toca o som de dano
             hitSound.Play(1);
-
+            if (GameData::bossHP > 0) {
+                hp -= damage * 20;
+            }
             Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
-            if (animator)
-            {
-                if (GameData::gameMode == 0)
-                {
-                    animator->SetAnimation("damageWall");
-                }
-                else
-                {
-                    animator->SetAnimation("damage"); 
-                }
+            if (GameData::gameMode == 0) {
+                animator->SetAnimation("damageWall");
+            }
+            else {
+                animator->SetAnimation("damage");
             }
         }
     }

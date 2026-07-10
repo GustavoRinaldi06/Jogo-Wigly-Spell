@@ -39,7 +39,17 @@ HallwayState::~HallwayState()
 void HallwayState::LoadAssets()
 {
     std::cout << "\n Carregando fase 2 WiglySpell:" << "\n"; // Alertar LoadAssets
-    GameData::universalspeed = Vec2(-50, 0);
+    if (GameData::expert) {
+        GameData::universalspeed = Vec2(-100,0);
+    }
+    else if (GameData::easy) {
+        GameData::universalspeed = Vec2(-0.001, 0);
+    }
+    else {
+        GameData::universalspeed = Vec2(-50, 0);
+    }
+    GameData::playerVictory_3 = false;
+    
     // Fundo -------------------------------------------------------------------------------------------------------------------
     // GameObject *bgObject = new GameObject();
     // SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
@@ -200,6 +210,10 @@ void HallwayState::Update(float dt)
     {
         quitRequested = true;
         return;
+    }
+
+    if (GameData::easy && GameData::universalspeed.x > -1.0) {
+        GameData::universalspeed = Vec2(0, 0);
     }
 
     if (gameOverTriggered)

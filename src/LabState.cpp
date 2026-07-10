@@ -63,6 +63,8 @@ void LabState::LoadAssets()
     propsObject->layer = 10;
     propsObject->AddComponent(propsRenderer);
     AddObject(propsObject);
+    tutorialEnd = false;
+    GameData::playerVictory_1 = false;
 
     GameData::discostart = false;
 
@@ -194,7 +196,7 @@ void LabState::Update(float dt)
             }
         }
         RenderArray();
-        return;
+        
     }
 
     UpdateArray(dt);

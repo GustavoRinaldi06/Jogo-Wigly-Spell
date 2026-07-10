@@ -61,7 +61,15 @@ CorridorGhost::CorridorGhost(GameObject &associated, const std::string &spritePa
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     specialInvuln.Restart();
-    health = 1000;
+    if (GameData::expert) {
+        health = 1500;
+        halfhealth = 750;
+    }   
+    else {
+        health = 1000;
+        halfhealth = 500;
+    }
+    
     dead = false;
     animTimer.Restart();
 
@@ -116,8 +124,14 @@ void CorridorGhost::Update(float dt)
         BounceTimer.Restart();
         bouncetime = 4 + rand() % 3;
         int count = 1;
-        if (health < 500) {
+        if (GameData::expert) {
+            bouncetime -= 1.5;
+        }
+        if (health < halfhealth) {
             int random = rand() % 6;
+            if (GameData::expert) {
+                random ++;
+            }
             if (random >= 5) {
                 count += 2;
             }
@@ -125,14 +139,24 @@ void CorridorGhost::Update(float dt)
                 count += 1;
             }
         }
-        for (int i = 0; i < count; i++)
-            BounceATK(i * 50);
+        for (int i = 0; i < count; i++) {
+            int mul = 50;
+            if (GameData::expert) {
+                mul = 75;
+            }
+            BounceATK(i * mul);
+        }
+
+            
     }
     if (ATK == 0) {
         MissSwap.Update(dt);
         if (MissSwap.Get() > missTime) {
             MissSwap.Restart();
             missTime = 4 + rand() % 4;
+            if (GameData::expert) {
+                missTime -=1;
+            }
             swapcount -= 1;
             
             if (swapcount == 0) {
@@ -152,8 +176,12 @@ void CorridorGhost::Update(float dt)
                 animator->SetAnimation("missileprep");
                 misstotal = 0;
                 misscount = 1;
-                if (health < 500) {
+                
+                if (health < halfhealth) {
                     misscount = 3;
+                }
+                if (GameData::expert) {
+                    misscount += rand() % 2;
                 }
                 colorsmnd = false;
                 attacked = false;
@@ -277,8 +305,17 @@ void CorridorGhost::Update(float dt)
             animator->SetAnimation("idle");
         }
     }
-    if (health < 500) {
-        GameData::universalspeed = Vec2(-100,0);
+    if (GameData::easy && health < halfhealth*1.5) {
+        GameData::universalspeed = Vec2(-50,0);
+    }
+    if (health < halfhealth) {
+        if (GameData::expert) {
+            GameData::universalspeed = Vec2(-150,0);
+        }
+        else if (!GameData::easy){
+            GameData::universalspeed = Vec2(-100,0);
+        }
+        
     }
 }
 
@@ -290,6 +327,9 @@ bool CorridorGhost::Is(const std::string &type)
 }
 
 void CorridorGhost::BounceATK(int offset) {
+    if (GameData::easy) {
+        return;
+    }
     GameObject *bounceGO = new GameObject();
     bounceGO->box.x = associated.box.x + associated.box.w + (float) offset;  // Centro do mapa
     bounceGO->box.y = associated.box.y + associated.box.h/2; // Altura maior
@@ -305,11 +345,11 @@ void CorridorGhost::BounceATK(int offset) {
 }
 void CorridorGhost::MissileATK(int offset,int color) {
     GameObject *missileGO = new GameObject();
-    missileGO->layer += offset/1000;
+    
     missileGO->box.x = associated.box.x + offset;  // Centro do mapa
     missileGO->box.y = associated.box.y + associated.box.h/2; // Altura maior
 
-    missileGO->AddComponent(new Missile(*missileGO, "recursos/img/garrafa.png",color)); // substitua pela imagem correta
+    missileGO->AddComponent(new Missile(*missileGO, "recursos/img/garrafa.png",color,offset/40.0)); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(missileGO);
     
 }

@@ -92,6 +92,7 @@ private:
 
     bool dashed = false;
     bool dashing = false;
+    bool hover = false;
 
     bool longdash = false;
     Timer dashTimer;

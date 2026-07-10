@@ -19,7 +19,13 @@ BounceBall::BounceBall(GameObject &associated, const std::string &spritePath)
     associated.damage = 1;
     auto renderer = new SpriteRenderer(associated, spritePath, 3, 3);
     associated.AddComponent(renderer);
-    renderer->SetScale(1,1);
+    if (GameData::expert) {
+        renderer->SetScale(1.5,1.5);
+    }
+    else {
+        renderer->SetScale(1,1);
+    }
+    
     
 
     // Novos sons
