@@ -305,6 +305,7 @@ void CorridorGhost::BounceATK(int offset) {
 }
 void CorridorGhost::MissileATK(int offset,int color) {
     GameObject *missileGO = new GameObject();
+    missileGO->layer += offset/1000;
     missileGO->box.x = associated.box.x + offset;  // Centro do mapa
     missileGO->box.y = associated.box.y + associated.box.h/2; // Altura maior
 
