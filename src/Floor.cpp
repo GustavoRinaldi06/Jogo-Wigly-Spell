@@ -29,6 +29,11 @@ Floor::Floor(GameObject &associated, const std::string &spritePath, int frame,SD
         {
             renderer->SetFrame(frame,flp);
         }
+        else if (tipo == 3)
+        {
+            renderer = new SpriteRenderer(associated, spritePath, 2, 1);
+            renderer->SetFrame(frame, flp);
+        }
         else {
             renderer->SetFrame(frame,flp);
         }
@@ -41,7 +46,8 @@ Floor::Floor(GameObject &associated, const std::string &spritePath, int frame,SD
     associated.AddComponent(renderer);
     
     // Cria as animações
-    if (frame != 1) {
+    if (frame != 1 || tipo == 3)
+    {
         Collider *col = new Collider(associated,Vec2(1,2));
         // Ajustando collider para evitar de atravessar
         if (flp == SDL_FLIP_NONE) {
@@ -52,9 +58,8 @@ Floor::Floor(GameObject &associated, const std::string &spritePath, int frame,SD
         }
         col->tag = "solid";
         associated.AddComponent(col);
-
     }
-    
+
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
 
 }

@@ -2,6 +2,7 @@
 #include "DiscoState.h"
 #include "Game.h"
 #include "HallwayState.h"
+#include "LabState.h"
 #include "InputManager.h"
 #include "SpriteRenderer.h"
 #include "GameObject.h"
@@ -153,7 +154,8 @@ void TitleState::Update(float dt)
                 }
                 else
                 {
-                    Game::GetInstance().Push(new HallwayState()); // por enquanto não há a primeira fase
+                    Load_Lab();
+                    return;
                 }
                 return;
             }
@@ -166,7 +168,7 @@ void TitleState::Update(float dt)
         if (IsButtonClicked(btnNewGame))
         {
             // Mapeia todos os arquivos do DiscoState
-            Load_Pub();
+            Load_Lab();
             return;
         }
 
@@ -195,6 +197,16 @@ void TitleState::Update(float dt)
             return;
         }
     }
+}
+
+void TitleState::Load_Lab() {
+    std::vector<ResourceItem> labResources = {
+        {"recursos/font/heavy heap.otf", TYPE_FONT, 24},
+        {"recursos/img/wigly.png", TYPE_IMAGE},
+        {"recursos/img/lab_bg.png", TYPE_IMAGE},
+        {"recursos/img/lab.png", TYPE_IMAGE}};
+
+    Game::GetInstance().Push(new LoadingState(new LabState(), labResources, true));
 }
 
 void TitleState::Load_Hallway() {

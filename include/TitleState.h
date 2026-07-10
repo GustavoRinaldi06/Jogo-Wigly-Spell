@@ -21,6 +21,7 @@ public:
     void Pause() override {}
     void Resume() override {}
 
+    void Load_Lab();
     void Load_Hallway();
     void Load_Pub();
 

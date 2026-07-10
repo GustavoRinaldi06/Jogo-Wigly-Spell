@@ -1,6 +1,9 @@
 #include "State.h"
 #include "Music.h"
 #include "EndState.h"
+#include "Transition.h"
+#include "Timer.h"
+#include "Sound.h"
 
 class LabState : public State
 {
@@ -26,4 +29,8 @@ public:
 private:
 
     Music backgroundMusic;
+    bool OverTriggered, tutorialEnd;
+    Transition *transitionEffect;
+    Timer endTimer;
+    Sound SkipSound;
 };

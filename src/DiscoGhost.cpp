@@ -822,7 +822,7 @@ void DiscoGhost::WaveATK(int side)
 {
     GameObject *waveGO = new GameObject();
     waveGO->box.x = associated.box.x + associated.box.w;                            // Centro do mapa
-    waveGO->box.y = +500;                                                           // Centro do mapa
+    waveGO->box.y = +540;                                                           // Centro do mapa
     waveGO->AddComponent(new BeatWave(*waveGO, "recursos/img/BeatWave.png", side)); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(waveGO);
 }

@@ -58,7 +58,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     animator->AddAnimation("dashend", Animation(27, 30, (1.0/24))); //+1 serve para detecção quando a animação deveria trocar
     animator->AddAnimation("dashing", Animation(23, 26, (1.0/12)));
     animator->AddAnimation("jump", Animation(42, 43, (1.0/12)));
-    animator->AddAnimation("jumping", Animation(44, 45, (1.0,12)));
+    animator->AddAnimation("jumping", Animation(44, 45, (1.0/12)));
     animator->AddAnimation("idleair", Animation(46, 47, (1.0/12)));
     animator->AddAnimation("walking_wall", Animation(10, 17, (1.0/12)));
     animator->AddAnimation("idlewall", Animation(10, 11, (1.0/12)));

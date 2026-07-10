@@ -1,22 +1,21 @@
 #include "../include/LabState.h"
-#include "../include/TileSet.h"
 #include "../include/SpriteRenderer.h"
-#include "../include/TileMap.h"
 #include "../include/InputManager.h"
 #include "../include/Camera.h"
 #include "../include/Character.h"
-#include "../include/BounceBall.h"
-#include "../include/HomingProj.h"
-#include "../include/Missile.h"
-#include "../include/CorrGhost.h"
+#include "../include/DiscoGhost.h"
 #include "../include/Potion.h"
-#include "../include/Floor.h"
-#include "../include/Haze.h"
+#include "../include/Health.h"
 #include "../include/PlayerController.h"
 #include "../include/Collider.h"
 #include "../include/Collision.h"
 #include "../include/ScenaryGenerator.h"
-
+#include "../include/Floor.h"
+#include "../include/Dancefloor.h"
+#include "../include/Resources.h"
+#include "../include/Light.h"
+#include "../include/HallwayState.h"
+#include "../include/LoadingState.h"
 
 #include "Text.h"
 
@@ -25,6 +24,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
 LabState::LabState() {}
 
@@ -33,161 +33,88 @@ LabState::~LabState()
     objectArray.clear(); // Limpa os GameObjects automaticamente graças ao unique_ptr
 }
 
-
 void LabState::LoadAssets()
 {
-    std::cout << "\n Carregando fase 1 WiglySpell:" << "\n"; // Alertar LoadAssets
-    GameData::universalspeed = Vec2(-50,0); 
-    // Fundo -------------------------------------------------------------------------------------------------------------------
-    //GameObject *bgObject = new GameObject();
-    //SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
-    //bgRenderer->Open("recursos/img/FundoTest.png");
-    //bgRenderer->SetCameraFollower(false);
+    std::cout << "\n Carregando fase 1 WiglySpell (Lab):" << "\n"; // Alertar LoadAssets
+    GameData::universalspeed = Vec2(0, 0);
 
-    //bgObject->box.x = 0;
-    //bgObject->box.y = 0;
+    // Fundo Principal -----------------------------------------------------------------------------------------
+    GameObject *bgObject = new GameObject();
+    SpriteRenderer *bgRenderer = new SpriteRenderer(*bgObject);
+    bgRenderer->Open("recursos/img/lab_bg.png");
+    bgRenderer->SetCameraFollower(true);
+    bgObject->box.x = 0;
+    bgObject->box.y = 0;
+    bgObject->layer = 0;
+    bgObject->AddComponent(bgRenderer);
+    AddObject(bgObject);
 
-    //bgObject->AddComponent(bgRenderer);
-    //AddObject(bgObject);
+    // Camada de Cenário Secundária --------------------------------------------------------------------------------
+    GameObject *propsObject = new GameObject();
+    SpriteRenderer *propsRenderer = new SpriteRenderer(*propsObject);
+    propsRenderer->Open("recursos/img/lab.png");
+    propsRenderer->SetCameraFollower(true);
+    propsObject->box.x = 0;
+    propsObject->box.y = -70;
+    propsObject->layer = 10;
+    propsObject->AddComponent(propsRenderer);
+    AddObject(propsObject);
 
-    // Mapa --------------------------------------------------------------------------------------------------------------------
+    GameData::discostart = false;
 
-    GameObject *floorGO = new GameObject();
-    floorGO->AddComponent(new ScenaryGenerator(*floorGO, Vec2(0.0,0.0),Vec2(0,650),Vec2(-120,0),SDL_FLIP_NONE,0.0)); // substitua pela imagem correta
-    AddObject(floorGO);
+    // Mapa --------------------------------------------------------------------------------------------
+    auto flip = SDL_FLIP_NONE;
+    float ypos = 650;
+    for (int j = 0; j < 2; j++)
+    {
+        float prevx = -1536;
+        for (int i = 0; i < 14; i++)
+        {
+            GameObject *floorGO = new GameObject();
+            int tipo = 3;
+            int frame = 0;
+            int id = -1;
 
-    GameObject *ceilGO = new GameObject();
-    ceilGO->AddComponent(new ScenaryGenerator(*ceilGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-120,0),SDL_FLIP_VERTICAL,0.0)); // substitua pela imagem correta
-    AddObject(ceilGO);
-
-    GameObject *bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,1)); // substitua pela imagem correta
-    AddObject(bgGO);
-    bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,2)); // substitua pela imagem correta
-    AddObject(bgGO);
-
-    bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0.0,0.0),Vec2(0,0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,3)); // substitua pela imagem correta
-    AddObject(bgGO);
+            floorGO->AddComponent(new Floor(*floorGO, "recursos/img/floor.png", frame, flip, 0, tipo, id));
+            floorGO->box.x = prevx;
+            floorGO->box.y = ypos;
+            AddObject(floorGO);
+            prevx = floorGO->box.x + floorGO->box.w;
+        }
+        flip = SDL_FLIP_VERTICAL;
+        ypos = -64;
+    }
 
     // Personagem ----------------------------------------------------------------------------------------------------------------
     GameObject *playerGO = new GameObject();
-    playerGO->box.x = 500;  // Centro do mapa
-    playerGO->box.y = 300; // Altura maior
+    playerGO->box.x = -1450; // Centro do mapa
+    playerGO->box.y = 300;   // Altura maior
 
     playerGO->AddComponent(new Character(*playerGO, "recursos/img/wigly.png")); // substitua pela imagem correta
     playerGO->AddComponent(new PlayerController(*playerGO));
 
-    GameData::playerHP = 100; // Reseta vida do personagem
-    Camera::GetInstance().SetPosition(Vec2(0, 0)); // Puxa a câmera de volta pro (0,0)
-    
-    //Camera::GetInstance().Follow(playerGO); // Segue o novo personagem
+    GameData::playerHP = 100;                          // Reseta vida do personagem
+    Camera::GetInstance().SetPosition(Vec2(-1450, 0)); // Puxa a câmera de volta pro (0,0)
 
     AddObject(playerGO);
     GameData::inverted = false;
-    /*
-    GameObject *bounceGO = new GameObject();
-    bounceGO->box.x = 800;  // Centro do mapa
-    bounceGO->box.y = 450; // Altura maior
-
-    bounceGO->AddComponent(new BounceBall(*bounceGO, "recursos/img/bounceB.png")); // substitua pela imagem correta
-    AddObject(bounceGO);
-
-    GameObject *missileGO = new GameObject();
-    missileGO->box.x = 1100;  // Centro do mapa
-    missileGO->box.y = 450; // Altura maior
-
-    missileGO->AddComponent(new Missile(*missileGO, "recursos/img/homingProj.png")); // substitua pela imagem correta
-    AddObject(missileGO);
-    */
-    float prevy = 0;
-    for (int i = 0; i < 8; i++) {
-        GameObject *hazeGO = new GameObject();
-        hazeGO->AddComponent(new Haze(*hazeGO, "recursos/img/purplehaze.png",SDL_FLIP_NONE,0)); // substitua pela imagem correta
-        hazeGO->box.x = 0;  // Centro do mapa
-        hazeGO->box.y = prevy; // Altura maior
-        AddObject(hazeGO);
-        prevy = hazeGO->box.y + hazeGO->box.h;
-    }
-    GameObject *corridorGO = new GameObject();
-    corridorGO->box.x = 850;  // Centro do mapa
-    corridorGO->box.y = 250; // Altura maior
-
-    corridorGO->AddComponent(new CorridorGhost(*corridorGO, "recursos/img/CorrGhost.png")); // substitua pela imagem correta
-    AddObject(corridorGO);
-
 
     // Música --------------------------------------------------------------------------------------------------------------------
+    backgroundMusic.Open("recursos/audio/pubsound.mp3");
+    backgroundMusic.Play(-1);
 
-    backgroundMusic.Open("recursos/audio/Fundo.mp3");
-    backgroundMusic.Play();
-
-    // Texto da vida do personagem------------------------------------------------------------------------------------------------
-
+    // texto de skip
+    GameObject *skipTextGO = new GameObject();
     SDL_Color white = {255, 255, 255, 255};
-    GameObject *textGO = new GameObject();
-    std::string hpString = "HP: " + std::to_string(Character::player->GetHP());
-    hpText = new Text(*textGO, "recursos/font/neodgm.ttf", 24, BLENDED, hpString, white);
-    textGO->AddComponent(hpText);
-    textGO->layer = 10;
+    Text *skipText = new Text(*skipTextGO, "recursos/font/heavy heap.otf", 36, BLENDED, "Pressione T para pular o tutorial", white);
+    skipTextGO->AddComponent(skipText);
+    skipText->SetCameraFollower(true);
+    skipTextGO->box.x = 660;
+    skipTextGO->box.y = 680;
+    skipTextGO->layer = 20;
+    AddObject(skipTextGO);
 
-    hpText->SetCameraFollower(true);
-    // Posição do texto
-    textGO->box.x = 60;
-    textGO->box.y = 650;
-
-    AddObject(textGO);
-
-    // TExto de cooldown da magia --------------------------------------------------------------------------------------------
-    /*
-    GameObject *textGO1 = new GameObject();
-    std::string spellCooldown = "Magia acumulada com sucesso!";
-    spellText = new Text(*textGO1, "recursos/font/neodgm.ttf", 24, BLENDED, spellCooldown, white);
-    textGO1->AddComponent(spellText);
-    textGO1->layer = 10;
-
-    spellText->SetCameraFollower(true);
-    // Posição do texto
-    textGO1->box.x = 200;
-    textGO1->box.y = 650;
-
-    AddObject(textGO1);
-
-    */
-    
-    GameObject *cauldGO1 = new GameObject();
-    cauldGO1->AddComponent(new Potion(*cauldGO1, "recursos/img/potions.png",0));
-    cauldGO1->layer = 10;
-
-    // Posição do texto
-    cauldGO1->box.x = 200;
-    cauldGO1->box.y = 650;
-
-    AddObject(cauldGO1);
-
-    GameObject *cauldGO2= new GameObject();
-    cauldGO2->AddComponent(new Potion(*cauldGO2, "recursos/img/potions.png",1));
-    cauldGO2->layer = 10;
-
-    // Posição do texto
-    cauldGO2->box.x = 250;
-    cauldGO2->box.y = 650;
-    AddObject(cauldGO2);
-
-
-    GameObject *textGO2 = new GameObject();
-    std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
-    bosshpText = new Text(*textGO2, "recursos/font/neodgm.ttf", 24, BLENDED, bhpString, white);
-    textGO2->AddComponent(bosshpText);
-    textGO2->layer = 10;
-
-    bosshpText->SetCameraFollower(true);
-    // Posição do texto
-    textGO2->box.x = 700;
-    textGO2->box.y = 650;
-
-    AddObject(textGO2);
+    SkipSound = Sound("recursos/audio/skip.mp3");
 }
 
 void LabState::Update(float dt)
@@ -196,60 +123,48 @@ void LabState::Update(float dt)
 
     Camera::GetInstance().Update(dt);
 
-    // Se o jogador pressionou ESC ou clicou no X ou esc
     if (input.QuitRequested() || input.KeyPress(ESCAPE_KEY))
     {
         quitRequested = true;
         return;
     }
 
-    // DEBUG DE TESTE  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if (input.KeyPress(SDLK_m))
+    if (input.KeyPress(SDLK_t) && !tutorialEnd)
     {
-        std::cout << "Troca de modos acionada!" << std::endl;
-        if (GameData::gameMode==0)
-            GameData::gameMode = 1; //trocca para plataforma
-        else
-            GameData::gameMode = 0; // troca para menu
+        tutorialEnd = true;
+        endTimer.Restart();
+        GameData::playerVictory_1 = true;
+        SkipSound.Play();
     }
 
-    // Leitura da tecla I
-    if (input.KeyPress(SDLK_i))
+    if (OverTriggered)
     {
-        std::cout << "Gravidade invertida!" << std::endl;
-        if (GameData::inverted)
-            GameData::inverted = false;
-        else
-            GameData::inverted = true;
+        if (transitionEffect)
+        {
+            transitionEffect->Update(dt);
+
+            if (transitionEffect->IsFinished())
+            {
+                popRequested = true;
+                Game::GetInstance().Push(new EndState());
+                return;
+            }
+        }
+        RenderArray();
+        return;
     }
 
-    // Leitura da tecla K
-    if (input.KeyPress(SDLK_k))
-    {
-        std::cout << "Modo de mira alterado!" << std::endl;
-        if (GameData::aimed)
-            GameData::aimed = false;
-        else
-            GameData::aimed = true;
-    }
-
-    // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Atualiza todos os GameObjects
     UpdateArray(dt);
 
-    // Atualiza colisores
     for (auto &obj : objectArray)
     {
         Collider *collider = (Collider *)obj->GetComponent("Collider");
-        if (collider) {
-            collider->Update(0); // forçando update
-
+        if (collider)
+        {
+            collider->Update(0);
         }
-            
     }
 
-    // Verifica colisões dos GameObjects
     for (size_t i = 0; i < objectArray.size(); ++i)
     {
         GameObject *objA = objectArray[i].get();
@@ -274,7 +189,6 @@ void LabState::Update(float dt)
                 {
                     objA->NotifyCollision(*objB);
 
-                    // Se algum morreu, não faz a outra colisão
                     if (!objA->IsDead() && !objB->IsDead())
                     {
                         objB->NotifyCollision(*objA);
@@ -284,7 +198,6 @@ void LabState::Update(float dt)
         }
     }
 
-    // Remove os mortos
     for (size_t i = 0; i < objectArray.size();)
     {
         if (objectArray[i]->IsDead())
@@ -297,40 +210,44 @@ void LabState::Update(float dt)
         }
     }
 
-    //CAixa de texto de vida
-    if (hpText && Character::player != nullptr){
-        std::string hpString = "HP: " + std::to_string(Character::player->GetHP());
-        hpText->SetText(hpString);
-    }
-    if (bosshpText){
-        std::string bhpString = "Boss HP: " + std::to_string(GameData::bossHP);
-        bosshpText->SetText(bhpString);
-    }
+    if (tutorialEnd)
+    {
+        endTimer.Update(dt);
 
-    //Caixa do cooldown do disparo
-    if (spellText && Character::player != nullptr){
-        if(GameData::spell == true){
-            if (Character::player->GetCool() < 5)
-            {
-                std::string spellCooldown = "Acumulando magia novamente... " + std::to_string(5 - Character::player->GetCool());
-                spellText->SetText(spellCooldown);
-            }
-            else
-            {
-                std::string spellCooldown = "Magia acumulada com sucesso!";
-                spellText->SetText(spellCooldown);
-            }
+        float delay = 1.5f;
+        if (endTimer.Get() >= delay && transitionEffect && !transitionEffect->IsFinished())
+        {
+            transitionEffect->StartOutro();
         }
-        else
-            spellText->SetText("");
+
+        if (transitionEffect && transitionEffect->IsFinished())
+        {
+            popRequested = true;
+
+            Camera::GetInstance().Unfollow();
+            Camera::GetInstance().SetPosition(Vec2(0, 0));
+            
+            std::vector<ResourceItem> hallwayResources = {
+                {"recursos/font/heavy heap.otf", TYPE_FONT, 24},
+                {"recursos/img/wigly.png", TYPE_IMAGE},
+                {"recursos/img/purplehaze.png", TYPE_IMAGE},
+                {"recursos/img/Bouncer_SpriteSheet.png", TYPE_IMAGE},
+                {"recursos/img/potions.png", TYPE_IMAGE},
+                {"recursos/audio/Fundo.mp3", TYPE_MUSIC}};
+
+            Game::GetInstance().Push(new LoadingState(new HallwayState(), hallwayResources, true));
+            return;
+        }
     }
 
-    // Checagem de fim Derrota
-    if (Character::player == nullptr || Character::player->GetGameObject()->IsDead()) // Se o player tiver morrido
+    if (Character::player == nullptr)
     {
         GameData::playerVictory_1 = false;
-        popRequested = true;
-        Game::GetInstance().Push(new EndState());
+        OverTriggered = true;
+        if (transitionEffect)
+        {
+            transitionEffect->StartOutro();
+        }
         return;
     }
 }
@@ -339,36 +256,36 @@ void LabState::Render()
 {
     SDL_Renderer *renderer = Game::GetInstance().GetRenderer();
 
-    // Limpa tudo para o próximo frame
     SDL_RenderClear(renderer);
 
-    // Desenha todos os game objects
-    std::sort(objectArray.begin(), objectArray.end(),[](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b) {
-        return a->layer < b->layer;
-    });
+    std::sort(objectArray.begin(), objectArray.end(), [](const std::shared_ptr<GameObject> a, const std::shared_ptr<GameObject> b)
+              { return a->layer < b->layer; });
     RenderArray();
 
-    // Apresenta o frame
     SDL_RenderPresent(renderer);
 }
-
 
 void LabState::Start()
 {
     LoadAssets();
-    StartArray(); // Agora a classe state é responsável
+
+    GameObject *transitionGO = new GameObject();
+    transitionGO->layer = 99;
+    transitionEffect = new Transition(*transitionGO);
+    transitionGO->AddComponent(transitionEffect);
+    AddObject(transitionGO);
+
+    StartArray();
     started = true;
-    GameData::currentState = 1; // Essa sendo a primeira fase state será 1
+    GameData::currentState = 1;
     GameData::gameMode = 1;
-    GameData::playerVictory_1 = false; // Reinicia a fase e apaga save de vitória anterior
+    GameData::playerVictory_1 = false;
 }
 
 void LabState::Pause()
 {
-   // Não sei ainda
 }
 
 void LabState::Resume()
 {
-  // Não sei ainda
 }
