@@ -192,6 +192,13 @@ void DanceGhost::NotifyCollision(GameObject &other)
             }
             else {
                 specialInvuln.Restart();
+                if (other.damage > 100) {
+                    other.StandardSmoke(Vec2(3.0,3.0));
+                }
+                else {
+                    other.StandardSmoke(Vec2(2.0,2.0));
+                }
+                
             }
         }
         

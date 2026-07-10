@@ -89,30 +89,30 @@ void DiscoState::LoadAssets()
     */
 
      GameObject *bgGO = new GameObject();
-     bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1536.0,0.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,4)); // substitua pela imagem correta
+     bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0,0), Vec2(-1536.0, -28.0),Vec2(-1380,0),SDL_FLIP_NONE,0.0,4)); // substitua pela imagem correta
      AddObject(bgGO);
 
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), (-1380, 0), SDL_FLIP_NONE, 0.0, 5)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, -28.0), (-1380, 0), SDL_FLIP_NONE, 0.0, 5)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 6)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, -28.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 6)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 7)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, -28.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 7)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 8)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, -28.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 8)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 9)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, -28.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 9)); // substitua pela imagem correta
     AddObject(bgGO);
 
     bgGO = new GameObject();
-    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, 0.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 10)); // substitua pela imagem correta
+    bgGO->AddComponent(new ScenaryGenerator(*bgGO, Vec2(0, 0), Vec2(-1536.0, -28.0), Vec2(-1380, 0), SDL_FLIP_NONE, 0.0, 10)); // substitua pela imagem correta
     AddObject(bgGO);
 
     // Pista de danca ---------------------------------------------------------------------------------------------------------

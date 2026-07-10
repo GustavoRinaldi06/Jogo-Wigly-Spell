@@ -34,7 +34,7 @@ BeatWave::BeatWave(GameObject &associated, const std::string &spritePath, int ar
     associated.AddComponent(animator);
     animator->SetAnimation("flowing");
 
-    associated.AddComponent(new Collider(associated,Vec2(0.8,0.8)));
+    associated.AddComponent(new Collider(associated,Vec2(0.7,0.7)));
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     lifespan.Restart();

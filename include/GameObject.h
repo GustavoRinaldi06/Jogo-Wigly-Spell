@@ -30,7 +30,7 @@ public:
     double angleDeg = 0; // usado para rotação
 
     void NotifyCollision(GameObject &other);
-    void StandardSmoke();
+    void StandardSmoke(Vec2 scale = Vec2(1,1));
     int color = 0;
     int blockable = -1;
     int damage = -1;

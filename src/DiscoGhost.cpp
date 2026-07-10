@@ -870,14 +870,20 @@ void DiscoGhost::NotifyCollision(GameObject &other)
                 health -= bul->damage;
                 if (bul->bulletcolor == 0 || bul->bulletcolor == 3)
                 {
-                    other.StandardSmoke();
                     other.RequestDelete();
-                    
+                    other.StandardSmoke();
                 }
                 else
                 {
+                    if (other.damage > 100) {
+                        other.StandardSmoke(Vec2(3.0,3.0));
+                    }
+                    else {
+                        other.StandardSmoke(Vec2(2.0,2.0));
+                    }
                     specialInvuln.Restart();
                 }
+                
             }
         }
     }

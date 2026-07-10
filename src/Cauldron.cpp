@@ -86,7 +86,9 @@ void Cauldron::Update(float dt)
     associated.box.x = playercenter.x -associated.box.w/2 + distance*direction.x;
     associated.box.y = playercenter.y -associated.box.h/2 + distance*direction.y;
     shotTime.Update(dt);
-    bool urple = Character::player->purpleTimer.Get() < 30.0;
+    float urpletime = Character::player->purpleTimer.Get();
+    bool urple = urpletime < 30.0;
+    
     if (Character::player->damageCooldown.Get() < 2.0) {
         renderer->SetTransparency(128);
     }

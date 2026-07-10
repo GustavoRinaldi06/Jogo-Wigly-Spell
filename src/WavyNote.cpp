@@ -147,6 +147,7 @@ void WavyNote::NotifyCollision(GameObject &other)
             int block = blockable;
             blockable -= bul->purpledurability;
             bul->purpledurability -= block;
+            other.StandardSmoke(Vec2(1,1));
             if (blockable <= 0) {
                 destroyed = true; 
             }

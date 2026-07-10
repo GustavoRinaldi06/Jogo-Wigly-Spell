@@ -127,7 +127,7 @@ void Character::Update(float dt)
     Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
 
     initTimer.Update(dt);
-    if (initTimer.Get() < 1.0)
+    if (initTimer.Get() < 0.2)
     {
         wasGameMode = GameData::gameMode;
         return;
@@ -247,8 +247,24 @@ void Character::Update(float dt)
         bubanim->SetAnimation("none");
     }
 
+    
+
     // Pega input de pulo ---------------------------------------------------------------------
     InputManager &input = InputManager::GetInstance();
+    if (colorInventory.size() < MAX_COLORS)
+    {
+        if (input.KeyPress(SDLK_1)) {
+            colorInventory.push_back(RED);
+        }
+        if (input.KeyPress(SDLK_2)) {
+            colorInventory.push_back(BLUE);
+        }
+    }
+    
+    if (input.KeyPress(SDLK_3)) {
+        hp += 20;
+    }
+
     if (GameData::gameMode == 1)
     {
 
@@ -682,7 +698,7 @@ void Character::NotifyCollision(GameObject &other)
     else if (other.damage >= 0 && damageCooldown.Get() > 2.0 && invTimer.Get() > 10)
     {
         float dist = associated.box.y - other.box.y;
-        if (solidcol || abs(dist) < other.box.h / 2 + 0.8 * (associated.box.h / 2))
+        if (solidcol || abs(dist) < other.box.h / 2 + 0.6 * (associated.box.h / 2))
         { // Diminuindo hitbox vertical contra dano
             damageCooldown.Restart();
             if (invTimer.Get() <= 10)
@@ -697,7 +713,9 @@ void Character::NotifyCollision(GameObject &other)
             else
             {
                 hitSound.Play(1);
-                hp -= other.damage * 20;
+                if (GameData::bossHP > 0) {
+                    hp -= other.damage * 20;
+                }
                 Animator *animator = static_cast<Animator *>(associated.GetComponent("Animator"));
                 if (GameData::gameMode == 0) {
                     animator->SetAnimation("damageWall");
