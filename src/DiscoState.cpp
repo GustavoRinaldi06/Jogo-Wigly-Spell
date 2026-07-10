@@ -190,7 +190,7 @@ void DiscoState::LoadAssets()
         vinilSwipe = Sound("recursos/audio/vinilswipe.mp3");
         // Playlist DJ
         playlist.push_back("recursos/audio/playlist/DiscoKing.mp3");
-        playlist.push_back("recursos/audio/playlist/IWS.mp3");
+        playlist.push_back("recursos/audio/playlist/IWS (cut).mp3");
 
         for (const auto &musicaPath : playlist)
         {
@@ -551,9 +551,9 @@ void DiscoState::DontStopTheMusic()
         {
             if (currentTrack == "recursos/audio/pubsound.mp3")
             {
-                backgroundMusic.Open("recursos/audio/playlist/IWS.mp3");
+                backgroundMusic.Open("recursos/audio/playlist/IWS (cut).mp3");
                 backgroundMusic.Play(-1);
-                currentTrack = "recursos/audio/playlist/IWS.mp3";
+                currentTrack = "recursos/audio/playlist/IWS (cut).mp3";
             }
             else
             {

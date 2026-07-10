@@ -33,4 +33,10 @@ private:
     Transition *transitionEffect;
     Timer endTimer;
     Sound SkipSound;
+    Sound tutorialSound;
+
+    //tutorial
+    SpriteRenderer *tutorialRenderer;
+    GameObject *tutorialGameObject;
+    int currentTutorialFrame;
 };

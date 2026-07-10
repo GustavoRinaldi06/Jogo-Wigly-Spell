@@ -36,8 +36,8 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     hitSound = Sound("recursos/audio/hit.wav");
     //deathSound = Sound("recursos/audio/purple.mp3"); Achar som de explosão magica
     // Ficou muito chato
-    //jumpSound = Sound("recursos/audio/jump.wav");
-    //DjumpSound = Sound("recursos/audio/Djump.wav");
+    jumpSound = Sound("recursos/audio/dash.wav");
+    DjumpSound = Sound("recursos/audio/dash.wav");
     dashSound = Sound("recursos/audio/dash.wav");
 
     walkSound = Sound("recursos/audio/AndandoGrama.mp3");
@@ -49,6 +49,7 @@ Character::Character(GameObject &associated, const std::string &spritePath)
     spell_darkBlue_Sound = Sound("recursos/audio/shield.wav");
     spell_purple_Sound = Sound("recursos/audio/purple.mp3");
     noSpell = Sound("recursos/audio/NoSpell.mp3");
+    blockedSound = Sound("recursos/audio/blocked.wav");
 
     // Cria as animações
     auto animator = new Animator(associated);
@@ -165,7 +166,7 @@ void Character::Update(float dt)
             hp = 0;
             GameData::playerHP = hp;
             deathAnimTriggered = true;
-            fallSound.Play(1);
+            deathSound.Play(1);
 
             // seta animação "dead"
     
@@ -685,9 +686,14 @@ void Character::NotifyCollision(GameObject &other)
         if (solidcol || abs(dist) < other.box.h / 2 + 0.8 * (associated.box.h / 2))
         { // Diminuindo hitbox vertical contra dano
             damageCooldown.Restart();
-            if (shield > 0)
+            if (invTimer.Get() <= 10)
+            {
+                blockedSound.Play(1);
+            }
+            else if (shield > 0)
             {
                 shield -= 1;
+                blockedSound.Play(1);
             }
             else
             {

@@ -26,7 +26,11 @@
 #include <algorithm>
 #include <vector>
 
-LabState::LabState() {}
+LabState::LabState() {
+    currentTutorialFrame = 0;
+    tutorialRenderer = nullptr;
+    tutorialGameObject = nullptr;
+}
 
 LabState::~LabState()
 {
@@ -103,18 +107,21 @@ void LabState::LoadAssets()
     backgroundMusic.Open("recursos/audio/pubsound.mp3");
     backgroundMusic.Play(-1);
 
-    // texto de skip
-    GameObject *skipTextGO = new GameObject();
-    SDL_Color white = {255, 255, 255, 255};
-    Text *skipText = new Text(*skipTextGO, "recursos/font/heavy heap.otf", 36, BLENDED, "Pressione T para pular o tutorial", white);
-    skipTextGO->AddComponent(skipText);
-    skipText->SetCameraFollower(true);
-    skipTextGO->box.x = 660;
-    skipTextGO->box.y = 680;
-    skipTextGO->layer = 20;
-    AddObject(skipTextGO);
-
+    // skip e tutorial
     SkipSound = Sound("recursos/audio/skip.mp3");
+    tutorialSound = Sound("recursos/audio/click.wav");
+
+    //Tutorial
+    tutorialGameObject = new GameObject();
+    tutorialRenderer = new SpriteRenderer(*tutorialGameObject, "recursos/img/Tutorial.png", 3, 6);
+    tutorialRenderer->SetCameraFollower(true);
+
+    tutorialGameObject->box.x = 150;
+    tutorialGameObject->box.y = 50;
+    tutorialGameObject->layer = 50;
+
+    tutorialGameObject->AddComponent(tutorialRenderer);
+    AddObject(tutorialGameObject);
 }
 
 void LabState::Update(float dt)
@@ -135,6 +142,42 @@ void LabState::Update(float dt)
         endTimer.Restart();
         GameData::playerVictory_1 = true;
         SkipSound.Play();
+
+        if (tutorialGameObject != nullptr)
+        {
+            tutorialGameObject->RequestDelete();
+            tutorialGameObject = nullptr;
+        }
+        tutorialRenderer = nullptr;
+    }
+
+    if (input.MousePress(SDL_BUTTON_RIGHT) && tutorialRenderer != nullptr && !tutorialEnd)
+    {
+        currentTutorialFrame++;
+        tutorialSound.Play();
+
+        if (currentTutorialFrame > 16)
+        {
+            // O tutorial acabou, apagamos a imagem através da referência segura
+            if (tutorialGameObject != nullptr)
+            {
+                tutorialGameObject->RequestDelete();
+                tutorialGameObject = nullptr;
+            }
+            tutorialRenderer = nullptr;
+
+            if (!tutorialEnd)
+            {
+                tutorialEnd = true;
+                endTimer.Restart();
+                GameData::playerVictory_1 = true;
+                SkipSound.Play();
+            }
+        }
+        else
+        {
+            tutorialRenderer->SetFrame(currentTutorialFrame);
+        }
     }
 
     if (OverTriggered)

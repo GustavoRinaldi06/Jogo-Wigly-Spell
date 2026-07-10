@@ -105,7 +105,7 @@ private:
     
 
     // Death e hit
-    Sound hitSound, fallSound, deathSound, jumpSound, DjumpSound, dashSound;
+    Sound hitSound, blockedSound, deathSound, jumpSound, DjumpSound, dashSound;
     
 
     Timer deathTimer;

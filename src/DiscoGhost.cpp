@@ -82,8 +82,8 @@ void DiscoGhost::Start()
     SDL_Color white = {255, 255, 255, 255};
     GameObject *textGO = new GameObject();
     textGO->layer = 11;
-    textGO->box.x = 300;
-    textGO->box.y = 70;
+    textGO->box.x = 350;
+    textGO->box.y = 67;
 
     // inicia com a string vazia
     discoInfoText = new Text(*textGO, "recursos/font/heavy heap.otf", 28, BLENDED, "", white);
@@ -822,8 +822,13 @@ void DiscoGhost::WaveATK(int side)
 {
     GameObject *waveGO = new GameObject();
     waveGO->box.x = associated.box.x + associated.box.w;                            // Centro do mapa
-    waveGO->box.y = +540;                                                           // Centro do mapa
+    waveGO->box.y = +530;                                                         // Centro do mapa
     waveGO->AddComponent(new BeatWave(*waveGO, "recursos/img/BeatWave.png", side)); // substitua pela imagem correta
+    SpriteRenderer *waveSprite = (SpriteRenderer *)waveGO->GetComponent("SpriteRenderer");
+    if (waveSprite != nullptr)
+    {
+        waveSprite->SetScale(2.0f, 2.0f);
+    }
     Game::GetInstance().GetCurrentState().AddObject(waveGO);
 }
 

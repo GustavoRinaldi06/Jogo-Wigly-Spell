@@ -206,7 +206,7 @@ void TitleState::Load_Lab() {
         {"recursos/img/lab_bg.png", TYPE_IMAGE},
         {"recursos/img/lab.png", TYPE_IMAGE}};
 
-    Game::GetInstance().Push(new LoadingState(new LabState(), labResources, true));
+    Game::GetInstance().Push(new LoadingState(new LabState(), labResources, false));
 }
 
 void TitleState::Load_Hallway() {
