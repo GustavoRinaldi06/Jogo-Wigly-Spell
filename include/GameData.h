@@ -37,6 +37,7 @@ public:
     static bool discostart;
     static bool discopos[14];
     static int inversedisco;
+    static bool tripledisco;
 
     // controle de ataque do disco
     static int targetDiscoColor;
@@ -46,6 +47,8 @@ public:
     static bool shotFired;
     static bool expert;
     static bool easy;
+    static float p2health;
+    static float p3health;
 
     static DanceFloor *danceFloorPtr;
 };

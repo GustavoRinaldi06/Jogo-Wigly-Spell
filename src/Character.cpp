@@ -712,8 +712,21 @@ void Character::NotifyCollision(GameObject &other)
     }
     else if (other.damage >= 0 && damageCooldown.Get() > 2.0 && invTimer.Get() > 10)
     {
-        float dist = associated.box.y - other.box.y;
-        if (solidcol || abs(dist) < other.box.h / 2 + 0.6 * (associated.box.h / 2))
+        Vec2 otherscale = collider->GetScale();
+        float dist; 
+        float verscale = 0.4;
+        if (!GameData::inverted) {
+            dist = (associated.box.y + associated.box.h*(1-verscale)/2.0) - (other.box.y + other.box.h*(1- (1-otherscale.y)/2.0));
+        }
+        else {
+            dist =  (other.box.y + other.box.h*((1-otherscale.y)/2.0)) - (associated.box.y + associated.box.h*(1-(1-verscale)/2.0));
+        }
+
+        if (GameData::gameMode == 0 ) {
+            dist = -1000;
+        }
+        
+        if (dist <= 0) 
         { // Diminuindo hitbox vertical contra dano
             ApplyDamage(other.damage);
         }

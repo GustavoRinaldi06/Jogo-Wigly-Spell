@@ -46,6 +46,13 @@ void DiscoState::LoadAssets()
     // bgObject->AddComponent(bgRenderer);
     // AddObject(bgObject);
     GameData::discostart = false;
+    GameData::discoAttackActive = false;
+    GameData::discoBlackout = false;
+    GameData::discoError = false;
+    GameData::inversedisco = 0;
+    GameData::tripledisco = false;
+    GameData::finalfase = false;
+    GameData::targetDiscoColor = 0;
     // Mapa --------------------------------------------------------------------------------------------------------------------
     auto flip = SDL_FLIP_NONE;
     float ypos = 650;

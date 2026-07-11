@@ -42,17 +42,12 @@ BeatWave::BeatWave(GameObject &associated, const std::string &spritePath, int ar
     associated.damage = -1;
     if (argside > 0) {
         renderer->SetFrame(0,SDL_FLIP_VERTICAL);
-        if (GameData::easy) {
-            associated.box.y = -50;
-        }
-        else {
-            associated.box.y = -10;
-        }
         
     }
     else {
         renderer->SetFrame(0,SDL_FLIP_NONE);
     }
+    sinval = 0;
     side = argside;
 }
 
@@ -125,7 +120,19 @@ void BeatWave::Update(float dt)
         associated.damage = -1;
     }
     // Enquanto funcional --------------------------------------------------------------------------
-    speed.y = 0;
+    
+    if (false /*GameData::expert*/) {
+        float dirmul = -1;
+        if (side > 0) {
+            dirmul = 1;
+        }
+
+        sinval+= dt;
+        speed.y = dirmul*100*cos(1.5*sinval);
+    }
+    else {
+        speed.y = 0;
+    }
  
     associated.box.x += (speed.x) * dt;
     associated.box.y += (speed.y)* dt;

@@ -13,13 +13,14 @@ class WavyNote : public Component
 {
 public:
 
-    WavyNote(GameObject &associated, const std::string &spritePath, int color = 0);
+    WavyNote(GameObject &associated, const std::string &spritePath, int color = 0, float sinstart = 1, float xspeed = 0);
     ~WavyNote();
 
     void Start() override;
     void Update(float dt) override;
     void Render() override;
     bool Is(const std::string &type) override;
+    float basespeed = 0;
 
     // Colisão
     void NotifyCollision(GameObject &other) override;
@@ -45,6 +46,7 @@ private:
     int blockable = 5;
 
     float linearSpeed;
+    int sindir;
     
     
 };

@@ -46,6 +46,7 @@ private:
 
     float linearSpeed;
     int side = 0;
+    float sinval;
     
     
 };

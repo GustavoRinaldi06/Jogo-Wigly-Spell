@@ -25,6 +25,7 @@ bool GameData::discostart = false;
 bool GameData::summonalive[6] = {false, false, false, false, false, false};
 bool GameData::discopos[14] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 int GameData::inversedisco = 0;
+bool GameData::tripledisco = false;
 
 // No seu GameData.cpp
 int GameData::targetDiscoColor = 0;
@@ -35,5 +36,7 @@ bool GameData::shotFired = false;
 
 bool GameData::expert = false;
 bool GameData::easy = false;
+float  GameData::p2health = -1000;
+float  GameData::p3health = -1000;
 
 DanceFloor *GameData::danceFloorPtr = nullptr; // pista fase 3

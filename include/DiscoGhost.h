@@ -19,8 +19,8 @@ public:
     void Render() override;
     
     bool Is(const std::string &type) override;
-    void NoteATK(int color);
-    void WaveATK(int side);
+    void NoteATK(int color, int fixed_po = 0);
+    void WaveATK(int side, Vec2 offset = Vec2(0,0));
     void SmnATK(int side, int pos);
     void NotifyCollision(GameObject &other) override;
     float health = 1500;
@@ -47,6 +47,7 @@ public:
     bool deathAnimTriggered{false};
     int nextwave = 0;
     int finalfase = 0;
+    int finalnote = 0;
 
     bool fightbegan = true;
 

@@ -65,20 +65,33 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     waveCD.Restart();
     if (GameData::expert) {
         health = 1800;
+        GameData::p2health = 1200;
+        GameData::p3health = 500;
     }
     else if (GameData::easy) {
         health = 1000;
+        GameData::p2health = 500;
+        GameData::p3health = -1000;
     }
     else {
         health = 1250;
+        GameData::p2health = 750;
+        GameData::p3health = 300;
+    }
+    finalnote = 0;
+    dead = false;
+    if (GameData::expert) {
+        ATK = 0;
+    }
+    else {
+        ATK = -1;
     }
     
-    dead = false;
-    ATK = -1;
     SmnTimer.Set(9999);
 
     Error = Sound("recursos/audio/Erro.mp3");
     Right_Place = Sound("recursos/audio/Right_Place.mp3");
+    
 }
 
 DiscoGhost::~DiscoGhost()
@@ -100,7 +113,12 @@ void DiscoGhost::Start()
     discoInfoText->SetCameraFollower(true);
 
     Game::GetInstance().GetCurrentState().AddObject(textGO);
-    ATK = -1;
+    if (GameData::expert) {
+        ATK = 0;
+    }
+    else {
+        ATK = -1;
+    }
 }
 
 void DiscoGhost::Update(float dt)
@@ -166,14 +184,16 @@ void DiscoGhost::Update(float dt)
             if (!GameData::discostart) {
                 noteTime = 4;
             }
-            else if (health > 750)
+            else if (health > GameData::p2health)
             {
                 noteTime = 6 + rand() % 5;
-                ;
             }
             else
             {
                 noteTime = 4 + rand() % 3;
+            }
+            if (GameData::expert) {
+                noteTime = noteTime*3/4.0;
             }
 
             int count = 1;
@@ -232,6 +252,15 @@ void DiscoGhost::Update(float dt)
             {
                 WaveATK(nextwave);
                 nextwave = (nextwave + 1) % 2;
+                if (GameData::expert) {
+                    finalnote += 1;
+                    if (finalnote == 3) {
+                        finalnote = 0;
+                        NoteATK(0,1);
+                        NoteATK(0,2);
+                    }
+                }
+                
             }
         }
     }
@@ -433,7 +462,7 @@ void DiscoGhost::Update(float dt)
     }
     if (ATK == 0)
     {
-        if (health <= 300 && !GameData::easy)
+        if (health <= GameData::p3health && !GameData::easy)
         {
             GameData::finalfase = true;
         }
@@ -465,6 +494,9 @@ void DiscoGhost::Update(float dt)
 
                     if (!GameData::easy) {
                         GameData::inversedisco = 1;
+                        if (GameData::expert) {
+                            GameData::tripledisco = true;
+                        }
                     }
                     
 
@@ -511,6 +543,10 @@ void DiscoGhost::Update(float dt)
         {
             WaveATK(0);
             WaveATK(1);
+            if (GameData::expert) {
+                NoteATK(0,1);
+                NoteATK(0,2);
+            }
             waveCD.Restart();
             attacked = true;
             animator->SetAnimation("smnrecover");
@@ -813,7 +849,7 @@ bool DiscoGhost::Is(const std::string &type)
     return type == "DiscoGhost";
 }
 
-void DiscoGhost::NoteATK(int color)
+void DiscoGhost::NoteATK(int color, int fixed_pos)
 {
     GameObject *noteGO = new GameObject();
     noteGO->box.x = associated.box.x + associated.box.w;
@@ -821,27 +857,51 @@ void DiscoGhost::NoteATK(int color)
         //
         noteGO->box.x = Camera::GetInstance().GetPosition().x + 1200;
     }
-    int notepos = (rand() % 8) * 60;
-    while (notepos == lastnote)
-    {
-        notepos = (rand() % 8) * 60;
+    float basespeed = 0;
+    float startsin = 1;
+    if (fixed_pos == 0){
+        int notepos = (rand() % 8) * 60;
+        while (notepos == lastnote)
+        {
+            notepos = (rand() % 8) * 60;
+        }
+        lastnote = notepos;
+        noteGO->box.y = notepos + 120; // Centro do mapa
     }
-    lastnote = notepos;
-    noteGO->box.y = notepos + 120; // Centro do mapa
-
-    noteGO->AddComponent(new WavyNote(*noteGO, "recursos/img/notamus.png", color)); // substitua pela imagem correta
+    else if (fixed_pos == 1) {
+        basespeed = -350;
+        noteGO->box.y = 320;
+        startsin = 1;
+    }
+    else {
+        basespeed = -350;
+        noteGO->box.y = 320;
+        startsin = -1;
+    }
+    noteGO->AddComponent(new WavyNote(*noteGO, "recursos/img/notamus.png", color,startsin, basespeed)); // substitua pela imagem correta
     Game::GetInstance().GetCurrentState().AddObject(noteGO);
 }
 
-void DiscoGhost::WaveATK(int side)
+void DiscoGhost::WaveATK(int side, Vec2 offset)
 {
     GameObject *waveGO = new GameObject();
-    waveGO->box.x = associated.box.x + associated.box.w;                            // Centro do mapa
+    waveGO->box.x = associated.box.x + associated.box.w+ offset.x ;                            // Centro do mapa
     if (GameData::easy) {
-        waveGO->box.y = +570; 
+        if (side > 0) {    
+            waveGO->box.y = -50 - offset.y; 
+        }
+        else {
+            waveGO->box.y = +570 + offset.y;
+        }
     }
     else {
-        waveGO->box.y = +530; 
+        if (side > 0) {
+            waveGO->box.y = 0 - offset.y;
+        }
+        else {
+            waveGO->box.y = +530 + offset.y; 
+        }
+        
     }
                                                             // Centro do mapa
     waveGO->AddComponent(new BeatWave(*waveGO, "recursos/img/BeatWave.png", side)); // substitua pela imagem correta

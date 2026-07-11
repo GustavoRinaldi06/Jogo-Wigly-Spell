@@ -44,7 +44,7 @@ Missile::Missile(GameObject &associated, const std::string &spritePath, int colo
     associated.AddComponent(animator);
     animator->SetAnimation("hoaming");
 
-    associated.AddComponent(new Collider(associated,Vec2(1.0,0.3)));
+    associated.AddComponent(new Collider(associated,Vec2(0.8,0.25)));
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     lifespan.Restart();

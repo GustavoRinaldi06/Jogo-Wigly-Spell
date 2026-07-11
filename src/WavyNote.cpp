@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-WavyNote::WavyNote(GameObject &associated, const std::string &spritePath, int color)
+WavyNote::WavyNote(GameObject &associated, const std::string &spritePath, int color, float sinstart, float xspeed )
     : Component(associated)
 {
     associated.layer = 5.1;
@@ -45,8 +45,16 @@ WavyNote::WavyNote(GameObject &associated, const std::string &spritePath, int co
     deathTimer.Restart();
     lifespan.Restart();
     sinval = 0;
-    speed.x = -50;
+    sindir = sinstart;
+    if (basespeed = 0) {
+        speed.x = -50;
+    }
+    else {
+        speed.x = xspeed;
+    }
+    
     associated.color = color;
+    basespeed =xspeed;
 }
 
 WavyNote::~WavyNote()
@@ -67,7 +75,7 @@ void WavyNote::Update(float dt)
     if (associated.color < 0) {
         destroyed = true;
     }
-    if (GameData::finalfase) {
+    if (GameData::finalfase && basespeed == 0) {
         destroyed = true;
     }
     
@@ -102,18 +110,31 @@ void WavyNote::Update(float dt)
     if (lifespan.Get() > 50.0f) { 
         destroyed = true;
     }
-
-    // Enquanto funcional --------------------------------------------------------------------------
-
     sinval += dt;
-    if (GameData::bossHP > 900) {
-        speed.x = -50;
+    // Enquanto funcional --------------------------------------------------------------------------
+    if (basespeed == 0){    
+        
+        if (GameData::bossHP > GameData::p2health) {
+            speed.x = -50;
+        }
+        else {
+            speed.x = -150;
+        }
+        if (GameData::expert) {
+            speed.x = speed.x*1.5;
+        }
+
+        float sinmul = 1.5;
+        if (GameData::expert) {
+            sinmul = 2.25;
+        }
+
+        speed.y =  sindir*150*cos(1.5*sinval);
     }
     else {
-        speed.x = -100;
+        speed.x = basespeed;
+        speed.y = sindir*250*cos(2*sinval);
     }
-
-    speed.y = 150*cos(1.5*sinval);
         
     Vec2 uspeed = GameData::universalspeed;
     uspeed = Vec2(0,0);

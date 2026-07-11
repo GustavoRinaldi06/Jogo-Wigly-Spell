@@ -176,13 +176,13 @@ void CorridorGhost::Update(float dt)
                 animator->SetAnimation("missileprep");
                 misstotal = 0;
                 misscount = 1;
-                
-                if (health < halfhealth) {
-                    misscount = 3;
-                }
                 if (GameData::expert) {
                     misscount += rand() % 2;
                 }
+                if (health < halfhealth) {
+                    misscount = 3;
+                }
+                
                 colorsmnd = false;
                 attacked = false;
             }

@@ -97,12 +97,27 @@ void Floor::Update(float dt)
                 changeTime.Restart();
                 float x_target = Character::PlayerBox().GetCenter().x;
                 int x_id = (int)(x_target / 128);
+                int id2 = -10;
+                int id3 = -10;
+
+                if (GameData::tripledisco && GameData::bossHP < GameData::p2health) {
+                    id2 = x_id +1;
+                    id3 = x_id -1;
+
+                    id2 = std::max(0,std::min(id2,7));
+                    id3 = std::max(0,std::min(id3,7));
+                }
+                
+                x_id = std::max(0,std::min(x_id,7));
+                
 
                 if (!GameData::inverted)
                 {
                     x_id += 7;
+                    id2 += 7;
+                    id3 += 7;
                 }
-                if (x_id != index)
+                if (x_id != index && id2 != index && id3 != index)
                 {
                     rend->SetFrame(3);
                     associated.damage = -1;
@@ -116,6 +131,7 @@ void Floor::Update(float dt)
             if (changeTime.Get() > 3.0)
             {
                 GameData::inversedisco = 0;
+                GameData::tripledisco = false;
             }
         }
         else

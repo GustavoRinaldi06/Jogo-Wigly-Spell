@@ -37,7 +37,7 @@ Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, flo
     else if (type == 3) {
         wcount = 4;
         hcount = 2;
-        colscale = Vec2(1,1);
+        colscale = Vec2(0.8,0.8);
         purpledurability = 3;
     }
     auto renderer = new SpriteRenderer(associated, spritePath, wcount, hcount);
