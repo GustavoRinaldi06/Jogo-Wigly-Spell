@@ -178,7 +178,7 @@ void TitleState::Update(float dt)
         if (IsButtonClicked(btnNewGame))
         {
             // Mapeia todos os arquivos do DiscoState
-            Load_Pub();
+            Load_Lab();
             return;
         }
 
