@@ -128,6 +128,16 @@ void TitleState::Update(float dt)
         GameData::easy = true;
     }
 
+    if ((input.KeyPress(SDLK_1))) {
+        GameData::target_stage = 1;
+    }
+    if ((input.KeyPress(SDLK_2))) {
+        GameData::target_stage = 2;
+    }
+    if ((input.KeyPress(SDLK_3))) {
+        GameData::target_stage = 3;
+    }
+
     if (input.MousePress(LEFT_MOUSE_BUTTON))
     {
         // Botão 1: Continuar Jogo
@@ -178,7 +188,16 @@ void TitleState::Update(float dt)
         if (IsButtonClicked(btnNewGame))
         {
             // Mapeia todos os arquivos do DiscoState
-            Load_Lab();
+            if (GameData::target_stage == 2) {
+                Load_Hallway();
+            }
+            else if (GameData::target_stage == 3) {
+                Load_Pub();
+            }
+            else {
+                Load_Lab();
+            }
+            
             return;
         }
 

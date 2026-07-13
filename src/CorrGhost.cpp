@@ -60,7 +60,7 @@ CorridorGhost::CorridorGhost(GameObject &associated, const std::string &spritePa
     associated.AddComponent(col);
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
-    specialInvuln.Restart();
+    specialInvuln.Set(9999);
     if (GameData::expert) {
         health = 1500;
         halfhealth = 750;
@@ -216,11 +216,13 @@ void CorridorGhost::Update(float dt)
                 color = 2;
                 colorsmnd = true;
             }
-            if (last_color == color) {
+            int randomchk = rand() % 3;
+            if (last_color == color && randomchk > 0) {
+                
                 if (color == 1) {
                     color = 2;
                 }
-                else {
+                else if (color == 2) {
                     color = 1;
                 }
             }

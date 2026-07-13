@@ -26,6 +26,7 @@ bool GameData::summonalive[6] = {false, false, false, false, false, false};
 bool GameData::discopos[14] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 int GameData::inversedisco = 0;
 bool GameData::tripledisco = false;
+int GameData::target_stage = 1;
 
 // No seu GameData.cpp
 int GameData::targetDiscoColor = 0;

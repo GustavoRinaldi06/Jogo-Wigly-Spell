@@ -61,6 +61,7 @@ private:
     bool feedbackActive = false;   // Tempo de feedback
     bool acertou = false;          // Acertou no tutorial
     int animcounter = 0;
+    bool started = false;
     Sound Error, Right_Place;
 };
 

@@ -61,7 +61,7 @@ DiscoGhost::DiscoGhost(GameObject &associated, const std::string &spritePath)
     associated.AddComponent(col);
     // associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
-    specialInvuln.Restart();
+    specialInvuln.Set(9999);
     waveCD.Restart();
     if (GameData::expert) {
         health = 1800;
@@ -268,6 +268,11 @@ void DiscoGhost::Update(float dt)
     {
         return;
     }
+    else if (!started && GameData::expert) {
+        DiscoState *currentState = dynamic_cast<DiscoState *>(&Game::GetInstance().GetCurrentState());
+        currentState->DontStopTheMusic();
+        started = true;
+    }
 
     if (ATK == -1)
     {
@@ -301,7 +306,7 @@ void DiscoGhost::Update(float dt)
                 {
                     // levanta o jogador
                     Character::player->SetSpeedY(-900.0f);
-
+                    Character::player->damageCooldown.Restart();
                     // função dj
                     DiscoState *currentState = dynamic_cast<DiscoState *>(&Game::GetInstance().GetCurrentState());
                     if (currentState != nullptr)
@@ -667,10 +672,14 @@ void DiscoGhost::Update(float dt)
             GameData::discoBlackout = true;
 
             // levanta o jogador
-            if (GameData::inverted == false)
+            if (GameData::inverted == false){
                 Character::player->SetSpeedY(-900.0f);
-            else
+                Character::player->damageCooldown.Restart();
+            }
+            else{
                 Character::player->SetSpeedY(900.0f);
+                Character::player->damageCooldown.Restart();
+            }
 
             // Atualiza o texto
             if (discoInfoText != nullptr)

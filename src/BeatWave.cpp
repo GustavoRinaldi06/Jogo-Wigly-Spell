@@ -34,7 +34,7 @@ BeatWave::BeatWave(GameObject &associated, const std::string &spritePath, int ar
     associated.AddComponent(animator);
     animator->SetAnimation("flowing");
 
-    associated.AddComponent(new Collider(associated,Vec2(0.7,0.7)));
+    associated.AddComponent(new Collider(associated,Vec2(0.90,0.90)));
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
     lifespan.Restart();
@@ -62,7 +62,7 @@ void BeatWave::Start()
 void BeatWave::Update(float dt)
 {
     // Ao morrer -------------------------------------------------------------------------------
-    if (associated.box.y < -120 || associated.box.y > 1400 || associated.box.x < -240) {
+    if (associated.box.y < -120 || associated.box.y > 1400 || associated.box.x < -1000) {
          associated.RequestDelete();
     }
     
@@ -97,12 +97,26 @@ void BeatWave::Update(float dt)
     }
 
     Vec2 playerdot = Character::player->PlayerBox().GetCenter();
-    if (playerdot.x > associated.box.x && playerdot.x < associated.box.x + associated.box.w && playerdot.y > associated.box.y && playerdot.y < associated.box.y + associated.box.h) {
-        float playerx = (playerdot.x - associated.box.x);
-        float playery = associated.box.h - (playerdot.y - associated.box.y);
-        float leeway =0.85;
-        float ileeway = 1 - leeway;
-        if (playery < leeway*associated.box.h*sin((M_PI/(leeway*associated.box.w))*(playerx-ileeway*associated.box.w))) { 
+    Collider *col = (Collider *)associated.GetComponent("Collider");
+    Vec2 scale = col->GetScale();
+    float basex = associated.box.x + associated.box.w*(1-scale.x)/2;
+    float finx =  associated.box.x + associated.box.w*(1+scale.x)/2;
+    float basey = associated.box.y + associated.box.h*(1-scale.y)/2;
+    float finy =  associated.box.y + associated.box.h*(1+scale.y)/2;
+    float scaledw = finx - basex;
+    float scaledh = finy - basey;
+    if (playerdot.x > basex && playerdot.x < finx && playerdot.y > basey && playerdot.y < finy) {
+        float playerx = (playerdot.x - basex);
+        float playery;
+        if (side == 0) {
+            playery = associated.box.h - (playerdot.y - basey);
+        }
+        else {
+            playery = - (playerdot.y - basey);
+        }
+        float leeway =0.95;
+        if (side == 0 && playery < leeway*scaledh*sin((M_PI/(leeway*scaledw))*(playerx)) ||
+            side == 1 && playery > -leeway*scaledh*sin((M_PI/(leeway*scaledw)*(playerx))) )  { 
             // Trata como uma função seno para determinar se ativa a colisão
             // leeway é usado para reduzir o tamanho dessa colisao se necessario
             active = true;
@@ -133,7 +147,6 @@ void BeatWave::Update(float dt)
     else {
         speed.y = 0;
     }
- 
     associated.box.x += (speed.x) * dt;
     associated.box.y += (speed.y)* dt;
     

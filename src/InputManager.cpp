@@ -1,4 +1,5 @@
 #include "../include/InputManager.h"
+#include "../include/Game.h"
 
 // Inicializa os valores essenciais
 InputManager::InputManager()
@@ -31,7 +32,13 @@ void InputManager::Update()
     updateCounter++;
 
     // Atualiza posição do mouse
-    SDL_GetMouseState(&mouseX, &mouseY);
+    int realX, realY;
+    SDL_GetMouseState(&realX, &realY);
+    SDL_Renderer * rend = Game::GetInstance().GetRenderer();
+    float logicalX, logicalY;
+    SDL_RenderWindowToLogical(rend, realX, realY, &logicalX, &logicalY);
+    mouseX = int(logicalX);
+    mouseY = int(logicalY);
 
     // Reseta quit
     quitRequested = false;

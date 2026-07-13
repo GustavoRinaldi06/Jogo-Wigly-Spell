@@ -157,7 +157,13 @@ void Character::Update(float dt)
     }
 
     if (associated.box.y > 750 || associated.box.y < -50) {
-        associated.box.y = 400;
+        if (!GameData::inverted) {
+            associated.box.y = 400;
+        }
+        else {
+            associated.box.y = 200;
+        }
+        
         speed.y = 0;
         speed.x = 0;
         dashed = false;
@@ -374,7 +380,7 @@ void Character::Update(float dt)
             Inversion = true;
 
             // Reseta os pulos para evitar que o player pule "no ar" logo após inverter
-            jumped = false;
+            jumped = true;
             Djumped = false;
             if (!dashing)
             {

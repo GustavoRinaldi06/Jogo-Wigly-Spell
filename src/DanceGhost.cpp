@@ -48,11 +48,12 @@ DanceGhost::DanceGhost(GameObject &associated, const std::string &spritePath, in
     associated.AddComponent(col);
     //associated.AddComponent(new Collider(associated,Vec2(1,1)));
     deathTimer.Restart();
-    specialInvuln.Restart();
+    specialInvuln.Set(9999);
     health = 50;
     dead = false;
     pos = position;
     attacked = false;
+    
 }
 
 DanceGhost::~DanceGhost()

@@ -32,14 +32,14 @@ Game::Game(const std::string &title, int width, int height)
     instance = this;
     InitSDL();  // Inicializa a SDL
 
-    window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+    window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
     if (!window)
     {
         std::cerr << "Erro ao criar janela: " << SDL_GetError() << "\n";
         QuitSDL();
         exit(1);
     }
-
+    
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer)
     {
@@ -47,6 +47,11 @@ Game::Game(const std::string &title, int width, int height)
         QuitSDL();
         exit(1);
     }
+    SDL_RenderSetLogicalSize(renderer,width,height);
+    
+
+
+    
 
     frameStart = SDL_GetTicks();
     dt = 0;
@@ -128,6 +133,8 @@ void Game::Run()
         }
 
         // Atualiza e renderiza o estado atual
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
         if (!stateStack.empty())
         {
             stateStack.top()->Update(dt);

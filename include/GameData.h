@@ -38,6 +38,7 @@ public:
     static bool discopos[14];
     static int inversedisco;
     static bool tripledisco;
+    static int target_stage;
 
     // controle de ataque do disco
     static int targetDiscoColor;

@@ -16,7 +16,7 @@
 #include "../include/Light.h"
 #include "../include/HallwayState.h"
 #include "../include/LoadingState.h"
-
+#include "../include/BeatWave.h"
 #include "Text.h"
 
 #define INCLUDE_SDL
@@ -124,6 +124,8 @@ void LabState::LoadAssets()
 
     tutorialGameObject->AddComponent(tutorialRenderer);
     AddObject(tutorialGameObject);
+
+   
 }
 
 void LabState::Update(float dt)

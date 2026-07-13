@@ -140,6 +140,7 @@ void Cauldron::Update(float dt)
             }
         }
         else if (anim == "dead") {
+            renderer->SetTransparency(255);
             if (urple) {
                 animator->SetAnimation("deadP");
             }

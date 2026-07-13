@@ -14,6 +14,7 @@
 #include "../include/Dancefloor.h"
 #include "../include/Resources.h"
 #include "../include/Light.h"
+#include "../include/Beatwave.h"
 
 #include "Text.h"
 
@@ -383,6 +384,20 @@ void DiscoState::Update(float dt)
         }
 
         Camera::GetInstance().SetPosition(camerapos);
+
+        /*GameObject *waveGO = new GameObject();
+        waveGO->box.x = -500;                            // Centro do mapa  
+        waveGO->box.y = 0 ;
+        //waveGO->box.y = +530;                                                       // Centro do mapa
+        waveGO->AddComponent(new BeatWave(*waveGO, "recursos/img/BeatWave.png", 1)); // substitua pela imagem correta
+        SpriteRenderer *waveSprite = (SpriteRenderer *)waveGO->GetComponent("SpriteRenderer");
+        if (waveSprite != nullptr)
+        {
+            waveSprite->SetScale(2.0f, 2.0f);
+        }
+        waveGO->box.x = 300;
+        Game::GetInstance().GetCurrentState().AddObject(waveGO);
+        */
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -530,6 +545,7 @@ void DiscoState::Start()
     GameData::currentState = 3; // Essa sendo a tercceira fase
     GameData::gameMode = 1;
     GameData::playerVictory_2 = false; // Reinicia a fase e apaga save de vitória anterior
+    GameData::playerVictory_3 = false;
 }
 
 void DiscoState::Pause()
@@ -560,9 +576,17 @@ void DiscoState::DontStopTheMusic()
         {
             if (currentTrack == "recursos/audio/pubsound.mp3")
             {
-                backgroundMusic.Open("recursos/audio/playlist/Dance.mp3");
-                backgroundMusic.Play(-1);
-                currentTrack = "recursos/audio/playlist/Dance.mp3";
+                if (!GameData::expert) {
+                    backgroundMusic.Open("recursos/audio/playlist/Dance.mp3");
+                    backgroundMusic.Play(-1);
+                    currentTrack = "recursos/audio/playlist/Dance.mp3";
+                }
+                else {
+                    backgroundMusic.Open("recursos/audio/playlist/DiscoKing.mp3");
+                    backgroundMusic.Play(-1);
+                    currentTrack = "recursos/audio/playlist/DiscoKing.mp3";
+                }
+                
             }
             else
             {
