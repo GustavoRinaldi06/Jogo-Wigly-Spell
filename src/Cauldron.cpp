@@ -27,6 +27,7 @@ Cauldron::Cauldron(GameObject &associated, const std::string &spritePath,Animato
     associated.AddComponent(renderer);
     associated.box.x = Character::PlayerBox().x;
     associated.box.y = Character::PlayerBox().y;
+    renderer->SetTransparency(255);
 
      auto animator = new Animator(associated);
     animator->AddAnimation("idle", Animation(0, 3, (1.0/6)));

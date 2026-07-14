@@ -104,11 +104,11 @@ void Floor::Update(float dt)
                     id2 = x_id +1;
                     id3 = x_id -1;
 
-                    id2 = std::max(0,std::min(id2,7));
-                    id3 = std::max(0,std::min(id3,7));
+                    id2 = std::max(1,std::min(id2,6));
+                    id3 = std::max(-1,std::min(id3,4));
                 }
                 
-                x_id = std::max(0,std::min(x_id,7));
+                x_id = std::max(0,std::min(x_id,5));
                 
 
                 if (!GameData::inverted)
@@ -137,7 +137,6 @@ void Floor::Update(float dt)
         else
         {
             associated.damage = -1;
-
 
             if (GameData::discoAttackActive)
             {

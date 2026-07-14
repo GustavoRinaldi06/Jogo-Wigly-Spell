@@ -381,7 +381,6 @@ void Character::Update(float dt)
 
             // Reseta os pulos para evitar que o player pule "no ar" logo após inverter
             jumped = true;
-            Djumped = false;
             if (!dashing)
             {
                 dashed = false;

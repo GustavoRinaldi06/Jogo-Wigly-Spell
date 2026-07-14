@@ -92,13 +92,57 @@ void DanceFloor::Update(float dt)
 
 void DanceFloor::ActivateDisco()
 {
-    for (int r = 0; r < rows; r++)
+    int baserow = 0;
+    int basecol = 0;
+    
+    for (int k = 0;k < 4;k++){
+        int pinkpick = rand() % 6;
+        int yellowpick = rand() % 6;
+        while (yellowpick == pinkpick) {
+            yellowpick = rand() % 6;
+        }
+        int bluepick = rand() % 6;
+        while (bluepick == pinkpick || bluepick == yellowpick) {
+            bluepick = rand() % 6;
+        }
+
+        int greenpick = rand() % 6;
+        while (greenpick == pinkpick || greenpick == yellowpick || greenpick == bluepick) {
+            greenpick = rand() % 6;
+        }
+        int picklist[4] = {pinkpick,yellowpick,bluepick,greenpick};
+        
+        for (int i = 0; i < 6; i++) {
+            int fixedcol = -1;
+            for (int j = 0; j < 4;j++) {
+                if (i == picklist[j]) {
+                    fixedcol = j;
+                    break;
+                }
+            }
+
+            if (fixedcol < 0) {
+                grid[baserow+int(i/3)][basecol+(i%3)] = rand() % 4;
+            }
+            else {
+                grid[baserow+int(i/3)][basecol+(i%3)] = fixedcol;
+            }
+            
+            
+        }
+        basecol +=3;
+        baserow += 2*int(basecol/6);
+        basecol = basecol % 6;
+    }
+    /*
+    for (int r = baserow; r < 3 + baserow; r++)
     {
-        for (int c = 0; c < cols; c++)
+        for (int c = basecol; c < 2 + basecol; c++)
         {
             grid[r][c] = 0 + (rand() % 4);
         }
     }
+    */
 }
 
 void DanceFloor::Error()
