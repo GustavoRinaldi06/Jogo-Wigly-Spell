@@ -782,7 +782,7 @@ void DiscoGhost::Update(float dt)
                         if (playerColor != targetColor)
                         {
                             Error.Play();
-                            Character::player->ApplyDamage(20); // Dá 20 de dano
+                            Character::player->ApplyDamage(1); // Dá 1 de dano
                             
                             GameData::danceFloorPtr->Error();   // Pista fica inteira vermelha
                             GameData::discoError = true;
@@ -897,7 +897,7 @@ void DiscoGhost::WaveATK(int side, Vec2 offset)
     waveGO->box.x = associated.box.x + associated.box.w+ offset.x ;                            // Centro do mapa
     if (GameData::easy) {
         if (side > 0) {    
-            waveGO->box.y = -50 - offset.y; 
+            waveGO->box.y = -40 - offset.y; 
         }
         else {
             waveGO->box.y = +570 + offset.y;
