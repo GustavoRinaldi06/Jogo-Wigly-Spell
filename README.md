@@ -17,8 +17,13 @@ O jogo possui 3 dificuldades:
 - Aprendiz: A dificuldade para aqueles não acostumados a esse tipo de jogo. Ataques simultaneos foram reduzidos e outros foram simplificados. com o intuito de facilitar com que mais pessoas experienciem o jogo
 - Mestre: A dificuldade para aqueles que desejam um desafio. Ataques mais rápidos e com novos elementos que requerem foco e atenção ainda maior. Não espere vencer em suas primeiras tentativas.
 
-Caso deseja-se de mais ajuda, o jogo tem alguns "cheats" acessíveis clicando 1 vez no centro do disco no menu, clicando de novo para desativas.
+
+<details>
+  <summary>Caso deseja-se de mais ajuda...</summary>
+  
+O jogo tem alguns "cheats" acessíveis clicando 1 vez no centro do disco no menu, clicando de novo para desativar.
 Para conferir se deu certo, pressione 7,8 ou 9 para alterar a dificuldade sem clicar em butões. Dentro de uma fase, pressione:
   - 1 para ganhar poção vermelha.
   - 2 para ganhar poção azul.
   - 3 para recuperar vida 
+</details>
