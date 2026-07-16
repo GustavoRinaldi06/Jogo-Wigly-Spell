@@ -175,6 +175,7 @@ void LabState::Update(float dt)
                 tutorialEnd = true;
                 endTimer.Restart();
                 GameData::playerVictory_1 = true;
+                GameData::Permanent_playerVictory_1 = true;
                 SkipSound.Play();
             }
         }

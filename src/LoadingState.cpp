@@ -17,6 +17,7 @@ LoadingState::LoadingState(State *nextState, std::vector<ResourceItem> resources
 
     SpriteRenderer *spriteRend = new SpriteRenderer(*caldeiraoGO, "recursos/img/Caldeirao.png", 4, 8);
     spriteRend->SetScale(2.0f, 2.0f);
+    spriteRend->SetTransparency(255);
     caldeiraoGO->AddComponent(spriteRend);
 
     Animator *animator = new Animator(*caldeiraoGO);

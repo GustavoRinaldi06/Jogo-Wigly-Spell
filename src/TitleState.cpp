@@ -31,7 +31,12 @@ void TitleState::LoadAssets()
 
     // Configurações comuns de texto
     SDL_Color black = {0, 0, 0, 255};
+    SDL_Color transparent = {0, 0, 0, 255};
     SDL_Color white = {255, 255, 255, 255};
+    SDL_Color blue = {30, 30, 200, 255};
+    SDL_Color darkblue = {0, 0, 30, 255};
+    SDL_Color green = {30, 200, 30, 255};
+    SDL_Color red = {200, 30, 30, 255};
     std::string fontPath = "recursos/font/heavy heap.otf";
     int fontSize = 36;
     int startY = 550; // Posição Y inicial para o primeiro botão
@@ -41,6 +46,7 @@ void TitleState::LoadAssets()
     // Verificar se existe um save válido para definir a cor do botão Continuar ---------------------
     std::string faseSalva = "";
     std::ifstream saveFile("save.txt");
+
     if (saveFile.is_open())
     {
         std::string linha;
@@ -50,6 +56,25 @@ void TitleState::LoadAssets()
             if (pos != std::string::npos)
             {
                 faseSalva = linha.substr(pos + 1);
+            }
+        }
+        for (int i = 0; i <3;i++) {
+            if (std::getline(saveFile, linha)) {
+                size_t pos = linha.find('=');
+                if (pos != std::string::npos)
+                {
+                    if (linha.substr(pos + 1) == "1") {
+                        if (i == 0) {
+                            GameData::Permanent_playerVictory_1 = true;
+                        }
+                        else if (i == 1) {
+                            GameData::Permanent_playerVictory_2 = true;
+                        }
+                        else if (i == 2) {
+                            GameData::Permanent_playerVictory_3 = true;
+                        }
+                    }
+                }
             }
         }
         saveFile.close();
@@ -85,7 +110,66 @@ void TitleState::LoadAssets()
     btnMute->box.x = 30;
     btnMute->box.y = 30;
     AddObject(btnMute);
+    
+     // Botão: Aprendiz ----------------------------------------------------------------------------
+    btnEasy = new GameObject();
+    Text *txtEasy = new Text(*btnEasy, fontPath, fontSize, BLENDED, "Aprendiz", green);
+    btnEasy->AddComponent(txtEasy);
+    txtEasy->SetCameraFollower(true);
+    btnEasy->box.x = posX - 70;
+    btnEasy->box.y = startY - 45;
+    AddObject(btnEasy);
+    
 
+     // Botão: Normal ----------------------------------------------------------------------------
+    btnNormal = new GameObject();
+    Text *txtNormal = new Text(*btnNormal, fontPath, fontSize, BLENDED, "Normal", darkblue);
+    btnNormal->AddComponent(txtNormal);
+    txtNormal->SetCameraFollower(true);
+    btnNormal->box.x = posX + 60;
+    btnNormal->box.y = startY - 45;
+    AddObject(btnNormal);
+    
+    
+     // Botão: Mestre ----------------------------------------------------------------------------
+    btnHard = new GameObject();
+    Text *txtHard = new Text(*btnHard, fontPath, fontSize, BLENDED, "Mestre", red);
+    btnHard->AddComponent(txtHard);
+    txtHard->SetCameraFollower(true);
+    btnHard->box.x = posX + 170;
+    btnHard->box.y = startY - 45;
+    AddObject(btnHard);
+
+    
+    
+     // Botão: Fase1 ----------------------------------------------------------------------------
+    btnP1 = new GameObject();
+    Text *txtP1 = new Text(*btnP1, fontPath, fontSize, BLENDED, "Tutorial-O Laboratorio", transparent);
+    btnP1->AddComponent(txtP1);
+    txtP1->SetCameraFollower(true);
+    btnP1->box.x = 30;
+    btnP1->box.y = 575;
+    AddObject(btnP1);
+    
+// Botão: Fase2 ---------------------------------------------------------------------------
+    btnP2 = new GameObject();
+    Text *txtP2 = new Text(*btnP2, fontPath, fontSize, BLENDED, "Fase 2- O Corredor", transparent);
+    btnP2->AddComponent(txtP2);
+    txtP2->SetCameraFollower(true);
+    btnP2->box.x = 30;
+    btnP2->box.y = 625;
+    AddObject(btnP2);
+
+    // Botão: Fase1 ----------------------------------------------------------------------------
+    btnP3 = new GameObject();
+    Text *txtP3 = new Text(*btnP3, fontPath, fontSize, BLENDED, "Fase 3- Disco King", transparent);
+    btnP3->AddComponent(txtP3);
+    txtP3->SetCameraFollower(true);
+    btnP3->box.x = 30;
+    btnP3->box.y = 675;
+    AddObject(btnP3);
+    
+ 
     // Botão: Sair ---------------------------------------------------------------------------------
     btnExit = new GameObject();
     Text *txtExit = new Text(*btnExit, fontPath, fontSize, BLENDED, "SAIR", black);
@@ -115,32 +199,39 @@ void TitleState::Update(float dt)
     }
 
     // Verifica cliques nos botões
-    if (input.KeyPress(SDLK_9)) {
+    if (input.KeyPress(SDLK_9) && GameData::cheats) {
         GameData::expert = true;
         GameData::easy = false;
     }
-    if (input.KeyPress(SDLK_8)) {
+    if (input.KeyPress(SDLK_8)  && GameData::cheats) {
         GameData::expert = false;
         GameData::easy = false;
     }
-    if ((input.KeyPress(SDLK_7))) {
+    if ((input.KeyPress(SDLK_7))  && GameData::cheats) {
         GameData::expert = false;
         GameData::easy = true;
     }
 
-    if ((input.KeyPress(SDLK_1))) {
+    if ((input.KeyPress(SDLK_1))  && GameData::cheats) {
         GameData::target_stage = 1;
     }
-    if ((input.KeyPress(SDLK_2))) {
+    if ((input.KeyPress(SDLK_2))  && GameData::cheats) {
         GameData::target_stage = 2;
     }
-    if ((input.KeyPress(SDLK_3))) {
+    if ((input.KeyPress(SDLK_3))  && GameData::cheats) {
         GameData::target_stage = 3;
     }
 
     if (input.MousePress(LEFT_MOUSE_BUTTON))
     {
         // Botão 1: Continuar Jogo
+
+        int mousex = input.GetMouseX();
+        int mousey = input.GetMouseY();
+        if (Vec2(593,214).Distance(Vec2(mousex,mousey))< 5) {
+            GameData::cheats = !GameData::cheats;
+        }
+        //if (input.GetMouseX() **)
         if (IsButtonClicked(btnContinue))
         {
             std::ifstream saveFile("save.txt");
@@ -201,6 +292,41 @@ void TitleState::Update(float dt)
             return;
         }
 
+
+
+        if (IsButtonClicked(btnEasy))
+        {
+            GameData::expert = false;
+            GameData::easy = true;
+        }
+        if (IsButtonClicked(btnNormal))
+        {
+            GameData::expert = false;
+            GameData::easy = false;
+        }
+        if (IsButtonClicked(btnHard))
+        {
+            GameData::expert = true;
+            GameData::easy = false;
+        }
+        if (IsButtonClicked(btnP1) && GameData::Permanent_playerVictory_1)
+        {
+            Load_Lab();
+            return;
+        }
+        if (IsButtonClicked(btnP2) && GameData::Permanent_playerVictory_2)
+        {
+            Load_Hallway();
+            return;
+        }
+        if (IsButtonClicked(btnP3) && GameData::Permanent_playerVictory_3)
+        {
+            Load_Pub();
+            return;
+       }
+        
+        
+
         // Botão 3: Silenciar Música
         if (IsButtonClicked(btnMute))
         {
@@ -225,6 +351,48 @@ void TitleState::Update(float dt)
             quitRequested = true;
             return;
         }
+    }
+    SDL_Color green = {0, 200,0, 255};
+    SDL_Color red = {200, 30, 30, 255};
+    SDL_Color blue = {30, 30, 200, 255};
+    Text *easytext = static_cast<Text *>(btnEasy->GetComponent("Text"));
+    Text *hardtext = static_cast<Text *>(btnHard->GetComponent("Text"));
+    Text *mediumtext = static_cast<Text *>(btnNormal->GetComponent("Text"));
+    Text *p1text = static_cast<Text *>(btnP1->GetComponent("Text"));
+    Text *p2text = static_cast<Text *>(btnP2->GetComponent("Text"));
+    Text *p3text = static_cast<Text *>(btnP3->GetComponent("Text"));
+    if (GameData::easy) {
+        SDL_Color darkgreen = {0, 30,0, 255};
+    
+        easytext->SetColor(darkgreen);
+        mediumtext->SetColor(blue);
+        hardtext->SetColor(red);
+    }
+    else if (GameData::expert) {
+        SDL_Color darkred = {30, 0, 0, 255};
+        
+        hardtext->SetColor(darkred);
+        easytext->SetColor(green);
+        mediumtext->SetColor(blue);
+    }
+    else {
+        SDL_Color darkblue = {0, 0, 30, 255};
+        
+        hardtext->SetColor(red);
+        mediumtext->SetColor(darkblue);
+        easytext->SetColor(green);
+    }
+    if (GameData::Permanent_playerVictory_1){
+        SDL_Color white = {255, 255, 255, 255};
+        p1text->SetColor(white);
+    }
+    if (GameData::Permanent_playerVictory_2){
+        SDL_Color white = {255, 255, 255, 255};
+        p2text->SetColor(white);
+    }
+    if (GameData::Permanent_playerVictory_3){
+        SDL_Color white = {255, 255, 255, 255};
+        p3text->SetColor(white);
     }
 }
 

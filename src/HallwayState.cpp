@@ -355,6 +355,7 @@ void HallwayState::Update(float dt)
         bossDefeated = true;
         victoryTimer.Restart(); // Zera o cronômetro para começar a contar
         GameData::playerVictory_2 = true;
+        GameData::Permanent_playerVictory_2 = true;
     }
 
     // Se o Boss já foi derrotado

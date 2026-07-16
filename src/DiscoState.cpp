@@ -480,6 +480,7 @@ void DiscoState::Update(float dt)
         bossDefeated = true; 
         victoryTimer.Restart(); 
         GameData::playerVictory_3 = true;
+        GameData::Permanent_playerVictory_3 = true;
     }
 
     if (bossDefeated)
@@ -503,7 +504,7 @@ void DiscoState::Update(float dt)
     // Checagem de fim Derrota
     if (Character::player == nullptr || Character::player->GetGameObject()->IsDead())
     {
-        GameData::playerVictory_2 = false;
+        //GameData::playerVictory_2 = false;
         gameOverTriggered = true;
         if (transitionEffect)
         {

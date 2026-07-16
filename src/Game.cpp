@@ -9,8 +9,6 @@
 // Inicializa a variável estática 'instance' como nullptr
 Game *Game::instance = nullptr;
 
-
-
 Game &Game::GetInstance()
 {
     if (instance == nullptr)
@@ -145,7 +143,7 @@ void Game::Run()
         SDL_Delay(33); // ~30 FPS
     }
 
-    // estrutura do autosave
+    // estrutura do autosave0
     std::cout << "Salvando o progresso...\n";
     std::ofstream saveFile("save.txt"); // Cria ou sobrescreve o arquivo save.txt
     if (saveFile.is_open())
@@ -165,6 +163,24 @@ void Game::Run()
         else
         {
             saveFile << "Fase_Atual=Fase_1\n";
+        }
+        if (GameData::Permanent_playerVictory_1){
+            saveFile << "Complete1=1\n";
+        }
+        else {
+            saveFile << "Complete1=0\n";
+        }
+        if (GameData::Permanent_playerVictory_2){
+            saveFile << "Complete2=1\n";
+        }
+        else {
+            saveFile << "Complete2=0\n";
+        }
+        if (GameData::Permanent_playerVictory_3){
+            saveFile << "Complete3=1\n";
+        }
+        else {
+            saveFile << "Complete3=0\n";
         }
 
         saveFile.close();

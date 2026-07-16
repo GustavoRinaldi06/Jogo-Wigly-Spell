@@ -270,15 +270,15 @@ void Character::Update(float dt)
     InputManager &input = InputManager::GetInstance();
     if (colorInventory.size() < MAX_COLORS)
     {
-        if (input.KeyPress(SDLK_1)) {
+        if (input.KeyPress(SDLK_1)  && GameData::cheats) {
             colorInventory.push_back(RED);
         }
-        if (input.KeyPress(SDLK_2)) {
+        if (input.KeyPress(SDLK_2)  && GameData::cheats) {
             colorInventory.push_back(BLUE);
         }
     }
     
-    if (input.KeyPress(SDLK_3)) {
+    if (input.KeyPress(SDLK_3)  && GameData::cheats) {
         hp += 20;
     }
 

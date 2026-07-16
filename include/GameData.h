@@ -22,6 +22,15 @@ public:
 
     static bool playerVictory_3; // SAber se o jogador ganhou ou perdeu a fase 3
 
+    // Historico de jogo e condição de vitoria
+    static bool Permanent_playerVictory_1; // SAber se o jogador venceu a fase 1 alguma vez
+
+    static bool Permanent_playerVictory_2; // SAber se o jogador venceu a fase 2 alguma vez
+
+    static bool Permanent_playerVictory_3; // SAber se o jogador venceu a fase 3 alguma vez
+
+    static bool cheats;
+
     static Vec2 universalspeed;
 
     // Habilidades desbloqueaveis

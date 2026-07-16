@@ -13,6 +13,15 @@ bool GameData::playerVictory_2 = false; // Jogador ainda não ganhou
 
 bool GameData::playerVictory_3 = false; // Jogador ainda não ganhou
 
+ // Historico de jogo e condição de vitoria
+bool GameData::Permanent_playerVictory_1 = false; // SAber se o jogador ganhou ou perdeu a fase 1
+
+bool GameData::Permanent_playerVictory_2 = false; // SAber se o jogador ganhou ou perdeu a fase 2
+
+bool GameData::Permanent_playerVictory_3 = false; // SAber se o jogador ganhou ou perdeu a fase 3
+
+bool GameData::cheats= false;
+
 bool GameData::Djump = true;
 bool GameData::spell = true;
 

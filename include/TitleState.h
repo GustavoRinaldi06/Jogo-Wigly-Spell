@@ -4,6 +4,7 @@
 #include "State.h"
 #include "Music.h"
 #include "Text.h"
+#include "Sound.h"
 
 class TitleState : public State
 {
@@ -33,7 +34,15 @@ private:
     GameObject *btnContinue = nullptr;
     GameObject *btnNewGame = nullptr;
     GameObject *btnMute = nullptr;
-    GameObject *btnExit = nullptr;
+    GameObject *btnExit;
+
+    GameObject *btnEasy;
+    GameObject *btnNormal;
+    GameObject *btnHard;
+
+    GameObject *btnP1;
+    GameObject *btnP2;
+    GameObject *btnP3;
 
     // Ponteiro para o texto de mute para podermos alterá-lo em tempo real
     Text *muteTextPtr = nullptr;
