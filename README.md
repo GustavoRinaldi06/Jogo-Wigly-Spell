@@ -19,7 +19,7 @@ O jogo possui 3 dificuldades:
 
 
 <details>
-  <summary>Caso deseja-se de mais ajuda...</summary>
+  <summary>Caso precise de mais ajuda para progredir...</summary>
   
 O jogo tem alguns "cheats" acessíveis clicando 1 vez no centro do disco no menu, clicando de novo para desativar.
 Para conferir se deu certo, pressione 7,8 ou 9 para alterar a dificuldade sem clicar em butões. Dentro de uma fase, pressione:
